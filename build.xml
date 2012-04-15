@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="dpp-ukol2" default="dist" basedir=".">
+	<description>
+        Library for working with command line arguments.
+    </description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="javadoc.dir" location="javadoc" />
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+	<target name="clean-javadoc" description="delete the javadoc directory">
+		<!-- Delete the  ${javadoc.dir} directory tree -->
+		<delete dir="${javadoc.dir}" />
+	</target>
+	<target name="clean-all" depends="clean,clean-javadoc" description="clean up including javadoc" />
+
+	<target name="compile" depends="clean" description="compile the sources">
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac includeantruntime="false" srcdir="${src}" destdir="${build}" />
+	</target>
+
+	<target name="init-dist" description="create dist directory">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}" />
+	</target>
+
+	<target name="copy-resources" description="copy non-java resources into build directory">
+		<!-- Copy non-java resources to ${build} -->
+		<copy todir="${build}">
+			<fileset dir="${src}" includes="**/*.xml,**/*.properties" />
+		</copy>
+	</target>
+
+	<target name="dist" depends="compile,init-dist,copy-resources" description="generate the distribution">
+		<!-- Put everything in ${build} into the Joker.jar file -->
+		<jar jarfile="${dist}/Options.jar" basedir="${build}" />
+	</target>
+
+	<target name="javadoc" depends="clean-javadoc">
+		<!-- Generate javadoc -->
+		<javadoc sourcepath="${src}" access="private" destdir="${javadoc.dir}" author="true" use="true" windowtitle="Options API">
+			<fileset dir="${src}">
+				<include name="**/*.java,**/*.html" />
+			</fileset>
+		</javadoc>
+	</target>
+</project>
