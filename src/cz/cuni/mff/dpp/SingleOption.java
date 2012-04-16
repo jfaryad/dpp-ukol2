@@ -90,10 +90,20 @@ public interface SingleOption {
     public String getArgumentName();
 
     /**
+     * Returns true if this option must always come with an argument.
+     * 
+     * @return
+     */
+    public boolean isArgumentRequired();
+
+    /**
      * Returns a description of this option. It will be used for help-page generation.
      * 
      * @return
      */
     public String getDescription();
+
+    // TODO something like getArgumentConverter, that would return a converter from string to the expected argument
+    // type.
 
 }
