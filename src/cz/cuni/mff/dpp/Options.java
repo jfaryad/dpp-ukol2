@@ -1,5 +1,7 @@
 package cz.cuni.mff.dpp;
 
+import java.util.Collection;
+
 /**
  * 
  * Object holding information about all specified options as well as some other information like whether non-option
@@ -24,7 +26,7 @@ public interface Options {
      * Returns a list off all defined options. Returns an empty list if no options are specified.
      * 
      */
-    public SingleOption[] getOptions();
+    public Collection<SingleOption> getOptions();
 
     /**
      * Returns the option with the specified name (long or short). If no such option exists, null is returned.

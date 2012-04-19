@@ -1,5 +1,7 @@
 package cz.cuni.mff.dpp;
 
+import java.util.Collection;
+
 /**
  * Represents a definition of one option. A parser uses this object to parse the command line arguments.
  * 
@@ -28,21 +30,21 @@ public interface SingleOption {
      * 
      * @return
      */
-    public String[] getNames();
+    public Collection<String> getNames();
 
     /**
      * Returns an array of all short names that represent this option.
      * 
      * @return
      */
-    public String[] getShortNames();
+    public Collection<String> getShortNames();
 
     /**
      * Returns an array of all long names that represent this option.
      * 
      * @return
      */
-    public String[] getLongNames();
+    public Collection<String> getLongNames();
 
     /**
      * Returns true if this option must be specified. If the option is not required, it is by default optional.
@@ -56,14 +58,14 @@ public interface SingleOption {
      * 
      * @return
      */
-    public String[] getDependendentIds();
+    public Collection<String> getDependendentIds();
 
     /**
      * Returns ids of options that must <b>not<b> be specified when this option is specified.
      * 
      * @return
      */
-    public String[] getIncompatibleIds();
+    public Collection<String> getIncompatibleIds();
 
     /**
      * Returns true if this option accepts an argument.
@@ -95,6 +97,11 @@ public interface SingleOption {
      * @return
      */
     public boolean isArgumentRequired();
+
+    /**
+     * Defines wheter an argument is mandatory, optional of forbidden for this option.
+     */
+    public OptionArgumentObligation getArgumentObligation();
 
     /**
      * Returns a description of this option. It will be used for help-page generation.
