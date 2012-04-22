@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import cz.cuni.mff.dpp.OptionArgumentObligation;
 
 /**
- * Anotace pro oznaèkování metody, která se zavolá pokud bude pøítomná na CLI.
- * Bude jednat o metody s jedním parametrem boolean
+ * Anotace pro oznaÄkovÃ¡nÃ­ metody, kterÃ¡ se zavolÃ¡ pokud bude pÅ™Ã­tomnÃ¡ na CLI.
+ * Bude jednat o metody s jednÃ­m parametrem boolean
  * 
  * @author Tom
  * 
@@ -18,21 +18,21 @@ public @interface Option {
 	String id() default "";
 
 	/**
-	 * Jména volby (krátká i dlouhá)
+	 * JmÃ©na volby (krÃ¡tkÃ¡ i dlouhÃ¡)
 	 * 
 	 * @return
 	 */
 	String[] names();
 
 	/**
-	 * Dlouhá jména volby
+	 * DlouhÃ¡ jmÃ©na volby
 	 * 
 	 * @return
 	 */
 	String[] longNames() default {};
 
 	/**
-	 * Krátká jména volby
+	 * KrÃ¡tkÃ¡ jmÃ©na volby
 	 * 
 	 * @return
 	 */
@@ -48,7 +48,7 @@ public @interface Option {
 	
 
 	/**
-	 * Urèí zda má volba argument
+	 * UrÄÃ­ zda mÃ¡ volba argument
 	 * 
 	 * @return
 	 */

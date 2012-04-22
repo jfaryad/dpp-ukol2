@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Takto tagovaná metoda se vyvolá pro neoèekávané volby. Jako argumnt dostavaji
+ * Takto tagovanÃ¡ metoda se vyvolÃ¡ pro neoÄekÃ¡vanÃ© volby. Jako argumnt dostavaji
  * jmeno volby
  * 
  * @author Tom

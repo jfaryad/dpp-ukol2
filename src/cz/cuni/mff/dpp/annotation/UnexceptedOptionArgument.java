@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Takto tagovaná metoda se vyvolá pro neoèekávané argumenty voleb.
+ * Takto tagovanÃ¡ metoda se vyvolÃ¡ pro neoÄekÃ¡vanÃ© argumenty voleb.
  * 
  * @author Tom
  * 
