@@ -10,16 +10,17 @@ import java.util.Map;
  * @author jfaryad
  * 
  */
-public class DefaultOptionsImpl implements Options {
+public class OptionsBuilder implements Options {
 
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
     private boolean nonOptionArgumentsAllowed = false;
 
-    @Override
-    public void addOption(SingleOption option) {
-        for (String optionName : option.getNames()) {
-            options.put(optionName, option);
+    public SingleOptionBuilder addOption(String... optionNames) {
+        SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
+        for (String optionName : optionNames) {
+            options.put(optionName, builder);
         }
+        return builder;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class GnuTimeBean {
 
     @Option(
             names = { "a", "append" },
-            dependentIds = { "output" },
+            dependentOn = { "output" },
             description = "(Used together with -o.) Do not overwrite but append.")
     private boolean append;
 

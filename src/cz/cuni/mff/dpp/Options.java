@@ -14,15 +14,6 @@ import java.util.Collection;
 public interface Options {
 
     /**
-     * Adds a new option definition. If the new option is not valid considering already added options (e.g. it contains
-     * a synonym already used in another option) an exception is thrown.
-     * 
-     * @param option
-     *            a new option.
-     */
-    public void addOption(SingleOption option);
-
-    /**
      * Returns a list off all defined options. Returns an empty list if no options are specified.
      * 
      */

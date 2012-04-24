@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import cz.cuni.mff.dpp.OptionArgumentObligation;
 
 /**
- * Anotace pro oznaèkování metody, která se zavolá pokud bude pøítomná na CLI.
- * Bude jednat o metody s jedním parametrem boolean
+ * Anotace pro oznaï¿½kovï¿½nï¿½ metody, kterï¿½ se zavolï¿½ pokud bude pï¿½ï¿½tomnï¿½ na CLI. Bude jednat o metody s jednï¿½m parametrem
+ * boolean
  * 
  * @author Tom
  * 
@@ -15,50 +15,47 @@ import cz.cuni.mff.dpp.OptionArgumentObligation;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Option {
 
-	String id() default "";
+    /**
+     * Jmï¿½na volby (krï¿½tkï¿½ i dlouhï¿½)
+     * 
+     * @return
+     */
+    String[] names();
 
-	/**
-	 * Jména volby (krátká i dlouhá)
-	 * 
-	 * @return
-	 */
-	String[] names();
+    /**
+     * Dlouhï¿½ jmï¿½na volby
+     * 
+     * @return
+     */
+    String[] longNames() default {};
 
-	/**
-	 * Dlouhá jména volby
-	 * 
-	 * @return
-	 */
-	String[] longNames() default {};
+    /**
+     * Krï¿½tkï¿½ jmï¿½na volby
+     * 
+     * @return
+     */
+    String[] shortNames() default {};
 
-	/**
-	 * Krátká jména volby
-	 * 
-	 * @return
-	 */
-	String[] shortNames() default {};
+    String description() default "";
 
-	String description() default "";
+    boolean required() default false;
 
-	boolean required() default false;
+    String[] dependentOn() default {};
 
-	String[] dependentIds() default {};
+    String[] incompatibleWith() default {};
 
-	String[] incompatibleIds() default {};
-	
+    /**
+     * Urï¿½ï¿½ zda mï¿½ volba argument
+     * 
+     * @return
+     */
+    OptionArgumentObligation argumentObligation() default OptionArgumentObligation.OPTIONAL;
 
-	/**
-	 * Urèí zda má volba argument
-	 * 
-	 * @return
-	 */
-	OptionArgumentObligation argumentObligation() default OptionArgumentObligation.OPTIONAL;
-
-	/**
-	 * To be displayed in generated help screen.
-	 * 
-	 * @return
-	 */
-	String argumentName() default "";
+    /**
+     * To be displayed in generated help screen.
+     * 
+     * @return
+     */
+    String argumentName() default "";
 
 }

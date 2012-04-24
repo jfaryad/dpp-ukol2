@@ -12,32 +12,21 @@ import java.util.TreeSet;
  * @author jfaryad
  * 
  */
-public class DefaultSingleOptionImpl implements SingleOption {
+public class SingleOptionBuilder implements SingleOption {
 
-    private String id = "";
     private final Set<String> names = new TreeSet<String>();
     private boolean required = false;
-    private final List<String> dependentIds = new ArrayList<String>();
-    private final List<String> incompatibleIds = new ArrayList<String>();
+    private final List<String> dependentOn = new ArrayList<String>();
+    private final List<String> incompatibleWith = new ArrayList<String>();
     private OptionArgumentObligation argumentObligation = OptionArgumentObligation.FORBIDDEN;
     private Class<?> argumentClass;
     private String argumentName;
     private String description = "";
 
-    @Override
-    public String getId() {
-        // TODO check if this is really necessary
-        if (!id.isEmpty()) {
-            return id;
+    SingleOptionBuilder(String... names) {
+        for (String name : names) {
+            addName(name);
         }
-        // if id is empty, try to return the first long name
-        Collection<String> longNames = getLongNames();
-        if (!longNames.isEmpty()) {
-            return longNames.iterator().next();
-        }
-
-        // if there are no long names, take a short one
-        return names.iterator().next();
     }
 
     @Override
@@ -73,13 +62,13 @@ public class DefaultSingleOptionImpl implements SingleOption {
     }
 
     @Override
-    public Collection<String> getDependendentIds() {
-        return dependentIds;
+    public Collection<String> getDependendentList() {
+        return dependentOn;
     }
 
     @Override
-    public Collection<String> getIncompatibleIds() {
-        return incompatibleIds;
+    public Collection<String> getIncompatibleList() {
+        return incompatibleWith;
     }
 
     @Override
@@ -112,41 +101,45 @@ public class DefaultSingleOptionImpl implements SingleOption {
         return description;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void addName(String name) {
+    public SingleOptionBuilder addName(String name) {
         checkArgumentNotEmpty(name);
         names.add(name);
+        return this;
     }
 
-    public void setArgumentObligation(OptionArgumentObligation argumentObligation) {
+    public SingleOptionBuilder setArgumentObligation(OptionArgumentObligation argumentObligation) {
         this.argumentObligation = argumentObligation;
+        return this;
     }
 
-    public void setArgumentClass(Class<?> argumentClass) {
+    public SingleOptionBuilder setArgumentClass(Class<?> argumentClass) {
         this.argumentClass = argumentClass;
+        return this;
     }
 
-    public void setArgumentName(String argumentName) {
+    public SingleOptionBuilder setArgumentName(String argumentName) {
         this.argumentName = argumentName;
+        return this;
     }
 
-    public void setRequired(boolean required) {
+    public SingleOptionBuilder setRequired(boolean required) {
         this.required = required;
+        return this;
     }
 
-    public void addDependentOptionId(String id) {
-        dependentIds.add(id);
+    public SingleOptionBuilder dependentOn(String optionName) {
+        dependentOn.add(optionName);
+        return this;
     }
 
-    public void addIncompatibleOptionId(String id) {
-        incompatibleIds.add(id);
+    public SingleOptionBuilder incompatibleWith(String optionName) {
+        incompatibleWith.add(optionName);
+        return this;
     }
 
-    public void setDescription(String descpription) {
+    public SingleOptionBuilder setDescription(String descpription) {
         this.description = descpription;
+        return this;
     }
 
     private static void checkArgumentNotEmpty(String value) {
