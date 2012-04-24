@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 
 /**
- * Metodì nesoucí toto oznaèení budou pøedány obyèejné parametry 
+ * MetodÄ› nesoucÃ­ toto oznaÄenÃ­ budou pÅ™edÃ¡ny obyÄejnÃ© parametry 
  * 
  * @author Tom
  *
@@ -15,8 +15,8 @@ public @interface Argument {
 	
 	
 	/**
-	 * Urèí zda se daná metoda mùe volat v pøípadì vıskytu více argumentù vícekrát
-	 * (sémantika add)
+	 * UrÄÃ­ zda se danÃ¡ metoda mÅ¯Å¾e volat v pÅ™Ã­padÄ› vÃ½skytu vÃ­ce argumentÅ¯ vÃ­cekrÃ¡t
+	 * (sÃ©mantika add)
 	 * @return
 	 */
 	boolean multipleInvocation() default true;

@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Takto oznaèená metoda bude pøíjímat argument volby
+ * Takto oznaÄenÃ¡ metoda bude pÅ™Ã­jÃ­mat argument volby
  * 
  * @author Tom
  * 

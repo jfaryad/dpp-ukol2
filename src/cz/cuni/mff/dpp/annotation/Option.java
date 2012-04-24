@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import cz.cuni.mff.dpp.OptionArgumentObligation;
 
 /**
- * Anotace pro ozna�kov�n� metody, kter� se zavol� pokud bude p��tomn� na CLI. Bude jednat o metody s jedn�m parametrem
+ * Anotace pro označkování metody, která se zavolá pokud bude přítomná na CLI. Bude jednat o metody s jedním parametrem
  * boolean
  * 
  * @author Tom
@@ -15,22 +15,24 @@ import cz.cuni.mff.dpp.OptionArgumentObligation;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Option {
 
+    String id() default "";
+
     /**
-     * Jm�na volby (kr�tk� i dlouh�)
+     * Jména volby (krátká i dlouhá)
      * 
      * @return
      */
     String[] names();
 
     /**
-     * Dlouh� jm�na volby
+     * Dlouhá jména volby
      * 
      * @return
      */
     String[] longNames() default {};
 
     /**
-     * Kr�tk� jm�na volby
+     * Krátká jména volby
      * 
      * @return
      */
@@ -45,7 +47,7 @@ public @interface Option {
     String[] incompatibleWith() default {};
 
     /**
-     * Ur�� zda m� volba argument
+     * Určí zda má volba argument
      * 
      * @return
      */
