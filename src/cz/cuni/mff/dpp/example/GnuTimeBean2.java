@@ -2,7 +2,8 @@ package cz.cuni.mff.dpp.example;
 
 import java.io.File;
 
-import cz.cuni.mff.dpp.annotation.Option;
+import cz.cuni.mff.dpp.annotation.ParameterOption;
+import cz.cuni.mff.dpp.annotation.SimpleOption;
 
 /**
  * Example of using the annotation @Option to define allowed options for GNU time. Also an example of annotating a
@@ -14,7 +15,7 @@ import cz.cuni.mff.dpp.annotation.Option;
  */
 public class GnuTimeBean2 {
 
-    @Option(
+    @ParameterOption(
             names = { "f", "format" },
             argumentName = "FORMAT",
             description = "Specify output format, possibly overriding the format specified in the environment variable TIME.")
@@ -23,24 +24,24 @@ public class GnuTimeBean2 {
     /* this field is set by the parser by calling outputFile(fileName) when parsing the option --output */
     private File output;
 
-    @Option(
+    @SimpleOption(
             names = { "a", "append" },
             dependentOn = { "output" },
             description = "(Used together with -o.) Do not overwrite but append.")
     private boolean append;
 
-    @Option(names = { "v", "verbose" }, description = "Give very verbose output about all the program knows about.")
+    @SimpleOption(names = { "v", "verbose" }, description = "Give very verbose output about all the program knows about.")
     private boolean verbose;
 
-    @Option(names = { "help" }, description = "Print a usage message on standard output and exit successfully.")
+    @SimpleOption(names = { "help" }, description = "Print a usage message on standard output and exit successfully.")
     private boolean help;
 
-    @Option(
+    @SimpleOption(
             names = { "V", "version" },
             description = "Print version information on standard output, then exit successfully.")
     private boolean version;
 
-    @Option(
+    @ParameterOption(
             names = { "o", "output" },
             argumentName = "FILE",
             description = "Do not send the results to stderr, but overwrite the specified file.")

@@ -12,34 +12,50 @@ import java.util.Map;
  */
 public class OptionsBuilder implements Options {
 
-    private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
-    private boolean nonOptionArgumentsAllowed = false;
+	private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
+	private boolean nonOptionArgumentsAllowed = false;
 
-    public SingleOptionBuilder addOption(String... optionNames) {
-        SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
-        for (String optionName : optionNames) {
-            options.put(optionName, builder);
-        }
-        return builder;
-    }
+	public SingleOptionBuilder addOption(String... optionNames) {
+		SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
+		for (String optionName : optionNames) {
+			options.put(optionName, builder);
+		}
+		return builder;
+	}
 
-    @Override
-    public Collection<SingleOption> getOptions() {
-        return options.values();
-    }
+	@Override
+	public Collection<SingleOption> getOptions() {
+		return options.values();
+	}
 
-    @Override
-    public SingleOption getOption(String optionName) {
-        return options.get(optionName);
-    }
+	@Override
+	public SingleOption getOption(String optionName) {
+		return options.get(optionName);
+	}
 
-    @Override
-    public boolean nonOptionArgumentsAllowed() {
-        return nonOptionArgumentsAllowed;
-    }
+	/**
+	 * Returns {@code true} if exists some configuration for optionName,
+	 * otherwise {@code false}
+	 * 
+	 * @param optionName
+	 * @return
+	 */
+	public boolean isExistsOption(String optionName) {
+		return options.containsKey(optionName);
+	}
 
-    public void setNonOptionArgumentsAllowed(boolean nonOptionArgumentsAllowed) {
-        this.nonOptionArgumentsAllowed = nonOptionArgumentsAllowed;
-    }
+	@Override
+	public boolean nonOptionArgumentsAllowed() {
+		return nonOptionArgumentsAllowed;
+	}
+
+	public void setNonOptionArgumentsAllowed(boolean nonOptionArgumentsAllowed) {
+		this.nonOptionArgumentsAllowed = nonOptionArgumentsAllowed;
+	}
+
+	@Override
+	public String toString() {
+		return "OptionsBuilder [options=" + options + ", nonOptionArgumentsAllowed=" + nonOptionArgumentsAllowed + "]";
+	}
 
 }

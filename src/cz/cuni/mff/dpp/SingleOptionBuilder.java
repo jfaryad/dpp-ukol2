@@ -1,6 +1,7 @@
 package cz.cuni.mff.dpp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -127,13 +128,15 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
-    public SingleOptionBuilder dependentOn(String optionName) {
-        dependentOn.add(optionName);
+    //todo totez jako dole
+    public SingleOptionBuilder dependentOn(String... optionName) {
+        dependentOn.addAll(Arrays.asList(optionName));
         return this;
     }
 
-    public SingleOptionBuilder incompatibleWith(String optionName) {
-        incompatibleWith.add(optionName);
+    //todo tohle by se mozna melo prohnat pres treeset kvuli duplicitam
+    public SingleOptionBuilder incompatibleWith(String... optionName) {
+        incompatibleWith.addAll(Arrays.asList(optionName));
         return this;
     }
 
@@ -147,4 +150,12 @@ public class SingleOptionBuilder implements SingleOption {
             throw new IllegalArgumentException("Cannot accept empty value as parameter");
         }
     }
+
+	@Override
+	public String toString() {
+		return "SingleOptionBuilder [names=" + names + ", required=" + required + ", dependentOn=" + dependentOn
+				+ ", incompatibleWith=" + incompatibleWith + ", argumentObligation=" + argumentObligation
+				+ ", argumentClass=" + argumentClass + ", argumentName=" + argumentName + ", description="
+				+ description + "]";
+	}
 }
