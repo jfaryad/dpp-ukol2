@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp;
+package cz.cuni.mff.dpp.api;
 
 import java.util.Collection;
 

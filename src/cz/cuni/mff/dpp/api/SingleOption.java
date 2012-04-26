@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp;
+package cz.cuni.mff.dpp.api;
 
 import java.util.Collection;
 
@@ -94,22 +94,26 @@ public interface SingleOption {
      * @return
      */
     public String getDescription();
-    
+
     /**
-     * Returns option's parameter converter. Return {@code null} if no converter is setted (for options without parameter). 
+     * Returns option's parameter converter. Return {@code null} if no converter is setted (for options without
+     * parameter).
+     * 
      * @return
      */
     public ArgumentConverter<?> getArgumentConverter();
-    
+
     /**
      * Returns soon converted default value, that should be used in {@link OptionSetter}
+     * 
      * @return
      */
     public Object getDefaultValue();
-    
+
     /**
-     * Returns implementation of {@code OptionSetter}, 
-     * whose method {@code OptionSetter#setOption(Object, Object)} should be called for this option
+     * Returns implementation of {@code OptionSetter}, whose method {@code OptionSetter#setOption(Object, Object)}
+     * should be called for this option
+     * 
      * @return
      */
     public OptionSetter<?> getOptionSetter();

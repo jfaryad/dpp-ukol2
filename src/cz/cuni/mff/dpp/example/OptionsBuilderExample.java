@@ -1,6 +1,6 @@
 package cz.cuni.mff.dpp.example;
 
-import cz.cuni.mff.dpp.OptionsBuilder;
+import cz.cuni.mff.dpp.impl.option.OptionsBuilder;
 
 /**
  * This is an example of how the OptionsBuilder can be used to manually create option definitions for GNU time.

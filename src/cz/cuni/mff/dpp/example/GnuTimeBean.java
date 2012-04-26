@@ -13,7 +13,7 @@ import cz.cuni.mff.dpp.annotation.SimpleOption;
  */
 public class GnuTimeBean {
 
-	@ParameterOption(
+    @ParameterOption(
             names = { "f", "format" },
             argumentName = "FORMAT",
             description = "Specify output format, possibly overriding the format specified in the environment variable TIME.")
@@ -33,7 +33,9 @@ public class GnuTimeBean {
             description = "(Used together with -o.) Do not overwrite but append.")
     private boolean append;
 
-    @SimpleOption(names = { "v", "verbose" }, description = "Give very verbose output about all the program knows about.")
+    @SimpleOption(
+            names = { "v", "verbose" },
+            description = "Give very verbose output about all the program knows about.")
     private boolean verbose;
 
     @SimpleOption(names = { "help" }, description = "Print a usage message on standard output and exit successfully.")

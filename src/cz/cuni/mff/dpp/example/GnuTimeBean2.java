@@ -30,7 +30,9 @@ public class GnuTimeBean2 {
             description = "(Used together with -o.) Do not overwrite but append.")
     private boolean append;
 
-    @SimpleOption(names = { "v", "verbose" }, description = "Give very verbose output about all the program knows about.")
+    @SimpleOption(
+            names = { "v", "verbose" },
+            description = "Give very verbose output about all the program knows about.")
     private boolean verbose;
 
     @SimpleOption(names = { "help" }, description = "Print a usage message on standard output and exit successfully.")
