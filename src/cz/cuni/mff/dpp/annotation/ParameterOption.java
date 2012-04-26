@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cz.cuni.mff.dpp.ArgumentConverter;
-import cz.cuni.mff.dpp.DefaultArgumentConverterImpl;
+import cz.cuni.mff.dpp.DummyArgumentConverter;
 
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,7 +36,7 @@ public @interface ParameterOption {
     
     boolean parameterRequired() default true;
     
-    Class<? extends ArgumentConverter<?>> argumentConverter() default DefaultArgumentConverterImpl.class;
+    Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
     
     String[] defaultParameter() default {};
     

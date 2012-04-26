@@ -94,6 +94,25 @@ public interface SingleOption {
      * @return
      */
     public String getDescription();
+    
+    /**
+     * Returns option's parameter converter. Return {@code null} if no converter is setted (for options without parameter). 
+     * @return
+     */
+    public ArgumentConverter<?> getArgumentConverter();
+    
+    /**
+     * Returns soon converted default value, that should be used in {@link OptionSetter}
+     * @return
+     */
+    public Object getDefaultValue();
+    
+    /**
+     * Returns implementation of {@code OptionSetter}, 
+     * whose method {@code OptionSetter#setOption(Object, Object)} should be called for this option
+     * @return
+     */
+    public OptionSetter<?> getOptionSetter();
 
     // TODO something like getArgumentConverter, that would return a converter from string to the expected argument
     // type.

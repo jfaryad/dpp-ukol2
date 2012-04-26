@@ -15,141 +15,171 @@ import java.util.TreeSet;
  */
 public class SingleOptionBuilder implements SingleOption {
 
-    private final Set<String> names = new TreeSet<String>();
-    private boolean required = false;
-    private final List<String> dependentOn = new ArrayList<String>();
-    private final List<String> incompatibleWith = new ArrayList<String>();
-    private OptionArgumentObligation argumentObligation = OptionArgumentObligation.FORBIDDEN;
-    private Class<?> argumentClass;
-    private String argumentName;
-    private String description = "";
+	private final Set<String> names = new TreeSet<String>();
+	private boolean required = false;
+	private final List<String> dependentOn = new ArrayList<String>();
+	private final List<String> incompatibleWith = new ArrayList<String>();
+	private OptionArgumentObligation argumentObligation = OptionArgumentObligation.FORBIDDEN;
+	private Class<?> argumentClass;
+	private String argumentName;
+	private String description = "";
+	private ArgumentConverter<?> argumentConverter;
+	private Object defaultValue;
+	private OptionSetter<?> optionSetter;
 
-    SingleOptionBuilder(String... names) {
-        for (String name : names) {
-            addName(name);
-        }
-    }
+	SingleOptionBuilder(String... names) {
+		for (String name : names) {
+			addName(name);
+		}
+	}
 
-    @Override
-    public Collection<String> getNames() {
-        return names;
-    }
+	@Override
+	public Collection<String> getNames() {
+		return names;
+	}
 
-    @Override
-    public Collection<String> getShortNames() {
-        Set<String> shortNames = new TreeSet<String>();
-        for (String name : names) {
-            if (name.length() < 2) {
-                shortNames.add(name);
-            }
-        }
-        return shortNames;
-    }
+	@Override
+	public Collection<String> getShortNames() {
+		Set<String> shortNames = new TreeSet<String>();
+		for (String name : names) {
+			if (name.length() < 2) {
+				shortNames.add(name);
+			}
+		}
+		return shortNames;
+	}
 
-    @Override
-    public Collection<String> getLongNames() {
-        Set<String> longNames = new TreeSet<String>();
-        for (String name : names) {
-            if (name.length() > 1) {
-                longNames.add(name);
-            }
-        }
-        return longNames;
-    }
+	@Override
+	public Collection<String> getLongNames() {
+		Set<String> longNames = new TreeSet<String>();
+		for (String name : names) {
+			if (name.length() > 1) {
+				longNames.add(name);
+			}
+		}
+		return longNames;
+	}
 
-    @Override
-    public boolean isRequired() {
-        return required;
-    }
+	@Override
+	public boolean isRequired() {
+		return required;
+	}
 
-    @Override
-    public Collection<String> getDependendentList() {
-        return dependentOn;
-    }
+	@Override
+	public Collection<String> getDependendentList() {
+		return dependentOn;
+	}
 
-    @Override
-    public Collection<String> getIncompatibleList() {
-        return incompatibleWith;
-    }
+	@Override
+	public Collection<String> getIncompatibleList() {
+		return incompatibleWith;
+	}
 
-    @Override
-    public boolean hasArgument() {
-        return argumentObligation != OptionArgumentObligation.FORBIDDEN;
-    }
+	@Override
+	public boolean hasArgument() {
+		return argumentObligation != OptionArgumentObligation.FORBIDDEN;
+	}
 
-    @Override
-    public Class<?> getArgumentClass() {
-        return argumentClass;
-    }
+	@Override
+	public Class<?> getArgumentClass() {
+		return argumentClass;
+	}
 
-    @Override
-    public String getArgumentName() {
-        return argumentName;
-    }
+	@Override
+	public String getArgumentName() {
+		return argumentName;
+	}
 
-    @Override
-    public boolean isArgumentRequired() {
-        return argumentObligation == OptionArgumentObligation.REQUIRED;
-    }
+	@Override
+	public boolean isArgumentRequired() {
+		return argumentObligation == OptionArgumentObligation.REQUIRED;
+	}
 
-    @Override
-    public OptionArgumentObligation getArgumentObligation() {
-        return argumentObligation;
-    }
+	@Override
+	public OptionArgumentObligation getArgumentObligation() {
+		return argumentObligation;
+	}
 
-    @Override
-    public String getDescription() {
-        return description;
-    }
+	@Override
+	public String getDescription() {
+		return description;
+	}
 
-    public SingleOptionBuilder addName(String name) {
-        checkArgumentNotEmpty(name);
-        names.add(name);
-        return this;
-    }
+	@Override
+	public ArgumentConverter<?> getArgumentConverter() {
+		return argumentConverter;
+	}
 
-    public SingleOptionBuilder setArgumentObligation(OptionArgumentObligation argumentObligation) {
-        this.argumentObligation = argumentObligation;
-        return this;
-    }
+	@Override
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
 
-    public SingleOptionBuilder setArgumentClass(Class<?> argumentClass) {
-        this.argumentClass = argumentClass;
-        return this;
-    }
+	@Override
+	public OptionSetter<?> getOptionSetter() {
+		return optionSetter;
+	}
 
-    public SingleOptionBuilder setArgumentName(String argumentName) {
-        this.argumentName = argumentName;
-        return this;
-    }
+	public SingleOptionBuilder addName(String name) {
+		checkArgumentNotEmpty(name);
+		names.add(name);
+		return this;
+	}
 
-    public SingleOptionBuilder setRequired(boolean required) {
-        this.required = required;
-        return this;
-    }
+	public SingleOptionBuilder setArgumentObligation(OptionArgumentObligation argumentObligation) {
+		this.argumentObligation = argumentObligation;
+		return this;
+	}
 
-    //todo totez jako dole
-    public SingleOptionBuilder dependentOn(String... optionName) {
-        dependentOn.addAll(Arrays.asList(optionName));
-        return this;
-    }
+	public SingleOptionBuilder setArgumentClass(Class<?> argumentClass) {
+		this.argumentClass = argumentClass;
+		return this;
+	}
 
-    //todo tohle by se mozna melo prohnat pres treeset kvuli duplicitam
-    public SingleOptionBuilder incompatibleWith(String... optionName) {
-        incompatibleWith.addAll(Arrays.asList(optionName));
-        return this;
-    }
+	public SingleOptionBuilder setArgumentName(String argumentName) {
+		this.argumentName = argumentName;
+		return this;
+	}
 
-    public SingleOptionBuilder setDescription(String descpription) {
-        this.description = descpription;
-        return this;
-    }
+	public SingleOptionBuilder setRequired(boolean required) {
+		this.required = required;
+		return this;
+	}
 
-    private static void checkArgumentNotEmpty(String value) {
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException("Cannot accept empty value as parameter");
-        }
-    }
+	// todo totez jako dole
+	public SingleOptionBuilder dependentOn(String... optionName) {
+		dependentOn.addAll(Arrays.asList(optionName));
+		return this;
+	}
+
+	// todo tohle by se mozna melo prohnat pres treeset kvuli duplicitam
+	public SingleOptionBuilder incompatibleWith(String... optionName) {
+		incompatibleWith.addAll(Arrays.asList(optionName));
+		return this;
+	}
+
+	public SingleOptionBuilder setDescription(String descpription) {
+		this.description = descpription;
+		return this;
+	}
+
+	private static void checkArgumentNotEmpty(String value) {
+		if (value == null || value.isEmpty()) {
+			throw new IllegalArgumentException("Cannot accept empty value as parameter");
+		}
+	}
+
+	public void setArgumentConverter(ArgumentConverter<?> argumentConverter) {
+		this.argumentConverter = argumentConverter;
+	}
+
+	public void setDefaultValue(Object defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public void setOptionSetter(OptionSetter<?> optionSetter) {
+		this.optionSetter = optionSetter;
+	}
 
 	@Override
 	public String toString() {
