@@ -30,7 +30,7 @@ public class SingleOptionBuilder implements SingleOption {
     private String description = "";
     private ArgumentConverter<?> argumentConverter;
     private Object defaultValue;
-    private OptionSetter<?> optionSetter;
+    private OptionSetter optionSetter;
 
     SingleOptionBuilder(String... names) {
         for (String name : names) {
@@ -121,7 +121,7 @@ public class SingleOptionBuilder implements SingleOption {
     }
 
     @Override
-    public OptionSetter<?> getOptionSetter() {
+    public OptionSetter getOptionSetter() {
         return optionSetter;
     }
 
@@ -174,16 +174,19 @@ public class SingleOptionBuilder implements SingleOption {
         }
     }
 
-    public void setArgumentConverter(ArgumentConverter<?> argumentConverter) {
+    public SingleOptionBuilder setArgumentConverter(ArgumentConverter<?> argumentConverter) {
         this.argumentConverter = argumentConverter;
+        return this;
     }
 
-    public void setDefaultValue(Object defaultValue) {
+    public SingleOptionBuilder setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
+        return this;
     }
 
-    public void setOptionSetter(OptionSetter<?> optionSetter) {
+    public SingleOptionBuilder setOptionSetter(OptionSetter optionSetter) {
         this.optionSetter = optionSetter;
+        return this;
     }
 
     @Override

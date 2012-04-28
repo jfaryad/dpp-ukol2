@@ -116,7 +116,7 @@ public interface SingleOption {
      * 
      * @return
      */
-    public OptionSetter<?> getOptionSetter();
+    public OptionSetter getOptionSetter();
 
     // TODO something like getArgumentConverter, that would return a converter from string to the expected argument
     // type.

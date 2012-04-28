@@ -1,6 +1,6 @@
 package cz.cuni.mff.dpp.api;
 
-public interface OptionSetter<T> {
+public interface OptionSetter {
 
     /**
      * Nastaví argument opsny

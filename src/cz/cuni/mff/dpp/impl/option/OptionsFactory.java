@@ -7,7 +7,10 @@ import java.lang.reflect.Method;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
+import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
+import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
+import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 
 /**
  * This class contains methods, which create Options objects from different parameters
@@ -49,6 +52,7 @@ public final class OptionsFactory {
 
             Field[] fields = beanClass.getDeclaredFields();
             for (Field field : fields) {
+                
                 processAnnotations(field);
             }
 
@@ -61,8 +65,35 @@ public final class OptionsFactory {
 
         private void processAnnotations(AccessibleObject accessibleObject) {
 
-            processSimpleOption(accessibleObject);
-            processParameterOption(accessibleObject);
+            SingleOptionBuilder builder1 = processSimpleOption(accessibleObject);
+            SingleOptionBuilder builder2 = processParameterOption(accessibleObject);
+
+            SingleOptionBuilder builder = null;
+
+            if (builder1 != null && builder2 != null) {
+                throw new MissConfiguratedAnnotationException(
+                        "It is not allowed to have ParameterOption and SimpleOption on the same field or method");
+            } else if (builder1 != null) {
+                builder = builder1;
+            } else if (builder2 != null) {
+                builder = builder2;
+            } else {
+                return;
+            }
+
+            builder.setOptionSetter(createOptionSetter(accessibleObject));
+
+        }
+
+        private OptionSetter createOptionSetter(AccessibleObject accessibleObject) {
+
+            if (accessibleObject instanceof Field) {
+                return new FieldOptionSetter((Field) accessibleObject);
+            } else if (accessibleObject instanceof Method) {
+                return new MethodOptionSetter((Method) accessibleObject);
+            } else {
+                throw new IllegalStateException("This should never happen.");
+            }
 
         }
 
