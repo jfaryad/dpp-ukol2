@@ -9,9 +9,9 @@ import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 
 public class OptionsFactoryExample {
-
+    
     public static void main(String[] args) {
-
+        
         Options createOptions = OptionsFactory.createOptions(GnuTimeBean.class);
 
         System.out.println(createOptions);
@@ -23,7 +23,7 @@ public class OptionsFactoryExample {
         testFieldOptionSetter();
         
         testMethodOptionSetter();
-
+        
     }
 
     public static void testFieldOptionSetter() {

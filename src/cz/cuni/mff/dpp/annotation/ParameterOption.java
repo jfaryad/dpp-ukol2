@@ -9,6 +9,8 @@ import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ParameterOption {
 
+    Class<DummyArgumentConverter> DEFAULT_ARGUMENT_CONVERTER_CLASS = DummyArgumentConverter.class;
+
     /**
      * Jména volby (krátká i dlouhá)
      * 

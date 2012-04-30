@@ -13,4 +13,9 @@ public final class DummyArgumentConverter implements ArgumentConverter<Object> {
         throw new IllegalStateException("This method shouldn't be called.");
     }
 
+    @Override
+    public Class<Object> getTargetClass() {
+        throw new IllegalStateException("This method shouldn't be called.");
+    }
+
 }

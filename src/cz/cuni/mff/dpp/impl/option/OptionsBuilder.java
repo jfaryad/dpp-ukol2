@@ -17,6 +17,7 @@ public class OptionsBuilder implements Options {
 
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
     private boolean nonOptionArgumentsAllowed = false;
+    private Class<?> targetBeanClass;
 
     public SingleOptionBuilder addOption(String... optionNames) {
         SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
@@ -56,8 +57,17 @@ public class OptionsBuilder implements Options {
     }
 
     @Override
-    public String toString() {
-        return "OptionsBuilder [options=" + options + ", nonOptionArgumentsAllowed=" + nonOptionArgumentsAllowed + "]";
+    public Class<?> getTargetBeanClass() {
+        return targetBeanClass;
     }
 
+    public void setTargetBeanClass(Class<?> targetBeanClass) {
+        this.targetBeanClass = targetBeanClass;
+    }
+
+    @Override
+    public String toString() {
+        return "OptionsBuilder [options=" + options + ", nonOptionArgumentsAllowed=" + nonOptionArgumentsAllowed
+                + ", targetBeanClass=" + targetBeanClass + "]";
+    }
 }

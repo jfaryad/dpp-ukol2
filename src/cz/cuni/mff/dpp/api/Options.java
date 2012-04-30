@@ -33,4 +33,11 @@ public interface Options {
      * 
      */
     public boolean nonOptionArgumentsAllowed();
+    
+    /**
+     * Returns class of the target bean
+     * @return
+     */
+    public Class<?> getTargetBeanClass();
+    
 }

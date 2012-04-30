@@ -1,14 +1,20 @@
 package cz.cuni.mff.dpp.impl.option;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
+import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
+import cz.cuni.mff.dpp.impl.convertor.ArgumentConverterFactory;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 
@@ -30,6 +36,35 @@ public final class OptionsFactory {
 
     private static final class AnnotatedBeanOptionsBuilder {
 
+        private static final Map<Class<?>, Object> DEFAULT_VALUES_MAP;
+
+        static {
+            Map<Class<?>, Object> temp = new HashMap<Class<?>, Object>();
+            temp.put(Byte.class, new Byte((byte) 0));
+            temp.put(byte.class, new Byte((byte) 0));
+            temp.put(Character.class, new Character('\0'));
+            temp.put(char.class, new Character('\0'));
+            temp.put(Short.class, new Short((short) 0));
+            temp.put(short.class, new Short((short) 0));
+            temp.put(Integer.class, new Integer(0));
+            temp.put(int.class, new Integer(0));
+            temp.put(Long.class, new Long(0));
+            temp.put(long.class, new Long(0));
+
+            temp.put(Float.class, new Float(0));
+            temp.put(float.class, new Float(0));
+            temp.put(Double.class, new Double(0));
+            temp.put(double.class, new Double(0));
+
+            temp.put(Boolean.class, Boolean.FALSE);
+            temp.put(boolean.class, Boolean.FALSE);
+            DEFAULT_VALUES_MAP = Collections.unmodifiableMap(temp);
+        }
+
+        private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
+        private static final Boolean SIMPLE_OPTION_DEFAULT_VALUE = Boolean.TRUE;
+
         private final OptionsBuilder optionsBuilder;
 
         private final Class<?> beanClass;
@@ -44,6 +79,7 @@ public final class OptionsFactory {
 
         private void build() {
 
+            optionsBuilder.setTargetBeanClass(beanClass);
             addOptions();
 
         }
@@ -52,88 +88,66 @@ public final class OptionsFactory {
 
             Field[] fields = beanClass.getDeclaredFields();
             for (Field field : fields) {
-                
-                processAnnotations(field);
+                processAnnotations(new FieldOptionTarget(field));
             }
 
             Method[] methods = beanClass.getMethods();
             for (Method method : methods) {
-                processAnnotations(method);
+                processAnnotations(new MethodOptionTarget(method));
             }
 
         }
 
-        private void processAnnotations(AccessibleObject accessibleObject) {
+        private void processAnnotations(AbstractOtionTarget optionTarget) {
 
-            SingleOptionBuilder builder1 = processSimpleOption(accessibleObject);
-            SingleOptionBuilder builder2 = processParameterOption(accessibleObject);
-
-            SingleOptionBuilder builder = null;
-
-            if (builder1 != null && builder2 != null) {
+            if (optionTarget.hasSimpleOption() && optionTarget.hasParameterOption()) {
                 throw new MissConfiguratedAnnotationException(
                         "It is not allowed to have ParameterOption and SimpleOption on the same field or method");
-            } else if (builder1 != null) {
-                builder = builder1;
-            } else if (builder2 != null) {
-                builder = builder2;
+            } else if (optionTarget.hasSimpleOption()) {
+                processSimpleOption(optionTarget);
+            } else if (optionTarget.hasParameterOption()) {
+                processParameterOption(optionTarget);
             } else {
-                return;
+                // no option annotation - nothing todo
             }
-
-            builder.setOptionSetter(createOptionSetter(accessibleObject));
-
         }
 
-        private OptionSetter createOptionSetter(AccessibleObject accessibleObject) {
+        private SingleOptionBuilder processSimpleOption(AbstractOtionTarget optionTarget) {
 
-            if (accessibleObject instanceof Field) {
-                return new FieldOptionSetter((Field) accessibleObject);
-            } else if (accessibleObject instanceof Method) {
-                return new MethodOptionSetter((Method) accessibleObject);
-            } else {
-                throw new IllegalStateException("This should never happen.");
-            }
-
-        }
-
-        private SingleOptionBuilder processSimpleOption(AccessibleObject accessibleObject) {
-
-            SimpleOption simpleOption = accessibleObject.getAnnotation(SimpleOption.class);
-
-            if (simpleOption == null) {
-                return null;
-            }
+            SimpleOption simpleOption = optionTarget.getSimpleOption();
 
             String optionNames[] = simpleOption.names();
-            // todo - budeme to kontrolovat???
             checkOptionNames(optionNames);
+
+            checkIsDeclaringClassBoolean(optionTarget.getTargetClass());
 
             return optionsBuilder.addOption(optionNames)
                     .setArgumentObligation(OptionArgumentObligation.FORBIDDEN)
                     .setDescription(simpleOption.description())
                     .dependentOn(simpleOption.dependentOn())
                     .incompatibleWith(simpleOption.incompatibleWith())
-                    .setRequired(false);
-
-            // todo musime nastavit, kam se to vubec bude nastavovat :-D
-
+                    .setRequired(false)
+                    .setDefaultValue(SIMPLE_OPTION_DEFAULT_VALUE)
+                    .setOptionSetter(optionTarget.createOptionSetter());
         }
 
-        private SingleOptionBuilder processParameterOption(AccessibleObject accessibleObject) {
-
-            ParameterOption parameterOption = accessibleObject.getAnnotation(ParameterOption.class);
-
-            if (parameterOption == null) {
-                return null;
+        private static void checkIsDeclaringClassBoolean(Class<?> targetClass) {
+            if (targetClass != boolean.class && targetClass != Boolean.class) {
+                throw new MissConfiguratedAnnotationException(
+                        "It's not allowed declaration of the field/method parameter with type different from boolean/Boolean");
             }
+        }
+
+        private void processParameterOption(AbstractOtionTarget optionTarget) {
+
+            ParameterOption parameterOption = optionTarget.getParameterOption();
 
             String[] optionNames = parameterOption.names();
-
-            // otazka - budeme to kontrolovat???
             checkOptionNames(optionNames);
 
-            return optionsBuilder.addOption(optionNames)
+            optionTarget.checkTargetObject();
+
+            SingleOptionBuilder builder = optionsBuilder.addOption(optionNames)
                     .setArgumentObligation(translateOptionParameterRequired(parameterOption.parameterRequired()))
                     .setDescription(parameterOption.description())
                     .setArgumentName(parameterOption.argumentName())
@@ -141,6 +155,54 @@ public final class OptionsFactory {
                     .incompatibleWith(parameterOption.incompatibleWith())
                     .setRequired(parameterOption.optionRequired());
 
+            ArgumentConverter<?> argumentConverter = createArgumentConverter(parameterOption.argumentConverter(),
+                    optionTarget.getTargetClass());
+            builder.setArgumentConverter(argumentConverter);
+
+            builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter));
+            
+            //todo maybe check return type of argument converter with target class
+
+        }
+
+        private static Object getDefaultValue(ParameterOption parameterOption, ArgumentConverter<?> argumentConverter) {
+            String[] defaultParameter = parameterOption.defaultParameter();
+            if (defaultParameter.length == 0) {
+                return DEFAULT_VALUES_MAP.get(argumentConverter.getClass());
+            } else if (defaultParameter.length == 1) {
+                try {
+                    return argumentConverter.parse(defaultParameter[0]);
+                } catch (Exception e) {
+                    throw new MissConfiguratedAnnotationException("Error during converting of the default value: "
+                            + defaultParameter[0] + " to the class: " + argumentConverter.getTargetClass(), e);
+                }
+            } else if (defaultParameter.length > 1) {
+                throw new MissConfiguratedAnnotationException(
+                        "For 'ParameterOption' annotation can be parameter 'defaultParameter' initialized at most with one value");
+            } else {
+                throw new IllegalStateException("This should really never happen");
+            }
+        }
+
+        private ArgumentConverter<?> createArgumentConverter(Class<?> argumentConverterClass, Class<?> targetClass) {
+            if (ParameterOption.DEFAULT_ARGUMENT_CONVERTER_CLASS == argumentConverterClass) {
+                if (ArgumentConverterFactory.existsInstance(targetClass)) {
+                    return ArgumentConverterFactory.getInstance(targetClass);
+                } else {
+                    throw new MissConfiguratedAnnotationException("For the type: " + targetClass.toString()
+                            + " is neither configurated argumentConverter nor it is type with default converter");
+                }
+            } else {
+                try {
+                    Constructor<?> constructor = argumentConverterClass.getConstructor();
+                    return (ArgumentConverter<?>) constructor.newInstance();
+                } catch (Exception e) {
+                    // todo it could be good to create for this error new type of the exception
+                    throw new MissConfiguratedAnnotationException(
+                            "Error during creation argument converter of the class: "
+                                    + argumentConverterClass.toString() + ".", e);
+                }
+            }
         }
 
         private OptionArgumentObligation translateOptionParameterRequired(boolean parameterRequired) {
@@ -160,6 +222,98 @@ public final class OptionsFactory {
         private OptionsBuilder getOptionsBuilder() {
             return optionsBuilder;
         }
+
+        private static abstract class AbstractOtionTarget {
+
+            protected abstract Class<?> getTargetClass();
+
+            protected abstract AccessibleObject getAccessibleObject();
+
+            protected ParameterOption getParameterOption() {
+                return getAccessibleObject().getAnnotation(ParameterOption.class);
+            }
+
+            protected SimpleOption getSimpleOption() {
+                return getAccessibleObject().getAnnotation(SimpleOption.class);
+            }
+
+            private boolean hasParameterOption() {
+                return null != getParameterOption();
+            }
+
+            private boolean hasSimpleOption() {
+                return null != getSimpleOption();
+            }
+
+            protected abstract void checkTargetObject();
+
+            protected abstract OptionSetter createOptionSetter();
+
+        }
+
+        private static class FieldOptionTarget extends AbstractOtionTarget {
+
+            private final Field field;
+
+            public FieldOptionTarget(Field field) {
+                super();
+                this.field = field;
+            }
+
+            @Override
+            protected Class<?> getTargetClass() {
+                return field.getType();
+            }
+
+            @Override
+            protected void checkTargetObject() {
+                // todo test for example for final...
+
+            }
+
+            @Override
+            protected OptionSetter createOptionSetter() {
+                return new FieldOptionSetter(field);
+            }
+
+            @Override
+            protected AccessibleObject getAccessibleObject() {
+                return field;
+            }
+
+        }
+
+        private static class MethodOptionTarget extends AbstractOtionTarget {
+
+            private final Method method;
+
+            public MethodOptionTarget(Method method) {
+                super();
+                this.method = method;
+            }
+
+            @Override
+            protected Class<?> getTargetClass() {
+                return method.getParameterTypes()[0];
+            }
+
+            @Override
+            protected AccessibleObject getAccessibleObject() {
+                return method;
+            }
+
+            @Override
+            protected void checkTargetObject() {
+                // todo have one parameter, returns void and so on...
+            }
+
+            @Override
+            protected OptionSetter createOptionSetter() {
+                return new MethodOptionSetter(method);
+            }
+
+        }
+
     }
 
     public static class MissConfiguratedAnnotationException extends RuntimeException {
