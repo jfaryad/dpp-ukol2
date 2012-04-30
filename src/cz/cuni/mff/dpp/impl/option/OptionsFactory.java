@@ -40,27 +40,27 @@ public final class OptionsFactory {
 
         static {
             Map<Class<?>, Object> temp = new HashMap<Class<?>, Object>();
-            temp.put(Byte.class, new Byte((byte) 0));
+            // temp.put(Byte.class, new Byte((byte) 0));
             temp.put(byte.class, new Byte((byte) 0));
-            temp.put(Character.class, new Character('\0'));
+            // temp.put(Character.class, new Character('\0'));
             temp.put(char.class, new Character('\0'));
-            temp.put(Short.class, new Short((short) 0));
+            // temp.put(Short.class, new Short((short) 0));
             temp.put(short.class, new Short((short) 0));
-            temp.put(Integer.class, new Integer(0));
+            // temp.put(Integer.class, new Integer(0));
             temp.put(int.class, new Integer(0));
-            temp.put(Long.class, new Long(0));
+            // temp.put(Long.class, new Long(0));
             temp.put(long.class, new Long(0));
 
-            temp.put(Float.class, new Float(0));
+            // temp.put(Float.class, new Float(0));
             temp.put(float.class, new Float(0));
-            temp.put(Double.class, new Double(0));
+            // temp.put(Double.class, new Double(0));
             temp.put(double.class, new Double(0));
 
-            temp.put(Boolean.class, Boolean.FALSE);
+            // temp.put(Boolean.class, Boolean.FALSE);
             temp.put(boolean.class, Boolean.FALSE);
             DEFAULT_VALUES_MAP = Collections.unmodifiableMap(temp);
         }
-        
+
         private static final Boolean SIMPLE_OPTION_DEFAULT_VALUE = Boolean.TRUE;
 
         private final OptionsBuilder optionsBuilder;
