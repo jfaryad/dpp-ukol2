@@ -99,4 +99,10 @@ public class GnuTimeBean2 {
         this.version = version;
     }
 
+    @Override
+    public String toString() {
+        return "GnuTimeBean2 [format=" + format + ", output=" + output + ", append=" + append + ", verbose=" + verbose
+                + ", help=" + help + ", version=" + version + "]";
+    }
+
 }
