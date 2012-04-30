@@ -23,7 +23,7 @@ public class GnuTimeBean {
             names = { "o", "output" },
             argumentName = "FILE",
             description = "Do not send the results to stderr, but overwrite the specified file.",
-            argumentConverter=FileArgumentConverter.class)
+            argumentConverter = FileArgumentConverter.class)
     // TODO add a converter able to convert the string to a file, or annotate a method instead, that would do the
     // conversion
     private File output;
@@ -93,6 +93,12 @@ public class GnuTimeBean {
 
     public void setVersion(boolean version) {
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "GnuTimeBean [format=" + format + ", output=" + output + ", append=" + append + ", verbose=" + verbose
+                + ", help=" + help + ", version=" + version + "]";
     }
 
 }

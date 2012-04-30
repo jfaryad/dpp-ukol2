@@ -6,7 +6,7 @@ public interface CommandLineParser {
     
     String SHORT_OPTION_DELIMITER="-";
     
-    String LONG_OPTION_DELIMITER="-";
+    String LONG_OPTION_DELIMITER="--";
 
     Object parse(String[] commnadLine);
 

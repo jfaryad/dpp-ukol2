@@ -60,9 +60,7 @@ public final class OptionsFactory {
             temp.put(boolean.class, Boolean.FALSE);
             DEFAULT_VALUES_MAP = Collections.unmodifiableMap(temp);
         }
-
-        private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-
+        
         private static final Boolean SIMPLE_OPTION_DEFAULT_VALUE = Boolean.TRUE;
 
         private final OptionsBuilder optionsBuilder;
@@ -153,15 +151,16 @@ public final class OptionsFactory {
                     .setArgumentName(parameterOption.argumentName())
                     .dependentOn(parameterOption.dependentOn())
                     .incompatibleWith(parameterOption.incompatibleWith())
-                    .setRequired(parameterOption.optionRequired());
+                    .setRequired(parameterOption.optionRequired())
+                    .setOptionSetter(optionTarget.createOptionSetter());
 
             ArgumentConverter<?> argumentConverter = createArgumentConverter(parameterOption.argumentConverter(),
                     optionTarget.getTargetClass());
             builder.setArgumentConverter(argumentConverter);
 
             builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter));
-            
-            //todo maybe check return type of argument converter with target class
+
+            // todo maybe check return type of argument converter with target class
 
         }
 
