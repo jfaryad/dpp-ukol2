@@ -241,24 +241,29 @@ public class ArgumentConverterFactory {
 
     }
 
-    public static <T> ArgumentConverter<T> getInstance(Class<T> argumentClazz) {
+    public static <T> ArgumentConverter<T> getInstance(Class<T> argumentClass) {
 
-        if (argumentClazz == null) {
+        if (argumentClass == null) {
             throw new NullPointerException("Parameter argumentClazz have to be initialized.");
         }
 
-        ArgumentConverter<T> result = (ArgumentConverter<T>) CONVERTER_MAP.get(argumentClazz);
+        ArgumentConverter<T> result = (ArgumentConverter<T>) CONVERTER_MAP.get(argumentClass);
+
+        if (result == null && argumentClass.isEnum()) {
+            // todo - replace this dirty code
+            result = new EnumArgumentConverter(argumentClass);
+        }
 
         if (result == null) {
-            throw new IllegalStateException("For class: " + argumentClazz.toString()
+            throw new IllegalStateException("For class: " + argumentClass.toString()
                     + " exists no default argument converter.");
         }
 
         return result;
     }
 
-    public static boolean existsInstance(Class<?> argumentClazz) {
-        return CONVERTER_MAP.containsKey(argumentClazz);
+    public static boolean existsInstance(Class<?> argumentClass) {
+        return CONVERTER_MAP.containsKey(argumentClass) || argumentClass.isEnum();
     }
 
     private static void checkIsChar(String character) {

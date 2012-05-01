@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.dpp.annotation.CommonArgument;
+import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.parser.DefaultCommandLineParser;
@@ -21,6 +22,10 @@ public class CommandLineParserExample {
         System.out.println("------------------------------");
 
         testCommonArgumentTestBean();
+        
+        System.out.println("------------------------------");
+        
+        testEnumArgumentBean();
 
     }
 
@@ -109,6 +114,22 @@ public class CommandLineParserExample {
         System.out.println(bean.toString());
 
     }
+    
+    public static void testEnumArgumentBean() {
+        
+        Options options = OptionsFactory.createOptions(EnumArgumentBean.class);
+        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+
+        EnumArgumentBean bean = (EnumArgumentBean) parser.parse(new String[] {});
+        System.out.println(bean.toString());
+
+        bean = (EnumArgumentBean) parser.parse(new String[] { "FORBIDDEN" });
+        System.out.println(bean.toString());
+        
+        bean = (EnumArgumentBean) parser.parse(new String[] { "OPTIONAL", "FORBIDDEN", "REQUIRED" });
+        System.out.println(bean.toString());
+        
+    }
 
     public static class CommonArgumentTestBean {
 
@@ -116,6 +137,20 @@ public class CommandLineParserExample {
 
         @CommonArgument
         public void addArgument(int argument) {
+            argumentList.add(argument);
+        }
+
+        @Override
+        public String toString() {
+            return "CommonArgumentTestBean [argumentList=" + argumentList + "]";
+        }
+    }
+    
+    public static class EnumArgumentBean {
+        private final List<OptionArgumentObligation> argumentList = new ArrayList<OptionArgumentObligation>();
+
+        @CommonArgument
+        public void addArgument(OptionArgumentObligation argument) {
             argumentList.add(argument);
         }
 
