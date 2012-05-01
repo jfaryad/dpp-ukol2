@@ -4,8 +4,10 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.CommandLineParser;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
+import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.api.SingleOption;
 
@@ -32,7 +34,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private final String[] commandLine;
 
-        private final List<String> argumetList = new ArrayList<String>();
+        private final List<String> commonArgumetList = new ArrayList<String>();
 
         private final List<ParsedOption> parsedOptionList = new ArrayList<DefaultCommandLineParser.ParsedOption>();
 
@@ -48,11 +50,17 @@ public class DefaultCommandLineParser implements CommandLineParser {
             process();
         }
 
+        private void process() {
+            processOptions();
+            processCommonArguments();
+        }
+
         private void createTargetBean() {
             try {
                 Constructor<?> constructor = options.getTargetBeanClass().getConstructor();
                 targetBean = constructor.newInstance();
             } catch (Exception e) {
+                throw new RuntimeException(e);
                 // todo translate exception
             }
 
@@ -64,7 +72,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         }
 
-        private void process() {
+        private void processOptions() {
 
             for (ParsedOption parsedOption : parsedOptionList) {
                 SingleOption singleOption = options.getOption(parsedOption.getOptionName());
@@ -72,12 +80,28 @@ public class DefaultCommandLineParser implements CommandLineParser {
                 if (parsedOption.hasOptionParameter()) {
                     String optionParameter = parsedOption.getOptionParameter();
                     convertedOptionParameter = singleOption.getArgumentConverter().parse(optionParameter);
-                    // todo catch and translate exeption
+                    // todo catch and translate exception
                 } else {
                     convertedOptionParameter = singleOption.getDefaultValue();
                 }
                 singleOption.getOptionSetter().setOption(targetBean, convertedOptionParameter);
             }
+        }
+
+        private void processCommonArguments() {
+
+            OptionSetter commonArgumentSetter = options.getCommonArgumentSetter();
+            ArgumentConverter<?> commonArgumentConverter = options.getCommonArgumentConverter();
+            for (String commonArgument : commonArgumetList) {
+                Object convertedObject;
+                if (commonArgumentConverter == null) {
+                    convertedObject = commonArgument;
+                } else {
+                    convertedObject = commonArgumentConverter.parse(commonArgument);
+                }
+                commonArgumentSetter.setOption(targetBean, convertedObject);
+            }
+
         }
 
         private void parse() {
@@ -89,7 +113,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
             for (String element : commandLine) {
 
                 if (isNextCommonArgument) {
-                    argumetList.add(element);
+                    commonArgumetList.add(element);
                 } else if (isNextOptionParameter) {
                     option.setOptionParameter(element);
                     isNextOptionParameter = false;
@@ -102,7 +126,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
                         isNextOptionParameter = true;
                     }
                 } else {
-                    argumetList.add(element);
+                    commonArgumetList.add(element);
                 }
 
             }

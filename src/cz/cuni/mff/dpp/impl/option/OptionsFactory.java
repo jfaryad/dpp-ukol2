@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.cuni.mff.dpp.annotation.CommonArgument;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
@@ -76,13 +77,16 @@ public final class OptionsFactory {
         }
 
         private void build() {
+            configOptions();
+            addSingleOptions();
+        }
 
+        private void configOptions() {
             optionsBuilder.setTargetBeanClass(beanClass);
-            addOptions();
 
         }
 
-        private void addOptions() {
+        private void addSingleOptions() {
 
             Field[] fields = beanClass.getDeclaredFields();
             for (Field field : fields) {
@@ -98,16 +102,28 @@ public final class OptionsFactory {
 
         private void processAnnotations(AbstractOtionTarget optionTarget) {
 
-            if (optionTarget.hasSimpleOption() && optionTarget.hasParameterOption()) {
+            if (optionTarget.hasMultipleAnnotations()) {
                 throw new MissConfiguratedAnnotationException(
-                        "It is not allowed to have ParameterOption and SimpleOption on the same field or method");
+                        "It is not allowed to have multiple annotations on the same field or method");
             } else if (optionTarget.hasSimpleOption()) {
                 processSimpleOption(optionTarget);
             } else if (optionTarget.hasParameterOption()) {
                 processParameterOption(optionTarget);
+            } else if (optionTarget.hasCommonArgument()) {
+                processCommonArgument(optionTarget);
             } else {
-                // no option annotation - nothing todo
+                // no option annotation - nothing to do
             }
+        }
+
+        private void processCommonArgument(AbstractOtionTarget optionTarget) {
+
+            optionsBuilder.setCommonArgumentSetter(optionTarget.createOptionSetter());
+            // todo test, that common argument is used at most once
+            CommonArgument commonArgument = optionTarget.getCommonArgument();
+            ArgumentConverter<?> commonArgumentConverter = createArgumentConverter(commonArgument.argumentConverter(),
+                    optionTarget.getTargetClass());
+            optionsBuilder.setCommonArgumentConverter(commonArgumentConverter);
         }
 
         private SingleOptionBuilder processSimpleOption(AbstractOtionTarget optionTarget) {
@@ -236,12 +252,34 @@ public final class OptionsFactory {
                 return getAccessibleObject().getAnnotation(SimpleOption.class);
             }
 
+            protected CommonArgument getCommonArgument() {
+                return getAccessibleObject().getAnnotation(CommonArgument.class);
+            }
+
             private boolean hasParameterOption() {
-                return null != getParameterOption();
+                return getParameterOption() != null;
             }
 
             private boolean hasSimpleOption() {
-                return null != getSimpleOption();
+                return getSimpleOption() != null;
+            }
+
+            private boolean hasCommonArgument() {
+                return getCommonArgument() != null;
+            }
+
+            private boolean hasMultipleAnnotations() {
+                int count = 0;
+                if (hasCommonArgument()) {
+                    count++;
+                }
+                if (hasParameterOption()) {
+                    count++;
+                }
+                if (hasSimpleOption()) {
+                    count++;
+                }
+                return count > 1;
             }
 
             protected abstract void checkTargetObject();

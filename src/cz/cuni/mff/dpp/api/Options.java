@@ -33,11 +33,27 @@ public interface Options {
      * 
      */
     public boolean nonOptionArgumentsAllowed();
-    
+
     /**
-     * Returns class of the target bean
+     * Returns class of the target bean.
+     * 
      * @return
      */
     public Class<?> getTargetBeanClass();
-    
+
+    /**
+     * Returns converter for common argument, this converter is used to convert value from {@link String} to desired
+     * type.
+     * 
+     * @return
+     */
+    public ArgumentConverter<?> getCommonArgumentConverter();
+
+    /**
+     * Returns setter for common argument.
+     * 
+     * @return
+     */
+    public OptionSetter getCommonArgumentSetter();
+
 }

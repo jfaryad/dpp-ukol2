@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.api.SingleOption;
 
@@ -18,6 +20,9 @@ public class OptionsBuilder implements Options {
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
     private boolean nonOptionArgumentsAllowed = false;
     private Class<?> targetBeanClass;
+
+    private ArgumentConverter<?> commonArgumentConverter;
+    private OptionSetter commonArgumentSetter;
 
     public SingleOptionBuilder addOption(String... optionNames) {
         SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
@@ -63,6 +68,24 @@ public class OptionsBuilder implements Options {
 
     public void setTargetBeanClass(Class<?> targetBeanClass) {
         this.targetBeanClass = targetBeanClass;
+    }
+
+    @Override
+    public ArgumentConverter<?> getCommonArgumentConverter() {
+        return commonArgumentConverter;
+    }
+
+    public void setCommonArgumentConverter(ArgumentConverter<?> commonArgumentConverter) {
+        this.commonArgumentConverter = commonArgumentConverter;
+    }
+
+    @Override
+    public OptionSetter getCommonArgumentSetter() {
+        return commonArgumentSetter;
+    }
+
+    public void setCommonArgumentSetter(OptionSetter commonArgumentSetter) {
+        this.commonArgumentSetter = commonArgumentSetter;
     }
 
     @Override

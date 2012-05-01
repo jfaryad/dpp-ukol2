@@ -1,5 +1,6 @@
 package cz.cuni.mff.dpp.annotation;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -37,7 +38,10 @@ public @interface ParameterOption {
 
     boolean parameterRequired() default true;
 
+    //todo raplace DummyArgumentConverter by ArgumentConverter
     Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
+    
+    Class<? extends Serializable> test() default Serializable.class;
 
     String[] defaultParameter() default {};
 

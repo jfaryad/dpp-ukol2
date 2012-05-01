@@ -3,6 +3,9 @@ package cz.cuni.mff.dpp.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
+
 /**
  * Metodě nesoucí toto označení budou předány obyčejné parametry
  * 
@@ -10,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Argument {
+public @interface CommonArgument {
 
     /**
      * Určí zda se daná metoda může volat v případě výskytu více argumentů vícekrát (sémantika add)
@@ -21,6 +24,7 @@ public @interface Argument {
 
     String description() default "";
 
-    Class<?> argumentConverter() default void.class;
+    //todo raplace DummyArgumentConverter by ArgumentConverter
+    Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
 
 }

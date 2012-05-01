@@ -1,5 +1,9 @@
 package cz.cuni.mff.dpp.example;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.cuni.mff.dpp.annotation.CommonArgument;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.parser.DefaultCommandLineParser;
@@ -9,17 +13,20 @@ public class CommandLineParserExample {
     public static void main(String[] args) {
 
         testGnuTimeBean();
-        
+
         System.out.println("------------------------------");
-        
+
         testGnuTimeBean2();
+
+        System.out.println("------------------------------");
+
+        testCommonArgumentTestBean();
 
     }
 
     public static void testGnuTimeBean() {
 
         Options options = OptionsFactory.createOptions(GnuTimeBean.class);
-
         DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
 
         GnuTimeBean gnuTimeBean = (GnuTimeBean) parser.parse(new String[] {});
@@ -51,11 +58,10 @@ public class CommandLineParserExample {
         System.out.println(gnuTimeBean.toString());
 
     }
-    
+
     public static void testGnuTimeBean2() {
 
         Options options = OptionsFactory.createOptions(GnuTimeBean2.class);
-
         DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
 
         GnuTimeBean2 gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] {});
@@ -86,6 +92,37 @@ public class CommandLineParserExample {
                 "c:\\temp.txt" });
         System.out.println(gnuTimeBean.toString());
 
+    }
+
+    private static void testCommonArgumentTestBean() {
+
+        Options options = OptionsFactory.createOptions(CommonArgumentTestBean.class);
+        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+
+        CommonArgumentTestBean bean = (CommonArgumentTestBean) parser.parse(new String[] {});
+        System.out.println(bean.toString());
+
+        bean = (CommonArgumentTestBean) parser.parse(new String[] { "20" });
+        System.out.println(bean.toString());
+
+        bean = (CommonArgumentTestBean) parser.parse(new String[] { "100", "200", "300" });
+        System.out.println(bean.toString());
+
+    }
+
+    public static class CommonArgumentTestBean {
+
+        private final List<Integer> argumentList = new ArrayList<Integer>();
+
+        @CommonArgument
+        public void addArgument(int argument) {
+            argumentList.add(argument);
+        }
+
+        @Override
+        public String toString() {
+            return "CommonArgumentTestBean [argumentList=" + argumentList + "]";
+        }
     }
 
 }
