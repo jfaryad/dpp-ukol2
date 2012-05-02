@@ -16,8 +16,8 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
-import cz.cuni.mff.dpp.impl.convertor.ArgumentConverterFactory;
-import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
+import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
+import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 
@@ -120,7 +120,7 @@ public final class OptionsFactory {
 
         }
 
-        private void processAnnotations(AbstractOtionTarget optionTarget) {
+        private void processAnnotations(AbstractOptionTarget optionTarget) {
 
             if (optionTarget.hasMultipleAnnotations()) {
                 Errors.MULTIPLE_ANNOTATIONS.throwException(optionTarget.getMemberName(), optionTarget.getTargetName());
@@ -138,7 +138,7 @@ public final class OptionsFactory {
             }
         }
 
-        private void processCommonArgument(AbstractOtionTarget optionTarget) {
+        private void processCommonArgument(AbstractOptionTarget optionTarget) {
 
             checkMultipleCommonArgument();
 
@@ -157,7 +157,7 @@ public final class OptionsFactory {
             }
         }
 
-        private SingleOptionBuilder processSimpleOption(AbstractOtionTarget optionTarget) {
+        private SingleOptionBuilder processSimpleOption(AbstractOptionTarget optionTarget) {
 
             SimpleOption simpleOption = optionTarget.getSimpleOption();
 
@@ -182,13 +182,13 @@ public final class OptionsFactory {
             }
         }
 
-        private void processParameterOption(AbstractOtionTarget optionTarget) {
+        private void processParameterOption(AbstractOptionTarget optionTarget) {
 
             ParameterOption parameterOption = optionTarget.getParameterOption();
 
             String[] optionNames = parameterOption.names();
             checkOptionNames(optionNames);
-            
+
             SingleOptionBuilder builder = optionsBuilder.addOption(optionNames)
                     .setArgumentObligation(translateOptionParameterRequired(parameterOption.parameterRequired()))
                     .setDescription(parameterOption.description())
@@ -208,7 +208,7 @@ public final class OptionsFactory {
         private static Object getDefaultValue(ParameterOption parameterOption, ArgumentConverter<?> argumentConverter) {
             String[] defaultParameter = parameterOption.defaultParameter();
             if (defaultParameter.length == 0) {
-                return DEFAULT_VALUES_MAP.get(argumentConverter.getClass());
+                return DEFAULT_VALUES_MAP.get(argumentConverter.getTargetClass());
             } else if (defaultParameter.length == 1) {
                 try {
                     return argumentConverter.parse(defaultParameter[0]);
@@ -305,7 +305,7 @@ public final class OptionsFactory {
         // =============================================================================================================
         // =============================================================================================================
 
-        private static abstract class AbstractOtionTarget {
+        private static abstract class AbstractOptionTarget {
 
             protected abstract Class<?> getTargetClass();
 
@@ -371,7 +371,7 @@ public final class OptionsFactory {
 
         }
 
-        private static class FieldOptionTarget extends AbstractOtionTarget {
+        private static class FieldOptionTarget extends AbstractOptionTarget {
 
             private final Field field;
 
@@ -418,7 +418,7 @@ public final class OptionsFactory {
             }
         }
 
-        private static class MethodOptionTarget extends AbstractOtionTarget {
+        private static class MethodOptionTarget extends AbstractOptionTarget {
 
             private final Method method;
 
@@ -471,24 +471,26 @@ public final class OptionsFactory {
 
     private static enum Errors {
 
-        MULTIPLE_ANNOTATIONS("It is not allowed multiple annotations usage on the same class member (%s %s)."),
-        MULTIPLE_COMMON_ARGUMENT("It is not allowed multiple annotation @CommonAgument usage."),
+        MULTIPLE_ANNOTATIONS("Usage of multiple annotations on the same class member (%s %s) is not allowed."),
+        MULTIPLE_COMMON_ARGUMENT("Multiple usage of the annotation @CommonAgument is not allowed."),
         ARGUMENT_CONVERTER_NOT_SPECIFIED(
-                "For the type: %s does not exist default converter and costume converter is not supplied."),
-        ARGUMENT_CONVERTER_CREATION_ERROR("During creation of the converter with class: %s was thrown exception."),
+                "No default converter exists for the type: %s and no custom converter is supplied."),
+        ARGUMENT_CONVERTER_CREATION_ERROR("An exception was caught while creating a converter with class: %s."),
         ARGUMENT_CONVERTER_CONSTRUCTOR(
-                "During obtaining public parameterless constructor of the converter with class: %s was thrown exception."),
+                "An exception was caught while obtaining a public parameterless constructor of the converter with class: %s."),
         ARGUMENT_CONVERTERBAD_RETURN_TYPE(
                 "Converter with class: %s converts to the type %s, but it is not possible to assign to the type %s"),
-        COMMON_ERROR("Unexcepted error was thrown during processing of the annotated bean."),
+        COMMON_ERROR("An unexcepted error was thrown during the processing of the annotated bean."),
         SIMPLE_OPTION_BAD_TARGET_TYPE(
-                "With the annoation @SimpleOption can be tagged only field/method with parameter boolean/Boolean."),
+                "Only boolean/Boolean fieldsor methods with one boolean/Boolean parameter can be tagged with the annotation @SimpleOption."),
         DEFAULT_VALUE_BAD_INITIALIZATION(
-                "For 'ParameterOption' annotation can be parameter 'defaultParameter' initialized at most with one value"),
-        DEFAULT_VALUE_CONVERTING_ERROR("Error during default value: %s converting to the class: %s."),
+                "At most one value is allowed for 'defaultParameter' in the 'ParameterOption' annotation."),
+        DEFAULT_VALUE_CONVERTING_ERROR("Error while converting the default value: %s to the class: %s."),
         MULTIPLE_CONFIGURATION_FOR_ONE_OPTION("There are at least two configurations for option: %s"),
-        MEMBER_STATIC("Static field/method: %s cannot be tagged with annotation."),
-        MEMBER_FINAL("Final field/method: %s cannot be tagged with annotation."),
+        MEMBER_STATIC(
+                "Static field/method: %s cannot be tagged with @SimpleOption, @ParameterOption or @CommonArgument."),
+        MEMBER_FINAL(
+                "Final field/method: %s cannot be tagged with @SimpleOption, @ParameterOption or @CommonArgument.."),
         METHOD_BAD_SIGNATURE("Tagged method: %s must have void return type and exactly one parameter.");
 
         private final String errorText;

@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.impl.convertor;
+package cz.cuni.mff.dpp.impl.converter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -245,7 +245,7 @@ public class ArgumentConverterFactory {
     public static <T> ArgumentConverter<T> getDefaultConverter(Class<T> argumentClass) {
 
         if (argumentClass == null) {
-            throw new NullPointerException("Parameter argumentClazz have to be initialized.");
+            throw new IllegalArgumentException("Parameter argumentClazz have to be initialized.");
         }
 
         ArgumentConverter<T> result = (ArgumentConverter<T>) CONVERTER_MAP.get(argumentClass);

@@ -96,7 +96,7 @@ public interface SingleOption {
     public String getDescription();
 
     /**
-     * Returns option's parameter converter. Return {@code null} if no converter is setted (for options without
+     * Returns the converter of this option's parameter or {@code null} if no converter is set (for options without
      * parameter).
      * 
      * @return
@@ -104,21 +104,19 @@ public interface SingleOption {
     public ArgumentConverter<?> getArgumentConverter();
 
     /**
-     * Returns soon converted default value, that should be used in {@link OptionSetter}
+     * Returns a default value of the argument of this option (in case the argument is optional and not provided on the
+     * command line), to be passed to {@link OptionSetter#setOption(Object, Object)}
      * 
      * @return
      */
     public Object getDefaultValue();
 
     /**
-     * Returns implementation of {@code OptionSetter}, whose method {@code OptionSetter#setOption(Object, Object)}
+     * Returns an implementation of {@code OptionSetter}, whose method {@link OptionSetter#setOption(Object, Object)}
      * should be called for this option
      * 
      * @return
      */
     public OptionSetter getOptionSetter();
-
-    // TODO something like getArgumentConverter, that would return a converter from string to the expected argument
-    // type.
 
 }

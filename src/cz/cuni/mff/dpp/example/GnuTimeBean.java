@@ -24,8 +24,6 @@ public class GnuTimeBean {
             argumentName = "FILE",
             description = "Do not send the results to stderr, but overwrite the specified file.",
             argumentConverter = FileArgumentConverter.class)
-    // TODO add a converter able to convert the string to a file, or annotate a method instead, that would do the
-    // conversion
     private File output;
 
     @SimpleOption(

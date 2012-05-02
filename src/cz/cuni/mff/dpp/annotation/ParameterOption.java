@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
-import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
+import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.METHOD })
