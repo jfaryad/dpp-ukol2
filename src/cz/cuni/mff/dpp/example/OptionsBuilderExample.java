@@ -19,9 +19,8 @@ public class OptionsBuilderExample {
                         "Specify output format, possibly overriding the format specified in the environment variable TIME.");
         builder.addOption("o", "output")
                 .setArgumentName("FILE")
-                .setDescription("Do not send the results to stderr, but overwrite the specified file.");
-        // TODO allow to specify converter for non string arguments
-
+                .setDescription("Do not send the results to stderr, but overwrite the specified file.")
+                .setArgumentConverter(new FileArgumentConverter());
         builder.addOption("a", "append")
                 .dependentOn("output")
                 .setDescription("(Used together with -o.) Do not overwrite but append.");

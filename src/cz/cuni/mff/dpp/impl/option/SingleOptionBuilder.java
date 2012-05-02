@@ -2,6 +2,7 @@ package cz.cuni.mff.dpp.impl.option;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -9,6 +10,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.SingleOption;
+import cz.cuni.mff.dpp.api.Validator;
 
 /**
  * Basic implementation of {@link SingleOption}
@@ -29,6 +31,7 @@ public class SingleOptionBuilder implements SingleOption {
     private ArgumentConverter<?> argumentConverter;
     private Object defaultValue;
     private OptionSetter optionSetter;
+    private Set<Validator<?>> validators = new HashSet<Validator<?>>();
 
     SingleOptionBuilder(String... names) {
         for (String name : names) {
@@ -123,6 +126,11 @@ public class SingleOptionBuilder implements SingleOption {
         return optionSetter;
     }
 
+    @Override
+    public Collection<Validator<?>> getValidators() {
+        return validators;
+    }
+
     public SingleOptionBuilder addName(String name) {
         checkArgumentNotEmpty(name);
         names.add(name);
@@ -164,12 +172,6 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
-    private static void checkArgumentNotEmpty(String value) {
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException("Cannot accept empty value as parameter");
-        }
-    }
-
     public SingleOptionBuilder setArgumentConverter(ArgumentConverter<?> argumentConverter) {
         this.argumentConverter = argumentConverter;
         return this;
@@ -185,11 +187,29 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
+    public SingleOptionBuilder addValidator(Validator<?> validator) {
+        this.validators.add(validator);
+        return this;
+    }
+
+    public SingleOptionBuilder setValidators(Validator<?>... validators) {
+        for (Validator<?> validator : validators) {
+            addValidator(validator);
+        }
+        return this;
+    }
+
     @Override
     public String toString() {
         return "SingleOptionBuilder [names=" + names + ", required=" + required + ", dependentOn=" + dependentOn
                 + ", incompatibleWith=" + incompatibleWith + ", argumentObligation=" + argumentObligation
                 + ", argumentClass=" + argumentClass + ", argumentName=" + argumentName + ", description="
                 + description + "]";
+    }
+
+    private static void checkArgumentNotEmpty(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("Cannot accept empty value as parameter");
+        }
     }
 }
