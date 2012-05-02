@@ -5,7 +5,6 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 public final class DummyArgumentConverter implements ArgumentConverter<Object> {
 
     private DummyArgumentConverter() {
-
     }
 
     @Override

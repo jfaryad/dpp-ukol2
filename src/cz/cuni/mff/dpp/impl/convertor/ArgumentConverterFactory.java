@@ -241,7 +241,8 @@ public class ArgumentConverterFactory {
 
     }
 
-    public static <T> ArgumentConverter<T> getInstance(Class<T> argumentClass) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> ArgumentConverter<T> getDefaultConverter(Class<T> argumentClass) {
 
         if (argumentClass == null) {
             throw new NullPointerException("Parameter argumentClazz have to be initialized.");
@@ -250,7 +251,7 @@ public class ArgumentConverterFactory {
         ArgumentConverter<T> result = (ArgumentConverter<T>) CONVERTER_MAP.get(argumentClass);
 
         if (result == null && argumentClass.isEnum()) {
-            // todo - replace this dirty code
+
             result = new EnumArgumentConverter(argumentClass);
         }
 
@@ -262,7 +263,7 @@ public class ArgumentConverterFactory {
         return result;
     }
 
-    public static boolean existsInstance(Class<?> argumentClass) {
+    public static boolean existsDefaultConverter(Class<?> argumentClass) {
         return CONVERTER_MAP.containsKey(argumentClass) || argumentClass.isEnum();
     }
 

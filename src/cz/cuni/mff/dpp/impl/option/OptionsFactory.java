@@ -4,6 +4,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.convertor.ArgumentConverterFactory;
+import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 
@@ -28,12 +30,15 @@ import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 public final class OptionsFactory {
 
     private OptionsFactory() {
-
     }
 
     public static Options createOptions(Class<?> beanClass) {
         return new AnnotatedBeanOptionsBuilder(beanClass).getOptionsBuilder();
     }
+
+    // =============================================================================================================
+    // =============================================================================================================
+    // =============================================================================================================
 
     private static final class AnnotatedBeanOptionsBuilder {
 
@@ -62,18 +67,34 @@ public final class OptionsFactory {
             DEFAULT_VALUES_MAP = Collections.unmodifiableMap(temp);
         }
 
+        private static final Map<Class<?>, Class<?>> PRIMITIVE_2_WRAPPER_MAP;
+
+        static {
+            Map<Class<?>, Class<?>> temp = new HashMap<Class<?>, Class<?>>();
+            temp.put(byte.class, Byte.class);
+            temp.put(char.class, Character.class);
+            temp.put(short.class, Short.class);
+            temp.put(int.class, Integer.class);
+            temp.put(long.class, Long.class);
+            temp.put(float.class, Float.class);
+            temp.put(double.class, Double.class);
+            temp.put(boolean.class, Boolean.class);
+            PRIMITIVE_2_WRAPPER_MAP = Collections.unmodifiableMap(temp);
+        }
+
         private static final Boolean SIMPLE_OPTION_DEFAULT_VALUE = Boolean.TRUE;
 
         private final OptionsBuilder optionsBuilder;
 
         private final Class<?> beanClass;
 
+        private boolean isCommonArgumentConfigured = false;
+
         private AnnotatedBeanOptionsBuilder(Class<?> beanClass) {
             this.beanClass = beanClass;
             this.optionsBuilder = new OptionsBuilder();
 
             build();
-
         }
 
         private void build() {
@@ -83,7 +104,6 @@ public final class OptionsFactory {
 
         private void configOptions() {
             optionsBuilder.setTargetBeanClass(beanClass);
-
         }
 
         private void addSingleOptions() {
@@ -93,7 +113,7 @@ public final class OptionsFactory {
                 processAnnotations(new FieldOptionTarget(field));
             }
 
-            Method[] methods = beanClass.getMethods();
+            Method[] methods = beanClass.getDeclaredMethods();
             for (Method method : methods) {
                 processAnnotations(new MethodOptionTarget(method));
             }
@@ -103,13 +123,15 @@ public final class OptionsFactory {
         private void processAnnotations(AbstractOtionTarget optionTarget) {
 
             if (optionTarget.hasMultipleAnnotations()) {
-                throw new MissConfiguratedAnnotationException(
-                        "It is not allowed to have multiple annotations on the same field or method");
+                Errors.MULTIPLE_ANNOTATIONS.throwException(optionTarget.getMemberName(), optionTarget.getTargetName());
             } else if (optionTarget.hasSimpleOption()) {
+                optionTarget.checkTarget();
                 processSimpleOption(optionTarget);
             } else if (optionTarget.hasParameterOption()) {
+                optionTarget.checkTarget();
                 processParameterOption(optionTarget);
             } else if (optionTarget.hasCommonArgument()) {
+                optionTarget.checkTarget();
                 processCommonArgument(optionTarget);
             } else {
                 // no option annotation - nothing to do
@@ -118,12 +140,21 @@ public final class OptionsFactory {
 
         private void processCommonArgument(AbstractOtionTarget optionTarget) {
 
+            checkMultipleCommonArgument();
+
             optionsBuilder.setCommonArgumentSetter(optionTarget.createOptionSetter());
-            // todo test, that common argument is used at most once
             CommonArgument commonArgument = optionTarget.getCommonArgument();
-            ArgumentConverter<?> commonArgumentConverter = createArgumentConverter(commonArgument.argumentConverter(),
+            ArgumentConverter<?> commonArgumentConverter = getArgumentConverter(commonArgument.argumentConverter(),
                     optionTarget.getTargetClass());
             optionsBuilder.setCommonArgumentConverter(commonArgumentConverter);
+        }
+
+        private void checkMultipleCommonArgument() {
+            if (isCommonArgumentConfigured) {
+                Errors.MULTIPLE_COMMON_ARGUMENT.throwException();
+            } else {
+                isCommonArgumentConfigured = true;
+            }
         }
 
         private SingleOptionBuilder processSimpleOption(AbstractOtionTarget optionTarget) {
@@ -147,8 +178,7 @@ public final class OptionsFactory {
 
         private static void checkIsDeclaringClassBoolean(Class<?> targetClass) {
             if (targetClass != boolean.class && targetClass != Boolean.class) {
-                throw new MissConfiguratedAnnotationException(
-                        "It's not allowed declaration of the field/method parameter with type different from boolean/Boolean");
+                Errors.SIMPLE_OPTION_BAD_TARGET_TYPE.throwException();
             }
         }
 
@@ -158,9 +188,7 @@ public final class OptionsFactory {
 
             String[] optionNames = parameterOption.names();
             checkOptionNames(optionNames);
-
-            optionTarget.checkTargetObject();
-
+            
             SingleOptionBuilder builder = optionsBuilder.addOption(optionNames)
                     .setArgumentObligation(translateOptionParameterRequired(parameterOption.parameterRequired()))
                     .setDescription(parameterOption.description())
@@ -170,14 +198,11 @@ public final class OptionsFactory {
                     .setRequired(parameterOption.optionRequired())
                     .setOptionSetter(optionTarget.createOptionSetter());
 
-            ArgumentConverter<?> argumentConverter = createArgumentConverter(parameterOption.argumentConverter(),
+            ArgumentConverter<?> argumentConverter = getArgumentConverter(parameterOption.argumentConverter(),
                     optionTarget.getTargetClass());
             builder.setArgumentConverter(argumentConverter);
 
             builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter));
-
-            // todo maybe check return type of argument converter with target class
-
         }
 
         private static Object getDefaultValue(ParameterOption parameterOption, ArgumentConverter<?> argumentConverter) {
@@ -188,36 +213,75 @@ public final class OptionsFactory {
                 try {
                     return argumentConverter.parse(defaultParameter[0]);
                 } catch (Exception e) {
-                    throw new MissConfiguratedAnnotationException("Error during converting of the default value: "
-                            + defaultParameter[0] + " to the class: " + argumentConverter.getTargetClass(), e);
+                    Errors.DEFAULT_VALUE_CONVERTING_ERROR.throwException(e, defaultParameter[0],
+                            argumentConverter.getTargetClass());
                 }
             } else if (defaultParameter.length > 1) {
-                throw new MissConfiguratedAnnotationException(
-                        "For 'ParameterOption' annotation can be parameter 'defaultParameter' initialized at most with one value");
-            } else {
-                throw new IllegalStateException("This should really never happen");
+                Errors.DEFAULT_VALUE_BAD_INITIALIZATION.throwException();
             }
+            throw new IllegalStateException("This should really never happen");
         }
 
-        private ArgumentConverter<?> createArgumentConverter(Class<?> argumentConverterClass, Class<?> targetClass) {
-            if (ParameterOption.DEFAULT_ARGUMENT_CONVERTER_CLASS == argumentConverterClass) {
-                if (ArgumentConverterFactory.existsInstance(targetClass)) {
-                    return ArgumentConverterFactory.getInstance(targetClass);
+        private ArgumentConverter<?> getArgumentConverter(Class<? extends ArgumentConverter<?>> argumentConverterClass,
+                Class<?> targetClass) {
+
+            if (DummyArgumentConverter.class == argumentConverterClass) {
+                if (ArgumentConverterFactory.existsDefaultConverter(targetClass)) {
+                    return ArgumentConverterFactory.getDefaultConverter(targetClass);
                 } else {
-                    throw new MissConfiguratedAnnotationException("For the type: " + targetClass.toString()
-                            + " is neither configurated argumentConverter nor it is type with default converter");
+                    Errors.ARGUMENT_CONVERTER_NOT_SPECIFIED.throwException(targetClass.toString());
                 }
             } else {
-                try {
-                    Constructor<?> constructor = argumentConverterClass.getConstructor();
-                    return (ArgumentConverter<?>) constructor.newInstance();
-                } catch (Exception e) {
-                    // todo it could be good to create for this error new type of the exception
-                    throw new MissConfiguratedAnnotationException(
-                            "Error during creation argument converter of the class: "
-                                    + argumentConverterClass.toString() + ".", e);
-                }
+                checkArgumentConverter(argumentConverterClass, targetClass);
+                return createInstance(argumentConverterClass);
             }
+
+            throw new IllegalStateException("This should really never happen");
+
+        }
+
+        private static void checkArgumentConverter(Class<? extends ArgumentConverter<?>> argumentConverterClass,
+                Class<?> targetClass) {
+
+            Method method = null;
+            try {
+                method = argumentConverterClass.getMethod("parse", String.class);
+            } catch (Exception e) {
+                Errors.COMMON_ERROR.throwException(e);
+            }
+
+            Class<?> returnType = method.getReturnType();
+            if (!targetClass.isAssignableFrom(returnType) && !isSamePrimitiveAndWrapperType(targetClass, returnType)) {
+                Errors.ARGUMENT_CONVERTERBAD_RETURN_TYPE.throwException(argumentConverterClass.toString(),
+                        returnType.toString(), targetClass.toString());
+            }
+
+        }
+
+        private static boolean isSamePrimitiveAndWrapperType(Class<?> primitiveClass, Class<?> wrapperClass) {
+            // this is approximation, in fact it is possible to assign primitive type from same or lesser type
+            return primitiveClass.isPrimitive() && PRIMITIVE_2_WRAPPER_MAP.get(primitiveClass) == wrapperClass;
+        }
+
+        private ArgumentConverter<?> createInstance(Class<? extends ArgumentConverter<?>> argumentConverterClass) {
+
+            Constructor<? extends ArgumentConverter<?>> constructor = null;
+            try {
+                constructor = argumentConverterClass.getConstructor();
+            } catch (Exception e) {
+                Errors.ARGUMENT_CONVERTER_CONSTRUCTOR.throwException(e, argumentConverterClass.toString());
+            }
+
+            ArgumentConverter<?> instance = null;
+
+            try {
+                instance = constructor.newInstance();
+            } catch (Exception e) {
+                Errors.ARGUMENT_CONVERTER_CREATION_ERROR.throwException(e, argumentConverterClass.toString());
+            }
+
+            return instance;
+
         }
 
         private OptionArgumentObligation translateOptionParameterRequired(boolean parameterRequired) {
@@ -228,8 +292,7 @@ public final class OptionsFactory {
 
             for (String optionName : optionNames) {
                 if (optionsBuilder.isExistsOption(optionName)) {
-                    throw new MissConfiguratedAnnotationException("There are at least two configurations for option '"
-                            + optionName + "'");
+                    Errors.MULTIPLE_CONFIGURATION_FOR_ONE_OPTION.throwException(optionName);
                 }
             }
         }
@@ -237,6 +300,10 @@ public final class OptionsFactory {
         private OptionsBuilder getOptionsBuilder() {
             return optionsBuilder;
         }
+
+        // =============================================================================================================
+        // =============================================================================================================
+        // =============================================================================================================
 
         private static abstract class AbstractOtionTarget {
 
@@ -282,9 +349,25 @@ public final class OptionsFactory {
                 return count > 1;
             }
 
-            protected abstract void checkTargetObject();
-
             protected abstract OptionSetter createOptionSetter();
+
+            protected abstract String getMemberName();
+
+            protected abstract String getTargetName();
+
+            protected abstract int getModifiers();
+
+            protected abstract void checkTargetMember();
+
+            protected void checkTarget() {
+
+                int modifiers = getModifiers();
+                if (Modifier.isStatic(modifiers)) {
+                    Errors.MEMBER_STATIC.throwException(getTargetName());
+                }
+
+                checkTargetMember();
+            }
 
         }
 
@@ -303,12 +386,6 @@ public final class OptionsFactory {
             }
 
             @Override
-            protected void checkTargetObject() {
-                // todo test for example for final...
-
-            }
-
-            @Override
             protected OptionSetter createOptionSetter() {
                 return new FieldOptionSetter(field);
             }
@@ -318,6 +395,27 @@ public final class OptionsFactory {
                 return field;
             }
 
+            @Override
+            protected String getMemberName() {
+                return "field";
+            }
+
+            @Override
+            protected String getTargetName() {
+                return field.getName();
+            }
+
+            @Override
+            protected int getModifiers() {
+                return field.getModifiers();
+            }
+
+            @Override
+            protected void checkTargetMember() {
+                if (Modifier.isFinal(getModifiers())) {
+                    Errors.MEMBER_FINAL.throwException(getTargetName());
+                }
+            }
         }
 
         private static class MethodOptionTarget extends AbstractOtionTarget {
@@ -340,46 +438,93 @@ public final class OptionsFactory {
             }
 
             @Override
-            protected void checkTargetObject() {
-                // todo have one parameter, returns void and so on...
-            }
-
-            @Override
             protected OptionSetter createOptionSetter() {
                 return new MethodOptionSetter(method);
             }
 
+            @Override
+            protected String getMemberName() {
+                return "method";
+            }
+
+            @Override
+            protected String getTargetName() {
+                return method.getName();
+            }
+
+            @Override
+            protected int getModifiers() {
+                return method.getModifiers();
+            }
+
+            @Override
+            protected void checkTargetMember() {
+                if (method.getReturnType() != void.class || method.getParameterTypes().length != 1) {
+                    Errors.METHOD_BAD_SIGNATURE.throwException(getTargetName());
+                }
+
+            }
+
+        }
+
+    }
+
+    private static enum Errors {
+
+        MULTIPLE_ANNOTATIONS("It is not allowed multiple annotations usage on the same class member (%s %s)."),
+        MULTIPLE_COMMON_ARGUMENT("It is not allowed multiple annotation @CommonAgument usage."),
+        ARGUMENT_CONVERTER_NOT_SPECIFIED(
+                "For the type: %s does not exist default converter and costume converter is not supplied."),
+        ARGUMENT_CONVERTER_CREATION_ERROR("During creation of the converter with class: %s was thrown exception."),
+        ARGUMENT_CONVERTER_CONSTRUCTOR(
+                "During obtaining public parameterless constructor of the converter with class: %s was thrown exception."),
+        ARGUMENT_CONVERTERBAD_RETURN_TYPE(
+                "Converter with class: %s converts to the type %s, but it is not possible to assign to the type %s"),
+        COMMON_ERROR("Unexcepted error was thrown during processing of the annotated bean."),
+        SIMPLE_OPTION_BAD_TARGET_TYPE(
+                "With the annoation @SimpleOption can be tagged only field/method with parameter boolean/Boolean."),
+        DEFAULT_VALUE_BAD_INITIALIZATION(
+                "For 'ParameterOption' annotation can be parameter 'defaultParameter' initialized at most with one value"),
+        DEFAULT_VALUE_CONVERTING_ERROR("Error during default value: %s converting to the class: %s."),
+        MULTIPLE_CONFIGURATION_FOR_ONE_OPTION("There are at least two configurations for option: %s"),
+        MEMBER_STATIC("Static field/method: %s cannot be tagged with annotation."),
+        MEMBER_FINAL("Final field/method: %s cannot be tagged with annotation."),
+        METHOD_BAD_SIGNATURE("Tagged method: %s must have void return type and exactly one parameter.");
+
+        private final String errorText;
+
+        private Errors(String errorText) {
+            this.errorText = errorText;
+        }
+
+        private void throwException(Object... args) {
+            throw new MissConfiguratedAnnotationException(String.format(errorText, args));
+        }
+
+        private void throwException(Exception exception, Object... args) {
+            throw new MissConfiguratedAnnotationException(String.format(errorText, args), exception);
         }
 
     }
 
     public static class MissConfiguratedAnnotationException extends RuntimeException {
 
-        /**
-		 * 
-		 */
         private static final long serialVersionUID = 1L;
 
         public MissConfiguratedAnnotationException() {
             super();
-            // TODO Auto-generated constructor stub
         }
 
         public MissConfiguratedAnnotationException(String message, Throwable cause) {
             super(message, cause);
-            // TODO Auto-generated constructor stub
         }
 
         public MissConfiguratedAnnotationException(String message) {
             super(message);
-            // TODO Auto-generated constructor stub
         }
 
         public MissConfiguratedAnnotationException(Throwable cause) {
             super(cause);
-            // TODO Auto-generated constructor stub
         }
-
     }
-
 }

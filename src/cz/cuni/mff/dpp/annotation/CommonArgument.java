@@ -1,7 +1,9 @@
 package cz.cuni.mff.dpp.annotation;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
@@ -13,6 +15,7 @@ import cz.cuni.mff.dpp.impl.convertor.DummyArgumentConverter;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface CommonArgument {
 
     /**
@@ -24,7 +27,6 @@ public @interface CommonArgument {
 
     String description() default "";
 
-    //todo raplace DummyArgumentConverter by ArgumentConverter
     Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
 
 }
