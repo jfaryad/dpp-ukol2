@@ -119,4 +119,11 @@ public interface SingleOption {
      */
     public OptionSetter getOptionSetter();
 
+    /**
+     * Returns all {@link Validator}s set for this option.
+     * 
+     * @return
+     */
+    public Collection<Validator<?>> getValidators();
+
 }
