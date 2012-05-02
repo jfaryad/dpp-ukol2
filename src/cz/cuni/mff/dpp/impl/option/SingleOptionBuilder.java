@@ -1,9 +1,7 @@
 package cz.cuni.mff.dpp.impl.option;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,8 +20,8 @@ public class SingleOptionBuilder implements SingleOption {
 
     private final Set<String> names = new TreeSet<String>();
     private boolean required = false;
-    private final List<String> dependentOn = new ArrayList<String>();
-    private final List<String> incompatibleWith = new ArrayList<String>();
+    private final Set<String> dependentOn = new TreeSet<String>();
+    private final Set<String> incompatibleWith = new TreeSet<String>();
     private OptionArgumentObligation argumentObligation = OptionArgumentObligation.FORBIDDEN;
     private Class<?> argumentClass;
     private String argumentName;
@@ -151,13 +149,11 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
-    // todo totez jako dole
     public SingleOptionBuilder dependentOn(String... optionName) {
         dependentOn.addAll(Arrays.asList(optionName));
         return this;
     }
 
-    // todo tohle by se mozna melo prohnat pres treeset kvuli duplicitam
     public SingleOptionBuilder incompatibleWith(String... optionName) {
         incompatibleWith.addAll(Arrays.asList(optionName));
         return this;

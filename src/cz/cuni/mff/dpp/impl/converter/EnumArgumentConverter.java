@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.impl.convertor;
+package cz.cuni.mff.dpp.impl.converter;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 
