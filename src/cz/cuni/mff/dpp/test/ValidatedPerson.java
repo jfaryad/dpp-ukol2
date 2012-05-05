@@ -6,9 +6,9 @@ import cz.cuni.mff.dpp.annotation.OptionsDefinition;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.Validator;
 import cz.cuni.mff.dpp.example.ValidatorExample.DateArgumentConverter;
-import cz.cuni.mff.dpp.validator.BetweenInclusiveValidator;
-import cz.cuni.mff.dpp.validator.GreaterThenValidator;
-import cz.cuni.mff.dpp.validator.OneOfValidator;
+import cz.cuni.mff.dpp.impl.validator.BetweenInclusiveValidator;
+import cz.cuni.mff.dpp.impl.validator.GreaterThenValidator;
+import cz.cuni.mff.dpp.impl.validator.OneOfValidator;
 
 /**
  * Annotated class used for some tests
