@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.validator;
+package cz.cuni.mff.dpp.impl.validator;
 
 /**
  * Validates that the argument is equal to one of the enumerated values. The values can contain {@code null}.

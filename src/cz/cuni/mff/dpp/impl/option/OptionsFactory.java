@@ -19,11 +19,12 @@ import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.api.RequiredCountInterval;
+import cz.cuni.mff.dpp.api.parser.CommandLineParser;
 import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
 import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
-import cz.cuni.mff.dpp.validator.ValidatorFactory;
+import cz.cuni.mff.dpp.impl.validator.ValidatorFactory;
 
 /**
  * This class contains methods, which create Options objects from different parameters
@@ -36,15 +37,15 @@ public final class OptionsFactory {
     private OptionsFactory() {
     }
 
-    public static Options createOptions(final Class<?> beanClass) {
-        return new AnnotatedBeanOptionsBuilder(beanClass).getOptionsBuilder();
+    public static <T> Options<T> createOptions(final Class<T> targetBeanClass) {
+        return new AnnotatedBeanOptionsBuilder<T>(targetBeanClass).getOptionsBuilder();
     }
 
     // =============================================================================================================
     // =============================================================================================================
     // =============================================================================================================
 
-    private static final class AnnotatedBeanOptionsBuilder {
+    private static final class AnnotatedBeanOptionsBuilder<T> {
 
         private static final Map<Class<?>, Object> DEFAULT_VALUES_MAP;
 
@@ -91,15 +92,15 @@ public final class OptionsFactory {
         private static final RequiredCountInterval SIMPLE_OPTION_REQUIRED_COUNT_INTERVAL =
                 new RequiredCountInterval(0, 1);
 
-        private final OptionsBuilder optionsBuilder;
+        private final OptionsBuilder<T> optionsBuilder;
 
-        private final Class<?> beanClass;
+        private final Class<T> beanClass;
 
         private boolean isCommonArgumentConfigured = false;
 
-        private AnnotatedBeanOptionsBuilder(final Class<?> beanClass) {
+        private AnnotatedBeanOptionsBuilder(final Class<T> beanClass) {
             this.beanClass = beanClass;
-            this.optionsBuilder = new OptionsBuilder();
+            this.optionsBuilder = new OptionsBuilder<T>();
 
             build();
         }
@@ -340,13 +341,23 @@ public final class OptionsFactory {
         private void checkOptionNames(final String[] optionNames) {
 
             for (final String optionName : optionNames) {
+
+                if (!isValidOptionName(optionName)) {
+                    Errors.INVALID_OPTION_NAME.throwException(optionName);
+                }
+
                 if (optionsBuilder.isExistsOption(optionName)) {
                     Errors.MULTIPLE_CONFIGURATION_FOR_ONE_OPTION.throwException(optionName);
                 }
             }
         }
 
-        private OptionsBuilder getOptionsBuilder() {
+        private boolean isValidOptionName(String optionName) {
+            return !optionName.contains(CommandLineParser.OPTION_VALUE_DELIMITER)
+                    && !optionName.startsWith(CommandLineParser.SHORT_OPTION_PREFIX);
+        }
+
+        private OptionsBuilder<T> getOptionsBuilder() {
             return optionsBuilder;
         }
 
@@ -538,7 +549,8 @@ public final class OptionsFactory {
         MEMBER_FINAL(
                 "Final field/method: %s cannot be tagged with @SimpleOption, @ParameterOption or @CommonArgument.."),
         METHOD_BAD_SIGNATURE("Tagged method: %s must have void return type and exactly one parameter."),
-        BAD_REQUIRED_COUNT_INTERVAL("Bad bounds (%d, %d) in 'minRequiredCount' and 'maxRequiredCount' parameters.");
+        BAD_REQUIRED_COUNT_INTERVAL("Bad bounds (%d, %d) in 'minRequiredCount' and 'maxRequiredCount' parameters."),
+        INVALID_OPTION_NAME("Option name %s is invalid.");
 
         private final String errorText;
 

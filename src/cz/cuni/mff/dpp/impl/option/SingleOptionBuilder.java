@@ -219,4 +219,29 @@ public class SingleOptionBuilder implements SingleOption {
     public String getFirstOptionName() {
         return names.iterator().next();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((names == null) ? 0 : names.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SingleOptionBuilder other = (SingleOptionBuilder) obj;
+        if (names == null) {
+            if (other.names != null)
+                return false;
+        } else if (!names.equals(other.names))
+            return false;
+        return true;
+    }
 }

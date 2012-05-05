@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.validator;
+package cz.cuni.mff.dpp.impl.validator;
 
 /**
  * Validates that the argument is greater than the given constraint.
@@ -28,6 +28,7 @@ public class GreaterThenValidator<T extends Comparable<T>> extends AbstractValid
         this.constraint = constraint[0];
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean isValid(final Object argument) {
         checkNullValue(argument);

@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author jakub
  * 
  */
-public interface Options {
+public interface Options<T> {
 
     /**
      * Returns a collection of all defined options. Returns an empty list if no options are specified.
@@ -33,7 +33,7 @@ public interface Options {
      * 
      * @return
      */
-    public Class<?> getTargetBeanClass();
+    public Class<T> getTargetBeanClass();
 
     /**
      * Returns converter for common argument, this converter is used to convert value from {@link String} to desired
@@ -56,6 +56,24 @@ public interface Options {
      * @return
      */
     public RequiredCountInterval getCommonArgumentRequiredCountInterval();
+
+    /**
+     * Returns {@link SingleOption} objects of options (specified by parameter) which must be specified together with
+     * this option on the command line.
+     * 
+     * @param optionName
+     * @return
+     */
+    public Collection<SingleOption> getDependentSingleOptionList(String optionName);
+
+    /**
+     * Returns {@link SingleOption} objects of options (specified by parameter) which mustn't be specified together with
+     * this option on the command line.
+     * 
+     * @param optionName
+     * @return
+     */
+    public Collection<SingleOption> getIncompatibleSingleOptionList(String optionName);
 
     /**
      * Returns a summary of about the program that this Options object represents. It will be used for help screen

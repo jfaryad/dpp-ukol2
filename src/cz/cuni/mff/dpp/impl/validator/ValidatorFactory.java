@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.validator;
+package cz.cuni.mff.dpp.impl.validator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -36,7 +36,7 @@ public class ValidatorFactory {
         return createValidatorInstance(validatorClass, argumentConverter.getTargetClass(), convertedConstructorParams);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"rawtypes" })
     private static <T> ArgumentValidator<T> createValidatorInstance(
             final Class<? extends ArgumentValidator> validatorClass,
             final Class<T> targetClass, final T... constructorParams) {

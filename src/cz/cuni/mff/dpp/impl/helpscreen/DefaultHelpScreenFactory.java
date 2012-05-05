@@ -43,12 +43,12 @@ public class DefaultHelpScreenFactory implements HelpScreenFactory {
     private final static String USAGE_SECTION_HEADER = "Usage: ";
 
     private final StringBuilder helpScreen = new StringBuilder();
-    private final Options options;
+    private final Options<?> options;
     private final Set<SingleOption> singleOptions = new TreeSet<SingleOption>(new SingleOptionComparator());
     private final StringBuilder[] optionNames;
     private final String[] optionDescriptions;;
 
-    public DefaultHelpScreenFactory(final Options options) {
+    public DefaultHelpScreenFactory(final Options<?> options) {
         this.options = options;
         this.singleOptions.addAll(options.getOptions());
         this.optionNames = new StringBuilder[singleOptions.size()];

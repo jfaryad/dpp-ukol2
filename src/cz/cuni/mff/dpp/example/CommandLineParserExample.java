@@ -19,55 +19,55 @@ public class CommandLineParserExample {
 
     public static void main(String[] args) {
 
-         testGnuTimeBean();
-        
-         System.out.println("------------------------------");
-        
-         testGnuTimeBean2();
-        
-         System.out.println("------------------------------");
-        
-         testCommonArgumentTestBean();
-        
-         System.out.println("------------------------------");
-        
-         testEnumArgumentBean();
-        
-         System.out.println("------------------------------");
+//         testGnuTimeBean();
+//        
+//         System.out.println("------------------------------");
+//        
+//         testGnuTimeBean2();
+//        
+//         System.out.println("------------------------------");
+//        
+//         testCommonArgumentTestBean();
+//        
+//         System.out.println("------------------------------");
+//        
+//         testEnumArgumentBean();
+//        
+//         System.out.println("------------------------------");
 
         testTestBean();
     }
 
     public static void testGnuTimeBean() {
 
-        Options options = OptionsFactory.createOptions(GnuTimeBean.class);
-        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        Options<GnuTimeBean> options = OptionsFactory.createOptions(GnuTimeBean.class);
+        DefaultCommandLineParser<GnuTimeBean> parser = new DefaultCommandLineParser<GnuTimeBean>(options);
 
-        GnuTimeBean gnuTimeBean = (GnuTimeBean) parser.parse(new String[] {});
+        GnuTimeBean gnuTimeBean = parser.parse(new String[] {});
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "-a" });
+        gnuTimeBean = parser.parse(new String[] { "-a" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "--help" });
+        gnuTimeBean = parser.parse(new String[] { "--help" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "--help", "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "--help", "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "--format", "%s%d%m" });
+        gnuTimeBean = parser.parse(new String[] { "--format", "%s%d%m" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "--format=%s%d%m" });
+        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean) parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V", "-o",
+        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V", "-o",
                 "c:\\temp.txt" });
         System.out.println(gnuTimeBean.toString());
 
@@ -75,34 +75,34 @@ public class CommandLineParserExample {
 
     public static void testGnuTimeBean2() {
 
-        Options options = OptionsFactory.createOptions(GnuTimeBean2.class);
-        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        Options<GnuTimeBean2> options = OptionsFactory.createOptions(GnuTimeBean2.class);
+        DefaultCommandLineParser<GnuTimeBean2> parser = new DefaultCommandLineParser<GnuTimeBean2>(options);
 
-        GnuTimeBean2 gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] {});
+        GnuTimeBean2 gnuTimeBean = parser.parse(new String[] {});
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "-a" });
+        gnuTimeBean = parser.parse(new String[] { "-a" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "--help" });
+        gnuTimeBean = parser.parse(new String[] { "--help" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "--help", "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "--help", "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "--format", "%s%d%m" });
+        gnuTimeBean = parser.parse(new String[] { "--format", "%s%d%m" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "--format=%s%d%m" });
+        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = (GnuTimeBean2) parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V", "-o",
+        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V", "-o",
                 "c:\\temp.txt" });
         System.out.println(gnuTimeBean.toString());
 
@@ -110,24 +110,25 @@ public class CommandLineParserExample {
 
     private static void testCommonArgumentTestBean() {
 
-        Options options = OptionsFactory.createOptions(CommonArgumentTestBean.class);
-        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        Options<CommonArgumentTestBean> options = OptionsFactory.createOptions(CommonArgumentTestBean.class);
+        DefaultCommandLineParser<CommonArgumentTestBean> parser = new DefaultCommandLineParser<CommonArgumentTestBean>(
+                options);
 
-        CommonArgumentTestBean bean = (CommonArgumentTestBean) parser.parse(new String[] {});
+        CommonArgumentTestBean bean = parser.parse(new String[] {});
         System.out.println(bean.toString());
 
-        bean = (CommonArgumentTestBean) parser.parse(new String[] { "20" });
+        bean = parser.parse(new String[] { "20" });
         System.out.println(bean.toString());
 
-        bean = (CommonArgumentTestBean) parser.parse(new String[] { "100", "200", "300" });
+        bean = parser.parse(new String[] { "100", "200", "300" });
         System.out.println(bean.toString());
 
     }
 
     public static void testEnumArgumentBean() {
 
-        Options options = OptionsFactory.createOptions(EnumArgumentBean.class);
-        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        Options<EnumArgumentBean> options = OptionsFactory.createOptions(EnumArgumentBean.class);
+        DefaultCommandLineParser<EnumArgumentBean> parser = new DefaultCommandLineParser<EnumArgumentBean>(options);
 
         EnumArgumentBean bean = (EnumArgumentBean) parser.parse(new String[] {});
         System.out.println(bean.toString());
@@ -142,10 +143,7 @@ public class CommandLineParserExample {
 
     public static void testTestBean() {
 
-        Options options = OptionsFactory.createOptions(TestBean.class);
-        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
-
-        TestBean bean=(TestBean) parser.parse(new String[] { "-abc=12" });
+        Object bean = DefaultCommandLineParser.parse(TestBean.class, new String[] { "-abc", "vvv" });
         System.out.println(bean.toString());
 
     }
@@ -154,7 +152,7 @@ public class CommandLineParserExample {
 
         private final List<Integer> argumentList = new ArrayList<Integer>();
 
-        @CommonArgument(maxRequiredCount=RequiredCountInterval.MAX_BOUND)
+        @CommonArgument(maxRequiredCount = RequiredCountInterval.MAX_BOUND)
         public void addArgument(int argument) {
             argumentList.add(argument);
         }
@@ -168,7 +166,7 @@ public class CommandLineParserExample {
     public static class EnumArgumentBean {
         private final List<OptionArgumentObligation> argumentList = new ArrayList<OptionArgumentObligation>();
 
-        @CommonArgument(maxRequiredCount=3)
+        @CommonArgument(maxRequiredCount = 3)
         public void addArgument(OptionArgumentObligation argument) {
             argumentList.add(argument);
         }
@@ -184,14 +182,14 @@ public class CommandLineParserExample {
         @ParameterOption(names = "aaa", argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
         private File neco = null;
 
-        @SimpleOption(names = "a")
+        @SimpleOption(names = "a", dependentOn = { "c" }, incompatibleWith = "abv")
         private boolean s1;
-        
+
         @SimpleOption(names = "b")
         private boolean s2;
-        
+
         @ParameterOption(names = "c")
-        private Integer s3;
+        private boolean s3;
 
         @ParameterOption(names = "bb", minRequiredCount = 0, maxRequiredCount = 3, parameterRequired = false)
         private Integer someNumberFrom2To10;

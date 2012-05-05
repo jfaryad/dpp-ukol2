@@ -1,32 +1,25 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
 import java.util.Collection;
-import java.util.Collections;
 
+import cz.cuni.mff.dpp.api.SingleOption;
 
-//todo bude se pouzivat...
-public class DependentOptionsException extends CommandLineParserException {
+public class DependentOptionsException extends AbstractOptionsCompatibilityException {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String MESSAGE = "Option with name: %s depends on this options: which aren't provided on command line.";
+    private static final String MESSAGE = "Option with name: %s depends on options which aren't specified on the command line.";
 
-    private final Collection<String> unprovidedOptionNames;
-
-    private final String optionName;
-
-    public DependentOptionsException(String optionName, Collection<String> unprovidedOptionNames) {
-        super(String.format(MESSAGE, optionName, unprovidedOptionNames));
-        this.unprovidedOptionNames = Collections.unmodifiableCollection(unprovidedOptionNames);
-        this.optionName = optionName;
+    public DependentOptionsException(SingleOption dependentSingleOption, Collection<SingleOption> unspecifiedDependentOptions) {
+        super(MESSAGE, dependentSingleOption, unspecifiedDependentOptions);
     }
 
-    public Collection<String> getUnprovidedOptionNames() {
-        return unprovidedOptionNames;
+    public SingleOption getDependentSingleOption() {
+        return getSingleOption();
     }
 
-    public String getOptionName() {
-        return optionName;
+    public Collection<SingleOption> getUnspecifiedDendentOptions() {
+        return getSingleOptionList();
     }
 
 }
