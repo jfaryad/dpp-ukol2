@@ -9,9 +9,9 @@ import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 
 public class OptionsFactoryExample {
-    
+
     public static void main(String[] args) {
-        
+
         Options createOptions = OptionsFactory.createOptions(GnuTimeBean.class);
 
         System.out.println(createOptions);
@@ -21,13 +21,13 @@ public class OptionsFactoryExample {
         System.out.println(createOptions2);
 
         testFieldOptionSetter();
-        
+
         testMethodOptionSetter();
-        
+
     }
 
     public static void testFieldOptionSetter() {
-        
+
         System.out.println("======testFieldOptionSetter======");
 
         try {
@@ -43,17 +43,15 @@ public class OptionsFactoryExample {
             System.out.println("append: " + bean.isAppend());
 
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
 
     public static void testMethodOptionSetter() {
-        
+
         System.out.println("======testFieldMethodSetter======");
 
         try {
@@ -69,10 +67,8 @@ public class OptionsFactoryExample {
             System.out.println("append: " + bean.isAppend());
 
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

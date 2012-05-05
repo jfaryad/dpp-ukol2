@@ -9,9 +9,6 @@ public class FieldOptionSetter implements OptionSetter {
     private final Field field;
 
     public FieldOptionSetter(final Field field) {
-
-        // todo check field
-
         this.field = field;
     }
 

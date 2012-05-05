@@ -4,7 +4,7 @@ import java.io.File;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 
-public class FileArgumentConverter implements ArgumentConverter<File>{
+public class FileArgumentConverter implements ArgumentConverter<File> {
 
     @Override
     public File parse(String argument) {
@@ -13,7 +13,6 @@ public class FileArgumentConverter implements ArgumentConverter<File>{
 
     @Override
     public Class<File> getTargetClass() {
-        // TODO Auto-generated method stub
         return File.class;
     }
 
