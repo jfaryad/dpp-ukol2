@@ -44,7 +44,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
     private T targetBean;
 
-    /*package*/ ParserImpl(Options<T> options, final String[] commandLine) {
+    /* package */ParserImpl(Options<T> options, final String[] commandLine) {
         super();
         this.commandLine = commandLine;
         this.options = options;
@@ -278,7 +278,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
             throw new IllegalStateException("This should never happen");
         }
 
-        final int delimIndex = token.indexOf("=");
+        final int delimIndex = token.indexOf(CommandLineParser.OPTION_VALUE_DELIMITER);
 
         String tokenName;
         String tokenParameter;

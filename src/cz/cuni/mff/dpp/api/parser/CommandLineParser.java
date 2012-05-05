@@ -10,6 +10,8 @@ public interface CommandLineParser<T> {
 
     String LONG_OPTION_PREFIX = "--";
 
+    String OPTION_VALUE_DELIMITER = "=";
+
     int SHORT_OPTION_NAME_LENGTH = 1;
 
     T parse(String[] commnadLine);
