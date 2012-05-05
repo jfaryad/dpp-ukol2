@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.ArgumentValidator;
 import cz.cuni.mff.dpp.api.CommandLineParser;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
@@ -15,13 +16,13 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
     private final Options options;
 
-    public DefaultCommandLineParser(Options options) {
+    public DefaultCommandLineParser(final Options options) {
         super();
         this.options = options;
     }
 
     @Override
-    public Object parse(String[] commnadLine) {
+    public Object parse(final String[] commnadLine) {
         return new ParserImpl(commnadLine).getTargetBean();
     }
 
@@ -40,7 +41,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private Object targetBean;
 
-        public ParserImpl(String[] commandLine) {
+        public ParserImpl(final String[] commandLine) {
             super();
             this.commandLine = commandLine;
 
@@ -57,9 +58,9 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private void createTargetBean() {
             try {
-                Constructor<?> constructor = options.getTargetBeanClass().getConstructor();
+                final Constructor<?> constructor = options.getTargetBeanClass().getConstructor();
                 targetBean = constructor.newInstance();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException(e);
                 // todo translate exception
             }
@@ -74,25 +75,37 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private void processOptions() {
 
-            for (ParsedOption parsedOption : parsedOptionList) {
-                SingleOption singleOption = options.getOption(parsedOption.getOptionName());
+            for (final ParsedOption parsedOption : parsedOptionList) {
+                final SingleOption singleOption = options.getOption(parsedOption.getOptionName());
                 Object convertedOptionParameter;
                 if (parsedOption.hasOptionParameter()) {
-                    String optionParameter = parsedOption.getOptionParameter();
+                    final String optionParameter = parsedOption.getOptionParameter();
                     convertedOptionParameter = singleOption.getArgumentConverter().parse(optionParameter);
                     // todo catch and translate exception
                 } else {
                     convertedOptionParameter = singleOption.getDefaultValue();
                 }
+                applyParameterValidations(singleOption, convertedOptionParameter);
                 singleOption.getOptionSetter().setOption(targetBean, convertedOptionParameter);
+            }
+        }
+
+        // TODO mozna presunout nekam jinam podle potreby a zmenit vyjimku
+        private <T> void applyParameterValidations(final SingleOption option,
+                final T parameter) {
+            for (final ArgumentValidator<?> validator : option.getValidators()) {
+                if (!validator.isValid(parameter)) {
+                    throw new RuntimeException("Validation failed for the option parameter" + option.getArgumentName()
+                            + " with valie " + parameter);
+                }
             }
         }
 
         private void processCommonArguments() {
 
-            OptionSetter commonArgumentSetter = options.getCommonArgumentSetter();
-            ArgumentConverter<?> commonArgumentConverter = options.getCommonArgumentConverter();
-            for (String commonArgument : commonArgumetList) {
+            final OptionSetter commonArgumentSetter = options.getCommonArgumentSetter();
+            final ArgumentConverter<?> commonArgumentConverter = options.getCommonArgumentConverter();
+            for (final String commonArgument : commonArgumetList) {
                 Object convertedObject;
                 if (commonArgumentConverter == null) {
                     convertedObject = commonArgument;
@@ -110,11 +123,12 @@ public class DefaultCommandLineParser implements CommandLineParser {
             boolean isNextOptionParameter = false;
             ParsedOption option = null;
 
-            for (String element : commandLine) {
+            for (final String element : commandLine) {
 
                 if (isNextCommonArgument) {
                     commonArgumetList.add(element);
                 } else if (isNextOptionParameter) {
+
                     option.setOptionParameter(element);
                     isNextOptionParameter = false;
                 } else if (CommandLineParser.COMMON_ARGUMENT_DELIMITER.equals(element)) {
@@ -132,14 +146,14 @@ public class DefaultCommandLineParser implements CommandLineParser {
             }
         }
 
-        private boolean hasOptionParameter(String optionName) {
-            SingleOption singleOption = options.getOption(optionName);
+        private boolean hasOptionParameter(final String optionName) {
+            final SingleOption singleOption = options.getOption(optionName);
             return singleOption != null && singleOption.getArgumentObligation() == OptionArgumentObligation.REQUIRED;
         }
 
-        private ParsedOption parseOption(String value) {
+        private ParsedOption parseOption(final String value) {
 
-            ParsedOption result = new ParsedOption();
+            final ParsedOption result = new ParsedOption();
 
             String token;
 
@@ -153,31 +167,31 @@ public class DefaultCommandLineParser implements CommandLineParser {
                 throw new IllegalStateException("This should never happen");
             }
 
-            int delimIndex = token.indexOf("=");
+            final int delimIndex = token.indexOf("=");
 
             if (delimIndex == -1) {
                 result.setOptionName(token);
             } else {
-                String optionName = token.substring(0, delimIndex);
+                final String optionName = token.substring(0, delimIndex);
                 result.setOptionName(optionName);
-                String optionParam = token.substring(delimIndex + 1);
+                final String optionParam = token.substring(delimIndex + 1);
                 result.setOptionParameter(optionParam);
             }
 
             return result;
         }
 
-        private boolean isOption(String value) {
+        private boolean isOption(final String value) {
             return isLongOption(value) || isShortOption(value);
         }
 
-        private boolean isShortOption(String value) {
+        private boolean isShortOption(final String value) {
             // todo shrink option names
             return value.startsWith(CommandLineParser.SHORT_OPTION_DELIMITER)
                     && value.length() > CommandLineParser.SHORT_OPTION_DELIMITER.length();
         }
 
-        private boolean isLongOption(String value) {
+        private boolean isLongOption(final String value) {
             return value.startsWith(CommandLineParser.LONG_OPTION_DELIMITER) &&
                     value.length() > CommandLineParser.LONG_OPTION_DELIMITER.length();
         }
@@ -204,11 +218,11 @@ public class DefaultCommandLineParser implements CommandLineParser {
             return optionParameter;
         }
 
-        public void setOptionName(String optionName) {
+        public void setOptionName(final String optionName) {
             this.optionName = optionName;
         }
 
-        public void setOptionParameter(String argument) {
+        public void setOptionParameter(final String argument) {
             this.optionParameter = argument;
         }
 
@@ -216,7 +230,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
             return isShortOption;
         }
 
-        public void setShortOption(boolean isShortOption) {
+        public void setShortOption(final boolean isShortOption) {
             this.isShortOption = isShortOption;
         }
 

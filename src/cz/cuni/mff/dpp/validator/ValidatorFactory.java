@@ -1,9 +1,14 @@
 package cz.cuni.mff.dpp.validator;
 
-import cz.cuni.mff.dpp.api.Validator;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+
+import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.ArgumentValidator;
+import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
 
 /**
- * Factory providing implementations of basic validators.
+ * Factory used to create {@link ArgumentValidator} instances.
  * 
  * @author jakub
  * 
@@ -11,181 +16,106 @@ import cz.cuni.mff.dpp.api.Validator;
 public class ValidatorFactory {
 
     /**
-     * Validates that the argument is greater than the given constraint.
+     * Creates a {@link ArgumentValidator} specified by the given validatorClass.
      * 
-     * @param constraint
-     *            the argument must be greater than this value, or else the validation fails.
+     * @param validatorClass
+     *            the class of the validator to instantiate
+     * @param argumentConverter
+     *            converter used to convert the validator constructor parameters, which come as strings, into the
+     *            required type
+     * @param constructorParams
+     *            parameters passed to the validator constructor (first they will be converter using the
+     *            argumentConverter)
+     * @return a new {@link ArgumentValidator} instance
      */
-    public static <T extends Comparable<T>> Validator<T> greaterThen(final T constraint) {
-        checkNullConstraint(constraint);
-        return new AbstractValidator<T>(constraint.getClass()) {
+    @SuppressWarnings("rawtypes")
+    public static <T> ArgumentValidator<T> createValidator(final Class<? extends ArgumentValidator> validatorClass,
+            final ArgumentConverter<T> argumentConverter, final String... constructorParams) {
 
-            @Override
-            public void validate(final T value) throws IllegalArgumentException {
-                checkNullValue(value);
-                if (value.compareTo(constraint) <= 0) {
-                    throw new IllegalArgumentException("The value '" + value + "' is not greater then '" + constraint
-                            + "'");
-                }
-            }
-        };
+        final T[] convertedConstructorParams = convertConstructorParams(argumentConverter, constructorParams);
+        return createValidatorInstance(validatorClass, argumentConverter.getTargetClass(), convertedConstructorParams);
     }
 
-    /**
-     * Validates that the argument is greater or equal than the given constraint.
-     * 
-     * @param constraint
-     *            the argument must be greater or equal than this value, or else the validation fails.
-     */
-    public static <T extends Comparable<T>> Validator<T> greaterOrEqualThen(final T constraint) {
-        checkNullConstraint(constraint);
-        return new AbstractValidator<T>(constraint.getClass()) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static <T> ArgumentValidator<T> createValidatorInstance(
+            final Class<? extends ArgumentValidator> validatorClass,
+            final Class<T> targetClass, final T... constructorParams) {
 
-            @Override
-            public void validate(final T value) throws IllegalArgumentException {
-                checkNullValue(value);
-                if (value.compareTo(constraint) < 0) {
-                    throw new IllegalArgumentException("The value '" + value + "' is not greater or equal then '"
-                            + constraint
-                            + "'");
-                }
-            }
-        };
+        final Constructor<? extends ArgumentValidator> constructor = getValidatorConstructor(validatorClass);
+        return getValidatorInstanceFromConstructor(constructor, targetClass, constructorParams);
+
     }
 
-    /**
-     * Validates that the argument is less than the given constraint.
-     * 
-     * @param constraint
-     *            the argument must be less than this value, or else the validation fails.
-     */
-    public static <T extends Comparable<T>> Validator<T> lessThen(final T constraint) {
-        checkNullConstraint(constraint);
-        return new AbstractValidator<T>(constraint.getClass()) {
-
-            @Override
-            public void validate(final T value) throws IllegalArgumentException {
-                checkNullValue(value);
-                if (value.compareTo(constraint) >= 0) {
-                    throw new IllegalArgumentException("The value '" + value + "' is not less then '" + constraint
-                            + "'");
-                }
-            }
-        };
-    }
-
-    /**
-     * Validates that the argument is less or equal than the given constraint.
-     * 
-     * @param constraint
-     *            the argument must be less or equal than this value, or else the validation fails.
-     */
-    public static <T extends Comparable<T>> Validator<T> lessOrEqualThen(final T constraint) {
-        checkNullConstraint(constraint);
-        return new AbstractValidator<T>(constraint.getClass()) {
-
-            @Override
-            public void validate(final T value) throws IllegalArgumentException {
-                checkNullValue(value);
-                if (value.compareTo(constraint) > 0) {
-                    throw new IllegalArgumentException("The value '" + value + "' is not less or equal then '"
-                            + constraint
-                            + "'");
-                }
-            }
-        };
-    }
-
-    /**
-     * Validates that the argument is between (exclusively) the given bounds
-     * 
-     * @param lowerBound
-     *            the argument must be greater than this value, or else the validation fails.
-     * @param upperBound
-     *            the argument must be less than this value, or else the validation fails.
-     */
-    public static <T extends Comparable<T>> Validator<T> between(final T lowerBound, final T upperBound) {
-        checkNullConstraint(lowerBound);
-        checkNullConstraint(upperBound);
-        return new AbstractValidator<T>(lowerBound.getClass()) {
-
-            @Override
-            public void validate(final T value) throws IllegalArgumentException {
-                checkNullValue(value);
-                if (value.compareTo(lowerBound) <= 0 || value.compareTo(upperBound) >= 0) {
-                    throw new IllegalArgumentException("The value '" + value + "' is not between '" + lowerBound
-                            + "' and '" + upperBound + "'");
-                }
-            }
-        };
-    }
-
-    /**
-     * Validates that the argument is between (inclusive) the given bounds
-     * 
-     * @param lowerBound
-     *            the argument must be greater or equal than this value, or else the validation fails.
-     * @param upperBound
-     *            the argument must be less or equal than this value, or else the validation fails.
-     */
-    public static <T extends Comparable<T>> Validator<T> betweenInclusive(final T lowerBound, final T upperBound) {
-        checkNullConstraint(lowerBound);
-        checkNullConstraint(upperBound);
-        return new AbstractValidator<T>(lowerBound.getClass()) {
-
-            @Override
-            public void validate(final T value) throws IllegalArgumentException {
-                checkNullValue(value);
-                if (value.compareTo(lowerBound) < 0 || value.compareTo(upperBound) > 0) {
-                    throw new IllegalArgumentException("The value '" + value + "' is not between '" + lowerBound
-                            + "' and '" + upperBound + "'");
-                }
-            }
-        };
-    }
-
-    /**
-     * Validates that the argument is equal to one of the enumerated values. The values can contain {@code null}.
-     * 
-     * @param allowedValues
-     *            An array of allowed values.
-     */
-    public static Validator<Object> oneOf(final Object[] allowedValues) {
-        checkEmptyArray(allowedValues);
-        return new AbstractValidator<Object>(allowedValues[0].getClass()) {
-
-            @Override
-            public void validate(final Object value) throws IllegalArgumentException {
-                for (Object allowedValue : allowedValues) {
-                    if (bothNullOrEqual(value, allowedValue)) {
-                        return;
-                    }
-                }
-                throw new IllegalArgumentException("The value '" + value + "' doesn't match any of the allowed values");
-            }
-        };
-    }
-
-    private static boolean bothNullOrEqual(final Object a, final Object b) {
-        return (a == null && b == null) || a.equals(b);
-    }
-
-    private static void checkNullConstraint(final Object constraint) {
-        if (constraint == null) {
-            throw new IllegalArgumentException("A validator doesn't accept a null constraint.");
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Constructor<? extends ArgumentValidator> getValidatorConstructor(
+            final Class<? extends ArgumentValidator> validatorClass) {
+        try {
+            return (Constructor<? extends ArgumentValidator>) validatorClass.getConstructors()[0];
+        } catch (final Exception e) {
+            throw new IllegalStateException("Unable to find a suiteable constructor for " + validatorClass);
         }
     }
 
-    private static void checkEmptyArray(final Object[] array) {
-        if (array == null || array.length == 0) {
-            throw new IllegalArgumentException("A validator doesn't accept a null or empty array of allowedValues.");
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static <T> ArgumentValidator<T> getValidatorInstanceFromConstructor(
+            final Constructor<? extends ArgumentValidator> constructor,
+            final Class<T> targetClass, final T[] constructorParams) {
+        try {
+            return constructor.newInstance(targetClass, constructorParams);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Unable to instanciate " + constructor.getDeclaringClass(), e);
         }
     }
 
-    private static void checkNullValue(final Object value) {
-        if (value == null) {
-            throw new IllegalArgumentException("A validator doesn't accept a null value in the method 'validate'.");
+    @SuppressWarnings("unchecked")
+    private static <T> T[] convertConstructorParams(final ArgumentConverter<T> argumentConverter,
+            final String... constructorParams) {
+        final T[] convertedParams = (T[]) Array.newInstance(argumentConverter.getTargetClass(),
+                constructorParams.length);
+        ;
+        for (int i = 0; i < constructorParams.length; i++) {
+            convertedParams[i] = argumentConverter.parse(constructorParams[i]);
         }
+        return convertedParams;
     }
 
+    // TODO jenom pro testovani, presunout do testovaci tridy
+    public static void main(final String[] args) {
+
+        System.out.println("BetweenValidator test:");
+        final ArgumentValidator<Integer> validator = createValidator(BetweenValidator.class,
+                ArgumentConverterFactory.getDefaultConverter(Integer.class), "0", "5");
+        System.out.println("Validating 3, should be ok");
+        boolean isValid = validator.isValid(3);
+        if (isValid) {
+            System.out.println("Passed");
+        } else {
+            System.out.println("Failed");
+        }
+        System.out.println("Validating 5, should be wrong");
+        isValid = validator.isValid(3);
+        if (!isValid) {
+            System.out.println("Passed");
+        } else {
+            System.out.println("Failed");
+        }
+
+        System.out.println("BetweenInclusiveValidator test");
+        final ArgumentValidator<Integer> validatorInclusive = createValidator(BetweenInclusiveValidator.class,
+                ArgumentConverterFactory.getDefaultConverter(Integer.class), new String[] { "0", "120" });
+        System.out.println("Validating 120, should be ok");
+        isValid = validatorInclusive.isValid(120);
+        if (isValid) {
+            System.out.println("Passed");
+        } else {
+            System.out.println("Failed");
+        }
+        System.out.println("Validating 121, should be wrong");
+        isValid = validatorInclusive.isValid(121);
+        if (!isValid) {
+            System.out.println("Passed");
+        } else {
+            System.out.println("Failed");
+        }
+    }
 }

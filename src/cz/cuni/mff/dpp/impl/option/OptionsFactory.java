@@ -12,6 +12,7 @@ import java.util.Map;
 import cz.cuni.mff.dpp.annotation.CommonArgument;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
+import cz.cuni.mff.dpp.annotation.Validator;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
@@ -20,6 +21,7 @@ import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
 import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
+import cz.cuni.mff.dpp.validator.ValidatorFactory;
 
 /**
  * This class contains methods, which create Options objects from different parameters
@@ -32,7 +34,7 @@ public final class OptionsFactory {
     private OptionsFactory() {
     }
 
-    public static Options createOptions(Class<?> beanClass) {
+    public static Options createOptions(final Class<?> beanClass) {
         return new AnnotatedBeanOptionsBuilder(beanClass).getOptionsBuilder();
     }
 
@@ -45,7 +47,7 @@ public final class OptionsFactory {
         private static final Map<Class<?>, Object> DEFAULT_VALUES_MAP;
 
         static {
-            Map<Class<?>, Object> temp = new HashMap<Class<?>, Object>();
+            final Map<Class<?>, Object> temp = new HashMap<Class<?>, Object>();
             // temp.put(Byte.class, new Byte((byte) 0));
             temp.put(byte.class, new Byte((byte) 0));
             // temp.put(Character.class, new Character('\0'));
@@ -70,7 +72,7 @@ public final class OptionsFactory {
         private static final Map<Class<?>, Class<?>> PRIMITIVE_2_WRAPPER_MAP;
 
         static {
-            Map<Class<?>, Class<?>> temp = new HashMap<Class<?>, Class<?>>();
+            final Map<Class<?>, Class<?>> temp = new HashMap<Class<?>, Class<?>>();
             temp.put(byte.class, Byte.class);
             temp.put(char.class, Character.class);
             temp.put(short.class, Short.class);
@@ -90,7 +92,7 @@ public final class OptionsFactory {
 
         private boolean isCommonArgumentConfigured = false;
 
-        private AnnotatedBeanOptionsBuilder(Class<?> beanClass) {
+        private AnnotatedBeanOptionsBuilder(final Class<?> beanClass) {
             this.beanClass = beanClass;
             this.optionsBuilder = new OptionsBuilder();
 
@@ -108,19 +110,19 @@ public final class OptionsFactory {
 
         private void addSingleOptions() {
 
-            Field[] fields = beanClass.getDeclaredFields();
-            for (Field field : fields) {
+            final Field[] fields = beanClass.getDeclaredFields();
+            for (final Field field : fields) {
                 processAnnotations(new FieldOptionTarget(field));
             }
 
-            Method[] methods = beanClass.getDeclaredMethods();
-            for (Method method : methods) {
+            final Method[] methods = beanClass.getDeclaredMethods();
+            for (final Method method : methods) {
                 processAnnotations(new MethodOptionTarget(method));
             }
 
         }
 
-        private void processAnnotations(AbstractOptionTarget optionTarget) {
+        private void processAnnotations(final AbstractOptionTarget optionTarget) {
 
             if (optionTarget.hasMultipleAnnotations()) {
                 Errors.MULTIPLE_ANNOTATIONS.throwException(optionTarget.getMemberName(), optionTarget.getTargetName());
@@ -138,13 +140,14 @@ public final class OptionsFactory {
             }
         }
 
-        private void processCommonArgument(AbstractOptionTarget optionTarget) {
+        private void processCommonArgument(final AbstractOptionTarget optionTarget) {
 
             checkMultipleCommonArgument();
 
             optionsBuilder.setCommonArgumentSetter(optionTarget.createOptionSetter());
-            CommonArgument commonArgument = optionTarget.getCommonArgument();
-            ArgumentConverter<?> commonArgumentConverter = getArgumentConverter(commonArgument.argumentConverter(),
+            final CommonArgument commonArgument = optionTarget.getCommonArgument();
+            final ArgumentConverter<?> commonArgumentConverter = getArgumentConverter(
+                    commonArgument.argumentConverter(),
                     optionTarget.getTargetClass());
             optionsBuilder.setCommonArgumentConverter(commonArgumentConverter);
         }
@@ -157,11 +160,11 @@ public final class OptionsFactory {
             }
         }
 
-        private SingleOptionBuilder processSimpleOption(AbstractOptionTarget optionTarget) {
+        private SingleOptionBuilder processSimpleOption(final AbstractOptionTarget optionTarget) {
 
-            SimpleOption simpleOption = optionTarget.getSimpleOption();
+            final SimpleOption simpleOption = optionTarget.getSimpleOption();
 
-            String optionNames[] = simpleOption.names();
+            final String optionNames[] = simpleOption.names();
             checkOptionNames(optionNames);
 
             checkIsDeclaringClassBoolean(optionTarget.getTargetClass());
@@ -176,20 +179,20 @@ public final class OptionsFactory {
                     .setOptionSetter(optionTarget.createOptionSetter());
         }
 
-        private static void checkIsDeclaringClassBoolean(Class<?> targetClass) {
+        private static void checkIsDeclaringClassBoolean(final Class<?> targetClass) {
             if (targetClass != boolean.class && targetClass != Boolean.class) {
                 Errors.SIMPLE_OPTION_BAD_TARGET_TYPE.throwException();
             }
         }
 
-        private void processParameterOption(AbstractOptionTarget optionTarget) {
+        private void processParameterOption(final AbstractOptionTarget optionTarget) {
 
-            ParameterOption parameterOption = optionTarget.getParameterOption();
+            final ParameterOption parameterOption = optionTarget.getParameterOption();
 
-            String[] optionNames = parameterOption.names();
+            final String[] optionNames = parameterOption.names();
             checkOptionNames(optionNames);
 
-            SingleOptionBuilder builder = optionsBuilder.addOption(optionNames)
+            final SingleOptionBuilder builder = optionsBuilder.addOption(optionNames)
                     .setArgumentObligation(translateOptionParameterRequired(parameterOption.parameterRequired()))
                     .setDescription(parameterOption.description())
                     .setArgumentName(parameterOption.argumentName())
@@ -198,21 +201,36 @@ public final class OptionsFactory {
                     .setRequired(parameterOption.optionRequired())
                     .setOptionSetter(optionTarget.createOptionSetter());
 
-            ArgumentConverter<?> argumentConverter = getArgumentConverter(parameterOption.argumentConverter(),
+            final ArgumentConverter<?> argumentConverter = getArgumentConverter(parameterOption.argumentConverter(),
                     optionTarget.getTargetClass());
             builder.setArgumentConverter(argumentConverter);
+
+            addValidatorsToSingleOptionBuilder(parameterOption, builder);
 
             builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter));
         }
 
-        private static Object getDefaultValue(ParameterOption parameterOption, ArgumentConverter<?> argumentConverter) {
-            String[] defaultParameter = parameterOption.defaultParameter();
+        private static void addValidatorsToSingleOptionBuilder(
+                final ParameterOption parameterOption,
+                final SingleOptionBuilder builder) {
+
+            for (final Validator validator : parameterOption.validators()) {
+                builder.addValidator(ValidatorFactory.createValidator(
+                        validator.validatorClass(),
+                        builder.getArgumentConverter(),
+                        validator.constructorParams()));
+            }
+        }
+
+        private static Object getDefaultValue(final ParameterOption parameterOption,
+                final ArgumentConverter<?> argumentConverter) {
+            final String[] defaultParameter = parameterOption.defaultParameter();
             if (defaultParameter.length == 0) {
                 return DEFAULT_VALUES_MAP.get(argumentConverter.getTargetClass());
             } else if (defaultParameter.length == 1) {
                 try {
                     return argumentConverter.parse(defaultParameter[0]);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     Errors.DEFAULT_VALUE_CONVERTING_ERROR.throwException(e, defaultParameter[0],
                             argumentConverter.getTargetClass());
                 }
@@ -222,8 +240,9 @@ public final class OptionsFactory {
             throw new IllegalStateException("This should really never happen");
         }
 
-        private ArgumentConverter<?> getArgumentConverter(Class<? extends ArgumentConverter<?>> argumentConverterClass,
-                Class<?> targetClass) {
+        private ArgumentConverter<?> getArgumentConverter(
+                final Class<? extends ArgumentConverter<?>> argumentConverterClass,
+                final Class<?> targetClass) {
 
             if (DummyArgumentConverter.class == argumentConverterClass) {
                 if (ArgumentConverterFactory.existsDefaultConverter(targetClass)) {
@@ -240,17 +259,17 @@ public final class OptionsFactory {
 
         }
 
-        private static void checkArgumentConverter(Class<? extends ArgumentConverter<?>> argumentConverterClass,
-                Class<?> targetClass) {
+        private static void checkArgumentConverter(final Class<? extends ArgumentConverter<?>> argumentConverterClass,
+                final Class<?> targetClass) {
 
             Method method = null;
             try {
                 method = argumentConverterClass.getMethod("parse", String.class);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Errors.COMMON_ERROR.throwException(e);
             }
 
-            Class<?> returnType = method.getReturnType();
+            final Class<?> returnType = method.getReturnType();
             if (!targetClass.isAssignableFrom(returnType) && !isSamePrimitiveAndWrapperType(targetClass, returnType)) {
                 Errors.ARGUMENT_CONVERTERBAD_RETURN_TYPE.throwException(argumentConverterClass.toString(),
                         returnType.toString(), targetClass.toString());
@@ -258,17 +277,17 @@ public final class OptionsFactory {
 
         }
 
-        private static boolean isSamePrimitiveAndWrapperType(Class<?> primitiveClass, Class<?> wrapperClass) {
+        private static boolean isSamePrimitiveAndWrapperType(final Class<?> primitiveClass, final Class<?> wrapperClass) {
             // this is approximation, in fact it is possible to assign primitive type from same or lesser type
             return primitiveClass.isPrimitive() && PRIMITIVE_2_WRAPPER_MAP.get(primitiveClass) == wrapperClass;
         }
 
-        private ArgumentConverter<?> createInstance(Class<? extends ArgumentConverter<?>> argumentConverterClass) {
+        private ArgumentConverter<?> createInstance(final Class<? extends ArgumentConverter<?>> argumentConverterClass) {
 
             Constructor<? extends ArgumentConverter<?>> constructor = null;
             try {
                 constructor = argumentConverterClass.getConstructor();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Errors.ARGUMENT_CONVERTER_CONSTRUCTOR.throwException(e, argumentConverterClass.toString());
             }
 
@@ -276,7 +295,7 @@ public final class OptionsFactory {
 
             try {
                 instance = constructor.newInstance();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Errors.ARGUMENT_CONVERTER_CREATION_ERROR.throwException(e, argumentConverterClass.toString());
             }
 
@@ -284,13 +303,13 @@ public final class OptionsFactory {
 
         }
 
-        private OptionArgumentObligation translateOptionParameterRequired(boolean parameterRequired) {
+        private OptionArgumentObligation translateOptionParameterRequired(final boolean parameterRequired) {
             return parameterRequired ? OptionArgumentObligation.REQUIRED : OptionArgumentObligation.OPTIONAL;
         }
 
-        private void checkOptionNames(String[] optionNames) {
+        private void checkOptionNames(final String[] optionNames) {
 
-            for (String optionName : optionNames) {
+            for (final String optionName : optionNames) {
                 if (optionsBuilder.isExistsOption(optionName)) {
                     Errors.MULTIPLE_CONFIGURATION_FOR_ONE_OPTION.throwException(optionName);
                 }
@@ -361,7 +380,7 @@ public final class OptionsFactory {
 
             protected void checkTarget() {
 
-                int modifiers = getModifiers();
+                final int modifiers = getModifiers();
                 if (Modifier.isStatic(modifiers)) {
                     Errors.MEMBER_STATIC.throwException(getTargetName());
                 }
@@ -375,7 +394,7 @@ public final class OptionsFactory {
 
             private final Field field;
 
-            public FieldOptionTarget(Field field) {
+            public FieldOptionTarget(final Field field) {
                 super();
                 this.field = field;
             }
@@ -422,7 +441,7 @@ public final class OptionsFactory {
 
             private final Method method;
 
-            public MethodOptionTarget(Method method) {
+            public MethodOptionTarget(final Method method) {
                 super();
                 this.method = method;
             }
@@ -495,15 +514,15 @@ public final class OptionsFactory {
 
         private final String errorText;
 
-        private Errors(String errorText) {
+        private Errors(final String errorText) {
             this.errorText = errorText;
         }
 
-        private void throwException(Object... args) {
+        private void throwException(final Object... args) {
             throw new MissConfiguratedAnnotationException(String.format(errorText, args));
         }
 
-        private void throwException(Exception exception, Object... args) {
+        private void throwException(final Exception exception, final Object... args) {
             throw new MissConfiguratedAnnotationException(String.format(errorText, args), exception);
         }
 
@@ -517,15 +536,15 @@ public final class OptionsFactory {
             super();
         }
 
-        public MissConfiguratedAnnotationException(String message, Throwable cause) {
+        public MissConfiguratedAnnotationException(final String message, final Throwable cause) {
             super(message, cause);
         }
 
-        public MissConfiguratedAnnotationException(String message) {
+        public MissConfiguratedAnnotationException(final String message) {
             super(message);
         }
 
-        public MissConfiguratedAnnotationException(Throwable cause) {
+        public MissConfiguratedAnnotationException(final Throwable cause) {
             super(cause);
         }
     }

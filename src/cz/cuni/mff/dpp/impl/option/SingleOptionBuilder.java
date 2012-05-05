@@ -10,7 +10,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.SingleOption;
-import cz.cuni.mff.dpp.api.Validator;
+import cz.cuni.mff.dpp.api.ArgumentValidator;
 
 /**
  * Basic implementation of {@link SingleOption}
@@ -31,7 +31,7 @@ public class SingleOptionBuilder implements SingleOption {
     private ArgumentConverter<?> argumentConverter;
     private Object defaultValue;
     private OptionSetter optionSetter;
-    private Set<Validator<?>> validators = new HashSet<Validator<?>>();
+    private Set<ArgumentValidator<?>> validators = new HashSet<ArgumentValidator<?>>();
 
     SingleOptionBuilder(String... names) {
         for (String name : names) {
@@ -127,7 +127,7 @@ public class SingleOptionBuilder implements SingleOption {
     }
 
     @Override
-    public Collection<Validator<?>> getValidators() {
+    public Collection<ArgumentValidator<?>> getValidators() {
         return validators;
     }
 
@@ -187,13 +187,13 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
-    public SingleOptionBuilder addValidator(Validator<?> validator) {
+    public SingleOptionBuilder addValidator(ArgumentValidator<?> validator) {
         this.validators.add(validator);
         return this;
     }
 
-    public SingleOptionBuilder setValidators(Validator<?>... validators) {
-        for (Validator<?> validator : validators) {
+    public SingleOptionBuilder setValidators(ArgumentValidator<?>... validators) {
+        for (ArgumentValidator<?> validator : validators) {
             addValidator(validator);
         }
         return this;

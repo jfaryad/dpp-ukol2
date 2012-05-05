@@ -49,4 +49,6 @@ public @interface ParameterOption {
 
     boolean multipleInvocation() default true;
 
+    Validator[] validators() default {};
+
 }
