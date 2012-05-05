@@ -127,7 +127,7 @@ public interface SingleOption {
     public RequiredCountInterval getRequiredCountInterval();
 
     /**
-     * Returns first name for this option (in order in which option names were configured)
+     * Returns first name for this option (alphabetically)
      * 
      * @return
      */

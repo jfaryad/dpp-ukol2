@@ -2,6 +2,7 @@ package cz.cuni.mff.dpp.example;
 
 import java.util.Date;
 
+import cz.cuni.mff.dpp.annotation.OptionsDefinition;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.Validator;
 import cz.cuni.mff.dpp.example.ValidatorExample.DateArgumentConverter;
@@ -9,6 +10,15 @@ import cz.cuni.mff.dpp.validator.BetweenInclusiveValidator;
 import cz.cuni.mff.dpp.validator.GreaterThenValidator;
 import cz.cuni.mff.dpp.validator.OneOfValidator;
 
+/**
+ * Annotated class used for some tests
+ * 
+ * @author jakub
+ * 
+ */
+@OptionsDefinition(
+        name = "person",
+        description = "saves information about a person")
 public class ValidatedPerson {
 
     @ParameterOption(

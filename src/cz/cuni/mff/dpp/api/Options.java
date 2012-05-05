@@ -57,4 +57,26 @@ public interface Options {
      */
     public RequiredCountInterval getCommonArgumentRequiredCountInterval();
 
+    /**
+     * Returns a summary of about the program that this Options object represents. It will be used for help screen
+     * generation.
+     * 
+     * @return
+     */
+    public String getDescription();
+
+    /**
+     * Returns the name of the command line program that this Options object represents. It will be used for help screen
+     * generation.
+     * 
+     * @return
+     */
+    public String getName();
+
+    /**
+     * Returns the "Usage" line that should be displayed in the help screen.
+     * 
+     */
+    public String getUsageLine();
+
 }

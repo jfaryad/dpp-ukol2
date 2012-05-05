@@ -2,6 +2,7 @@ package cz.cuni.mff.dpp.example;
 
 import java.io.File;
 
+import cz.cuni.mff.dpp.annotation.OptionsDefinition;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
 
@@ -13,6 +14,10 @@ import cz.cuni.mff.dpp.annotation.SimpleOption;
  * @author jfaryad
  * 
  */
+@OptionsDefinition(
+        name = "time",
+        description = "time a simple command or give resource usage",
+        usage = "time [options] command [arguments...]")
 public class GnuTimeBean2 {
 
     @ParameterOption(
@@ -47,7 +52,7 @@ public class GnuTimeBean2 {
             names = { "o", "output" },
             argumentName = "FILE",
             description = "Do not send the results to stderr, but overwrite the specified file.")
-    public void outputFile(String fileName) {
+    public void outputFile(final String fileName) {
         this.output = new File(fileName);
     }
 
@@ -55,7 +60,7 @@ public class GnuTimeBean2 {
         return format;
     }
 
-    public void setFormat(String format) {
+    public void setFormat(final String format) {
         this.format = format;
     }
 
@@ -63,7 +68,7 @@ public class GnuTimeBean2 {
         return output;
     }
 
-    public void setOutput(File output) {
+    public void setOutput(final File output) {
         this.output = output;
     }
 
@@ -71,7 +76,7 @@ public class GnuTimeBean2 {
         return append;
     }
 
-    public void setAppend(boolean append) {
+    public void setAppend(final boolean append) {
         this.append = append;
     }
 
@@ -79,7 +84,7 @@ public class GnuTimeBean2 {
         return verbose;
     }
 
-    public void setVerbose(boolean verbose) {
+    public void setVerbose(final boolean verbose) {
         this.verbose = verbose;
     }
 
@@ -87,7 +92,7 @@ public class GnuTimeBean2 {
         return help;
     }
 
-    public void setHelp(boolean help) {
+    public void setHelp(final boolean help) {
         this.help = help;
     }
 
@@ -95,7 +100,7 @@ public class GnuTimeBean2 {
         return version;
     }
 
-    public void setVersion(boolean version) {
+    public void setVersion(final boolean version) {
         this.version = version;
     }
 
