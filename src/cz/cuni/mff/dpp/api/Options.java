@@ -57,4 +57,22 @@ public interface Options {
      */
     public RequiredCountInterval getCommonArgumentRequiredCountInterval();
 
+    /**
+     * Returns {@link SingleOption} objects of options (specified by parameter) which must be specified together with
+     * this option on the command line.
+     * 
+     * @param optionName
+     * @return
+     */
+    public Collection<SingleOption> getDependentSingleOptionList(String optionName);
+
+    /**
+     * Returns {@link SingleOption} objects of options (specified by parameter) which mustn't be specified together with
+     * this option on the command line.
+     * 
+     * @param optionName
+     * @return
+     */
+    public Collection<SingleOption> getIncompatibleSingleOptionList(String optionName);
+
 }

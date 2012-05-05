@@ -2,6 +2,7 @@ package cz.cuni.mff.dpp.impl.option;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
@@ -99,4 +100,21 @@ public class OptionsBuilder implements Options {
         this.commonArgumentRequiredCountInterval = commonArgumentRequiredCountInterval;
     }
 
+    @Override
+    public Collection<SingleOption> getDependentSingleOptionList(String optionName) {
+        return getSingleOptionsByOptionNames(getOption(optionName).getDependentList());
+    }
+
+    @Override
+    public Collection<SingleOption> getIncompatibleSingleOptionList(String optionName) {
+        return getSingleOptionsByOptionNames(getOption(optionName).getIncompatibleList());
+    }
+
+    private final Collection<SingleOption> getSingleOptionsByOptionNames(Collection<String> optionNames) {
+        Collection<SingleOption> result = new HashSet<SingleOption>();
+        for (String dependentOptionName : optionNames) {
+            result.add(options.get(dependentOptionName));
+        }
+        return result;
+    }
 }

@@ -2,9 +2,12 @@ package cz.cuni.mff.dpp.impl.parser;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
@@ -16,6 +19,8 @@ import cz.cuni.mff.dpp.api.SingleOption;
 import cz.cuni.mff.dpp.api.parser.CommandLineParser;
 import cz.cuni.mff.dpp.api.parser.exception.CommandLineParserException;
 import cz.cuni.mff.dpp.api.parser.exception.CommonArgumentFormatException;
+import cz.cuni.mff.dpp.api.parser.exception.DependentOptionsException;
+import cz.cuni.mff.dpp.api.parser.exception.IncompatibleOptionsException;
 import cz.cuni.mff.dpp.api.parser.exception.OptionParameterFormatException;
 import cz.cuni.mff.dpp.api.parser.exception.RequiredCommonArgumentCountException;
 import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionCountException;
@@ -54,8 +59,6 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private final List<ParsedOption> parsedOptionList = new ArrayList<DefaultCommandLineParser.ParsedOption>();
 
-        // private Set<SingleOption> singleOptionsOnCommandLine;
-
         private Object targetBean;
 
         public ParserImpl(final String[] commandLine) {
@@ -64,16 +67,9 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
             createTargetBean();
             parse();
-            // fillSingleOptionsOnCommandLine();
             check();
             process();
         }
-
-        // private void fillSingleOptionsOnCommandLine() {
-        // for (ParsedOption parsedOption : parsedOptionList) {
-        // singleOptionsOnCommandLine.add(parsedOption.getSingleOptionConfig());
-        // }
-        // }
 
         private void process() {
             processOptions();
@@ -108,10 +104,9 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
                 checkUnexceptedParameterOption(parsedOption);
                 checkExceptedParameterOption(parsedOption);
-
-                checkDependentOption(singleOption);
-
             }
+
+            checkOptionsCompatibility(optionCounts);
 
             checkOptionCounts(optionCounts);
             checkCommonArgumentsCounts();
@@ -152,8 +147,30 @@ public class DefaultCommandLineParser implements CommandLineParser {
             }
         }
 
-        private void checkDependentOption(final SingleOption singleOption) {
-            // todo - budeme to opravdu podporovat???
+        private void checkOptionsCompatibility(final Map<SingleOption, Integer> optionCounts) {
+
+            for (SingleOption singleOption : optionCounts.keySet()) {
+                checkDependentOptions(singleOption, new HashSet<SingleOption>(optionCounts.keySet()));
+                checkIncompatibleOptions(singleOption, new HashSet<SingleOption>(optionCounts.keySet()));
+            }
+        }
+
+        private void checkDependentOptions(SingleOption singleOption, Set<SingleOption> optionsOnCommandLine) {
+            Collection<SingleOption> dependentSingleOptionList =
+                    options.getDependentSingleOptionList(singleOption.getFirstOptionName());
+            if (!optionsOnCommandLine.containsAll(dependentSingleOptionList)) {
+                optionsOnCommandLine.removeAll(dependentSingleOptionList);
+                processException(new DependentOptionsException(singleOption, optionsOnCommandLine));
+            }
+        }
+
+        private void checkIncompatibleOptions(SingleOption singleOption, Set<SingleOption> optionsOnCommandLine) {
+            Collection<SingleOption> incompatibleSingleOptionList =
+                    options.getIncompatibleSingleOptionList(singleOption.getFirstOptionName());
+            optionsOnCommandLine.retainAll(incompatibleSingleOptionList);
+            if (!optionsOnCommandLine.isEmpty()) {
+                processException(new IncompatibleOptionsException(singleOption, optionsOnCommandLine));
+            }
         }
 
         public void checkCommonArgumentsCounts() {

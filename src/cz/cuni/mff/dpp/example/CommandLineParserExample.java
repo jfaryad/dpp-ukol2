@@ -19,21 +19,21 @@ public class CommandLineParserExample {
 
     public static void main(String[] args) {
 
-         testGnuTimeBean();
-        
-         System.out.println("------------------------------");
-        
-         testGnuTimeBean2();
-        
-         System.out.println("------------------------------");
-        
-         testCommonArgumentTestBean();
-        
-         System.out.println("------------------------------");
-        
-         testEnumArgumentBean();
-        
-         System.out.println("------------------------------");
+//         testGnuTimeBean();
+//        
+//         System.out.println("------------------------------");
+//        
+//         testGnuTimeBean2();
+//        
+//         System.out.println("------------------------------");
+//        
+//         testCommonArgumentTestBean();
+//        
+//         System.out.println("------------------------------");
+//        
+//         testEnumArgumentBean();
+//        
+//         System.out.println("------------------------------");
 
         testTestBean();
     }
@@ -145,9 +145,9 @@ public class CommandLineParserExample {
         Options options = OptionsFactory.createOptions(TestBean.class);
         DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
 
-        TestBean bean=(TestBean) parser.parse(new String[] { "-abc=12" });
+        TestBean bean=(TestBean) parser.parse(new String[] { "-abc", "vvv" });
         System.out.println(bean.toString());
-
+        
     }
 
     public static class CommonArgumentTestBean {
@@ -184,14 +184,14 @@ public class CommandLineParserExample {
         @ParameterOption(names = "aaa", argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
         private File neco = null;
 
-        @SimpleOption(names = "a")
+        @SimpleOption(names = "a", dependentOn={"c"}, incompatibleWith="abv")
         private boolean s1;
         
         @SimpleOption(names = "b")
         private boolean s2;
         
         @ParameterOption(names = "c")
-        private Integer s3;
+        private boolean s3;
 
         @ParameterOption(names = "bb", minRequiredCount = 0, maxRequiredCount = 3, parameterRequired = false)
         private Integer someNumberFrom2To10;
