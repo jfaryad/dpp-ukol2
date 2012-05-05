@@ -205,9 +205,6 @@ public class CommandLineParserExample {
             return "TestBean [neco=" + neco + ", s1=" + s1 + ", s2=" + s2 + ", s3=" + s3 + ", someNumberFrom2To10="
                     + someNumberFrom2To10 + "]";
         }
-        
-        
-
     }
 
     public static class TestArgumentConverter implements ArgumentConverter<File> {

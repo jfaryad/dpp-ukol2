@@ -23,6 +23,7 @@ import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionParameterException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionParameterException;
+import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
 public class DefaultCommandLineParser implements CommandLineParser {
 
@@ -191,13 +192,11 @@ public class DefaultCommandLineParser implements CommandLineParser {
             }
         }
 
-        // TODO mozna presunout nekam jinam podle potreby a zmenit vyjimku
         private <T> void applyParameterValidations(final SingleOption option,
                 final T parameter) {
             for (final ArgumentValidator<?> validator : option.getValidators()) {
                 if (!validator.isValid(parameter)) {
-                    throw new RuntimeException("Validation failed for the option parameter" + option.getArgumentName()
-                            + " with value " + parameter);
+                    processException(new ValidationException(validator, parameter));
                 }
             }
         }
@@ -289,7 +288,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
             } else {
                 tokenName = token.substring(0, delimIndex);
                 if (token.length() == delimIndex + 1) {
-                    tokenParameter = "";
+                    tokenParameter = EMPTY_OPTION_PARAMETER;
                 } else {
                     tokenParameter = token.substring(delimIndex + 1);
                 }
@@ -301,7 +300,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
                 addParsedOption(tokenName);
             }
 
-            ParsedOption lastParsedOption = parsedOptionList.get(parsedOptionList.size()-1);
+            ParsedOption lastParsedOption = parsedOptionList.get(parsedOptionList.size() - 1);
             if (tokenParameter != null) {
                 lastParsedOption.setOptionParameter(tokenParameter);
             }
