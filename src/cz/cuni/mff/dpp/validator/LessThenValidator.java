@@ -28,6 +28,7 @@ public class LessThenValidator<T extends Comparable<T>> extends AbstractValidato
         this.constraint = constraint[0];
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean isValid(final Object argument) {
         checkNullValue(argument);

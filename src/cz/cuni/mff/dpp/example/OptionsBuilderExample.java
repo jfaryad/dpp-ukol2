@@ -11,7 +11,7 @@ import cz.cuni.mff.dpp.impl.option.OptionsBuilder;
 public class OptionsBuilderExample {
 
     public static void main(String[] args) {
-        OptionsBuilder builder = new OptionsBuilder();
+        OptionsBuilder<Object> builder = new OptionsBuilder<Object>();
         builder.addOption("f", "format")
                 .setArgumentName("FORMAT")
                 .setArgumentClass(String.class)

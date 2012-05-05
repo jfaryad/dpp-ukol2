@@ -17,12 +17,12 @@ import cz.cuni.mff.dpp.api.SingleOption;
  * @author jfaryad
  * 
  */
-public class OptionsBuilder implements Options {
+public class OptionsBuilder<T> implements Options<T> {
 
     private static final RequiredCountInterval DEFAULT_REQUIRED_COUNT_INTERVAL = new RequiredCountInterval(0, 0);
 
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
-    private Class<?> targetBeanClass;
+    private Class<T> targetBeanClass;
 
     private ArgumentConverter<?> commonArgumentConverter;
     private OptionSetter commonArgumentSetter;
@@ -60,11 +60,11 @@ public class OptionsBuilder implements Options {
     }
 
     @Override
-    public Class<?> getTargetBeanClass() {
+    public Class<T> getTargetBeanClass() {
         return targetBeanClass;
     }
 
-    public void setTargetBeanClass(final Class<?> targetBeanClass) {
+    public void setTargetBeanClass(final Class<T> targetBeanClass) {
         this.targetBeanClass = targetBeanClass;
     }
 

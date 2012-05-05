@@ -2,7 +2,7 @@ package cz.cuni.mff.dpp.api.parser;
 
 import cz.cuni.mff.dpp.api.Options;
 
-public interface CommandLineParser {
+public interface CommandLineParser<T> {
 
     String COMMON_ARGUMENT_DELIMITER = "--";
 
@@ -12,8 +12,8 @@ public interface CommandLineParser {
 
     int SHORT_OPTION_NAME_LENGTH = 1;
 
-    Object parse(String[] commnadLine);
+    T parse(String[] commnadLine);
 
-    Options getOptions();
+    Options<T> getOptions();
 
 }

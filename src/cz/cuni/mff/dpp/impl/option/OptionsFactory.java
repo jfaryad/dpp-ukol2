@@ -36,15 +36,15 @@ public final class OptionsFactory {
     private OptionsFactory() {
     }
 
-    public static Options createOptions(final Class<?> beanClass) {
-        return new AnnotatedBeanOptionsBuilder(beanClass).getOptionsBuilder();
+    public static <T> Options<T> createOptions(final Class<T> targetBeanClass) {
+        return new AnnotatedBeanOptionsBuilder<T>(targetBeanClass).getOptionsBuilder();
     }
 
     // =============================================================================================================
     // =============================================================================================================
     // =============================================================================================================
 
-    private static final class AnnotatedBeanOptionsBuilder {
+    private static final class AnnotatedBeanOptionsBuilder<T> {
 
         private static final Map<Class<?>, Object> DEFAULT_VALUES_MAP;
 
@@ -91,15 +91,15 @@ public final class OptionsFactory {
         private static final RequiredCountInterval SIMPLE_OPTION_REQUIRED_COUNT_INTERVAL =
                 new RequiredCountInterval(0, 1);
 
-        private final OptionsBuilder optionsBuilder;
+        private final OptionsBuilder<T> optionsBuilder;
 
-        private final Class<?> beanClass;
+        private final Class<T> beanClass;
 
         private boolean isCommonArgumentConfigured = false;
 
-        private AnnotatedBeanOptionsBuilder(final Class<?> beanClass) {
+        private AnnotatedBeanOptionsBuilder(final Class<T> beanClass) {
             this.beanClass = beanClass;
-            this.optionsBuilder = new OptionsBuilder();
+            this.optionsBuilder = new OptionsBuilder<T>();
 
             build();
         }
@@ -346,7 +346,7 @@ public final class OptionsFactory {
             }
         }
 
-        private OptionsBuilder getOptionsBuilder() {
+        private OptionsBuilder<T> getOptionsBuilder() {
             return optionsBuilder;
         }
 

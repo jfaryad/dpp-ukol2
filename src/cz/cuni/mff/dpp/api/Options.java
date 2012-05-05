@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author jakub
  * 
  */
-public interface Options {
+public interface Options<T> {
 
     /**
      * Returns a collection of all defined options. Returns an empty list if no options are specified.
@@ -33,7 +33,7 @@ public interface Options {
      * 
      * @return
      */
-    public Class<?> getTargetBeanClass();
+    public Class<T> getTargetBeanClass();
 
     /**
      * Returns converter for common argument, this converter is used to convert value from {@link String} to desired

@@ -21,7 +21,7 @@ public abstract class AbstractValidator<T> implements ArgumentValidator<T> {
      * @param targetClass
      *            the class of the argument to validate
      */
-    @SuppressWarnings("unchecked")
+    
     public AbstractValidator(final Class<T> targetClass) {
         this.targetClass = targetClass;
     }

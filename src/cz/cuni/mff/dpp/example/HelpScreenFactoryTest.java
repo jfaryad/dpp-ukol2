@@ -8,7 +8,7 @@ import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 public class HelpScreenFactoryTest {
 
     public static void main(final String[] args) {
-        final Options options = OptionsFactory.createOptions(GnuTimeBean.class);
+        final Options<GnuTimeBean> options = OptionsFactory.createOptions(GnuTimeBean.class);
         final HelpScreenFactory helpScreenFactory = new DefaultHelpScreenFactory(options);
         System.out.println(helpScreenFactory.generateHelpScreen());
     }

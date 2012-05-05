@@ -36,7 +36,7 @@ public class ValidatorFactory {
         return createValidatorInstance(validatorClass, argumentConverter.getTargetClass(), convertedConstructorParams);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"rawtypes" })
     private static <T> ArgumentValidator<T> createValidatorInstance(
             final Class<? extends ArgumentValidator> validatorClass,
             final Class<T> targetClass, final T... constructorParams) {

@@ -12,11 +12,11 @@ public class OptionsFactoryExample {
 
     public static void main(String[] args) {
 
-        Options createOptions = OptionsFactory.createOptions(GnuTimeBean.class);
+        Options<GnuTimeBean> createOptions = OptionsFactory.createOptions(GnuTimeBean.class);
 
         System.out.println(createOptions);
 
-        Options createOptions2 = OptionsFactory.createOptions(GnuTimeBean2.class);
+        Options<GnuTimeBean2> createOptions2 = OptionsFactory.createOptions(GnuTimeBean2.class);
 
         System.out.println(createOptions2);
 

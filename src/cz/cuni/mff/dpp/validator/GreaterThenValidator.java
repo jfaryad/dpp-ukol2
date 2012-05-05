@@ -28,6 +28,7 @@ public class GreaterThenValidator<T extends Comparable<T>> extends AbstractValid
         this.constraint = constraint[0];
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean isValid(final Object argument) {
         checkNullValue(argument);

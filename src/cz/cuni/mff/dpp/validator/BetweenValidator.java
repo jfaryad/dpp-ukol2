@@ -32,6 +32,7 @@ public class BetweenValidator<T extends Comparable<T>> extends AbstractValidator
         checkNullConstraint(upperBound);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean isValid(final Object argument) {
         checkNullValue(argument);

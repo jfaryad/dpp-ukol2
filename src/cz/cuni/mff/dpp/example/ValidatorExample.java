@@ -3,7 +3,6 @@ package cz.cuni.mff.dpp.example;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
@@ -20,7 +19,8 @@ import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 public class ValidatorExample {
 
     private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private final static String TODAY = dateFormat.format(Calendar.getInstance().getTime());
+
+    // private final static String TODAY = dateFormat.format(Calendar.getInstance().getTime());
 
     // private final static ArgumentValidator<Integer> ageValidator = ValidatorFactory.createValidator(
     // BetweenInclusiveValidator.class,
@@ -38,15 +38,15 @@ public class ValidatorExample {
     // dateFormat.format(Calendar.getInstance().getTime()));
 
     public static void main(final String[] args) {
-        final Options options = OptionsFactory.createOptions(ValidatedPerson.class);
+        final Options<ValidatedPerson> options = OptionsFactory.createOptions(ValidatedPerson.class);
         System.out.println(options);
 
-        final DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        final DefaultCommandLineParser<ValidatedPerson> parser = new DefaultCommandLineParser<ValidatedPerson>(options);
 
         try {
 
             System.out.println("Testing valid command line");
-            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "55", "-c", "blue",
+            final ValidatedPerson person = parser.parse(new String[] { "--a", "55", "-c", "blue",
                     "-b",
                     "30-05-2012" });
             System.out.println(person.toString());
@@ -57,7 +57,7 @@ public class ValidatorExample {
 
         try {
             System.out.println("Testing invalid nextBirthday");
-            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "55", "-c", "blue",
+            final ValidatedPerson person = parser.parse(new String[] { "--a", "55", "-c", "blue",
                     "-b",
                     "30-03-2012" });
             System.out.println(person.toString());
@@ -68,7 +68,7 @@ public class ValidatorExample {
 
         try {
             System.out.println("Testing invalid color");
-            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "55", "-c", "purple",
+            final ValidatedPerson person = parser.parse(new String[] { "--a", "55", "-c", "purple",
                     "-b",
                     "30-05-2012" });
             System.out.println(person.toString());
@@ -79,7 +79,7 @@ public class ValidatorExample {
 
         try {
             System.out.println("Testing invalid age");
-            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "125", "-c", "blue",
+            final ValidatedPerson person = parser.parse(new String[] { "--a", "125", "-c", "blue",
                     "-b",
                     "30-06-2012" });
             System.out.println(person.toString());
