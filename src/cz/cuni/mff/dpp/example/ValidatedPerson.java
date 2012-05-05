@@ -20,7 +20,7 @@ public class ValidatedPerson {
                             constructorParams = { "0", "120" })
             },
             description = "The age of the person.")
-    private Integer age;
+    private int age;
 
     @ParameterOption(
             names = { "c", "color" },

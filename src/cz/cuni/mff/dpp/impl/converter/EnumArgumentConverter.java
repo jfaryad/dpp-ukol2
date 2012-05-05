@@ -26,5 +26,4 @@ public class EnumArgumentConverter<T extends Enum<T>> implements ArgumentConvert
     public Class<T> getTargetClass() {
         return targetClass;
     }
-
 }

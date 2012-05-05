@@ -216,8 +216,8 @@ public final class OptionsFactory {
             builder.setArgumentConverter(argumentConverter);
 
             addValidatorsToSingleOptionBuilder(parameterOption, builder);
-
-            builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter));
+         
+            builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter, optionTarget.getTargetClass()));
         }
 
         private static RequiredCountInterval createRequiredCountInterval(int min, int max) {
@@ -242,10 +242,10 @@ public final class OptionsFactory {
         }
 
         private static Object getDefaultValue(final ParameterOption parameterOption,
-                final ArgumentConverter<?> argumentConverter) {
+                final ArgumentConverter<?> argumentConverter, Class<?> setterTargetClass) {
             final String[] defaultParameter = parameterOption.defaultParameter();
             if (defaultParameter.length == 0) {
-                return DEFAULT_VALUES_MAP.get(argumentConverter.getTargetClass());
+                return DEFAULT_VALUES_MAP.get(setterTargetClass);
             } else if (defaultParameter.length == 1) {
                 try {
                     return argumentConverter.parse(defaultParameter[0]);
@@ -500,11 +500,8 @@ public final class OptionsFactory {
                 if (method.getReturnType() != void.class || method.getParameterTypes().length != 1) {
                     Errors.METHOD_BAD_SIGNATURE.throwException(getTargetName());
                 }
-
             }
-
         }
-
     }
 
     private static enum Errors {

@@ -45,7 +45,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Byte> getTargetClass() {
-                return byte.class;
+                return Byte.class;
             }
         });
 
@@ -79,7 +79,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Short> getTargetClass() {
-                return short.class;
+                return Short.class;
             }
         });
 
@@ -113,7 +113,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Integer> getTargetClass() {
-                return int.class;
+                return Integer.class;
             }
         });
 
@@ -147,7 +147,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Long> getTargetClass() {
-                return long.class;
+                return Long.class;
             }
         });
 
@@ -181,7 +181,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Float> getTargetClass() {
-                return float.class;
+                return Float.class;
             }
         });
 
@@ -215,7 +215,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Double> getTargetClass() {
-                return double.class;
+                return Double.class;
             }
         });
 
@@ -249,7 +249,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Boolean> getTargetClass() {
-                return boolean.class;
+                return Boolean.class;
             }
         });
 
@@ -277,7 +277,7 @@ public class ArgumentConverterFactory {
 
             @Override
             public Class<Character> getTargetClass() {
-                return char.class;
+                return Character.class;
             }
         });
 

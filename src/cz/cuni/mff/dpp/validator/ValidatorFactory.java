@@ -72,7 +72,6 @@ public class ValidatorFactory {
             final String... constructorParams) {
         final T[] convertedParams = (T[]) Array.newInstance(argumentConverter.getTargetClass(),
                 constructorParams.length);
-        ;
         for (int i = 0; i < constructorParams.length; i++) {
             convertedParams[i] = argumentConverter.parse(constructorParams[i]);
         }

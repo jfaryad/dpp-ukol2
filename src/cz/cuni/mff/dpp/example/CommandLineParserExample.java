@@ -145,7 +145,7 @@ public class CommandLineParserExample {
         Options options = OptionsFactory.createOptions(TestBean.class);
         DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
 
-        TestBean bean=(TestBean) parser.parse(new String[] { "-abc=true" });
+        TestBean bean=(TestBean) parser.parse(new String[] { "-abc=12" });
         System.out.println(bean.toString());
 
     }
@@ -191,7 +191,7 @@ public class CommandLineParserExample {
         private boolean s2;
         
         @ParameterOption(names = "c")
-        private boolean s3;
+        private Integer s3;
 
         @ParameterOption(names = "bb", minRequiredCount = 0, maxRequiredCount = 3, parameterRequired = false)
         private Integer someNumberFrom2To10;

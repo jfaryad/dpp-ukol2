@@ -30,5 +30,4 @@ public class FieldOptionSetter implements OptionSetter {
         }
 
     }
-
 }

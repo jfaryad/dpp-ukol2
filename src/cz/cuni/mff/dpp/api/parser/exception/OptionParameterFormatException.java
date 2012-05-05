@@ -6,7 +6,7 @@ public class OptionParameterFormatException extends AbstractArgumentConverterExc
 
     private static final long serialVersionUID = 1L;
 
-    private static final String MESSAGE = "Value: '%s' cannot  be formated with converter: %s.";
+    private static final String MESSAGE = "Value: '%s' cannot  be converted with converter: %s.";
 
     private final String optionName;
 
