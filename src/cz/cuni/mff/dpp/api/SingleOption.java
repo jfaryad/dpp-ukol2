@@ -43,7 +43,7 @@ public interface SingleOption {
      * 
      * @return
      */
-    public Collection<String> getDependendentList();
+    public Collection<String> getDependentList();
 
     /**
      * Returns names of options that must <b>not<b> be specified when this option is specified.

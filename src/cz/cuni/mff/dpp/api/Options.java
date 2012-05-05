@@ -14,10 +14,15 @@ import java.util.Collection;
 public interface Options {
 
     /**
-     * Returns a list off all defined options. Returns an empty list if no options are specified.
+     * Returns a collection of all defined options. Returns an empty list if no options are specified.
      * 
      */
     public Collection<SingleOption> getOptions();
+
+    /**
+     * Returns a collection of all options which are required.
+     */
+    public Collection<SingleOption> getRequiredOptions();
 
     /**
      * Returns the option with the specified name (long or short). If no such option exists, null is returned.
@@ -55,5 +60,4 @@ public interface Options {
      * @return
      */
     public OptionSetter getCommonArgumentSetter();
-
 }

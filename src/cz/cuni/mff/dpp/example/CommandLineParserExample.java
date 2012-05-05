@@ -1,17 +1,20 @@
 package cz.cuni.mff.dpp.example;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.dpp.annotation.CommonArgument;
+import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
+import cz.cuni.mff.dpp.annotation.Validator;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.ArgumentFormatException;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
-import cz.cuni.mff.dpp.parser.DefaultCommandLineParser;
+import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
+import cz.cuni.mff.dpp.validator.AbstractValidator;
 
 public class CommandLineParserExample {
 
@@ -33,7 +36,7 @@ public class CommandLineParserExample {
 
         System.out.println("------------------------------");
 
-        testTestBean();
+        //testTestBean();
     }
 
     public static void testGnuTimeBean() {
@@ -141,7 +144,9 @@ public class CommandLineParserExample {
     public static void testTestBean() {
 
         Options options = OptionsFactory.createOptions(TestBean.class);
-        // DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+        
+        parser.parse(new String[] {"--aa"});
 
     }
 
@@ -176,13 +181,17 @@ public class CommandLineParserExample {
 
     public static class TestBean {
 
-        //@CommonArgument(argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
-        private File neco=null;
+        @ParameterOption(names="aaa", argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
+        private File neco = null;
 
+        @SimpleOption(names="aaaa")
         private boolean neco2;
-        
-        @CommonArgument
-        public void setNeco3(boolean neco3) {
+
+        @ParameterOption(names="bb", optionRequired=false,parameterRequired=false)
+        private Integer someNumberFrom2To10;
+
+        //@CommonArgument
+        public void setNeco3(boolean neco3) { 
         }
 
     }
@@ -194,7 +203,7 @@ public class CommandLineParserExample {
 
         @Override
         public File parse(String argument) {
-            return null;
+            throw new ArgumentFormatException(argument, this.getClass());
         }
 
         @Override
@@ -203,5 +212,6 @@ public class CommandLineParserExample {
         }
 
     }
+
 
 }

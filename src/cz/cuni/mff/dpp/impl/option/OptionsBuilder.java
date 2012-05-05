@@ -1,7 +1,9 @@
 package cz.cuni.mff.dpp.impl.option;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
@@ -92,5 +94,16 @@ public class OptionsBuilder implements Options {
     public String toString() {
         return "OptionsBuilder [options=" + options + ", nonOptionArgumentsAllowed=" + nonOptionArgumentsAllowed
                 + ", targetBeanClass=" + targetBeanClass + "]";
+    }
+
+    @Override
+    public Collection<SingleOption> getRequiredOptions() {
+        List<SingleOption> result=new ArrayList<SingleOption>();
+        for (SingleOption singleOption : options.values()) {
+            if (singleOption.isRequired()) {
+                result.add(singleOption);
+            }
+        }
+        return result;
     }
 }

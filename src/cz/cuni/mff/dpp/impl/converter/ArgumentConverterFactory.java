@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.ArgumentFormatException;
 
 public class ArgumentConverterFactory {
 
@@ -18,7 +19,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Byte parse(String argument) {
-                return Byte.parseByte(argument);
+                try {
+                    return Byte.parseByte(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -31,7 +36,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Byte parse(String argument) {
-                return Byte.parseByte(argument);
+                try {
+                    return Byte.parseByte(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -44,7 +53,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Short parse(String argument) {
-                return Short.parseShort(argument);
+                try {
+                    return Short.parseShort(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -57,7 +70,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Short parse(String argument) {
-                return Short.parseShort(argument);
+                try {
+                    return Short.parseShort(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -70,7 +87,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Integer parse(String argument) {
-                return Integer.parseInt(argument);
+                try {
+                    return Integer.parseInt(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -83,7 +104,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Integer parse(String argument) {
-                return Integer.parseInt(argument);
+                try {
+                    return Integer.parseInt(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -96,7 +121,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Long parse(String argument) {
-                return Long.parseLong(argument);
+                try {
+                    return Long.parseLong(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -109,7 +138,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Long parse(String argument) {
-                return Long.parseLong(argument);
+                try {
+                    return Long.parseLong(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -122,7 +155,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Float parse(String argument) {
-                return Float.parseFloat(argument);
+                try {
+                    return Float.parseFloat(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -135,7 +172,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Float parse(String argument) {
-                return Float.parseFloat(argument);
+                try {
+                    return Float.parseFloat(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -148,7 +189,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Double parse(String argument) {
-                return Double.parseDouble(argument);
+                try {
+                    return Double.parseDouble(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -161,7 +206,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Double parse(String argument) {
-                return Double.parseDouble(argument);
+                try {
+                    return Double.parseDouble(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -174,7 +223,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Boolean parse(String argument) {
-                return Boolean.parseBoolean(argument);
+                try {
+                    return Boolean.parseBoolean(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -187,7 +240,11 @@ public class ArgumentConverterFactory {
 
             @Override
             public Boolean parse(String argument) {
-                return Boolean.parseBoolean(argument);
+                try {
+                    return Boolean.parseBoolean(argument);
+                } catch (NumberFormatException nfe) {
+                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                }
             }
 
             @Override
@@ -269,10 +326,8 @@ public class ArgumentConverterFactory {
 
     private static void checkIsChar(String character) {
         if (character == null || character.length() != 1) {
-            throw new IllegalArgumentException("String '" + character
-                    + "' is no character, which have to have lenght 1 char");
+            throw new ArgumentFormatException(character, Character.class);
         }
 
     }
-
 }

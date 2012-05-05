@@ -30,8 +30,6 @@ public @interface ParameterOption {
      */
     String argumentName() default "";
 
-    boolean required() default false;
-
     String[] dependentOn() default {};
 
     String[] incompatibleWith() default {};
@@ -45,5 +43,7 @@ public @interface ParameterOption {
     String[] defaultParameter() default {};
 
     boolean multipleInvocation() default true;
+    
+    Validator[] validators() default {};
 
 }

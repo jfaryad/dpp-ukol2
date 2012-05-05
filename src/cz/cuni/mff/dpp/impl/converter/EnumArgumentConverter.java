@@ -1,5 +1,7 @@
 package cz.cuni.mff.dpp.impl.converter;
 
+import java.lang.annotation.AnnotationFormatError;
+
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 
 public class EnumArgumentConverter<T extends Enum<T>> implements ArgumentConverter<T> {
@@ -13,7 +15,11 @@ public class EnumArgumentConverter<T extends Enum<T>> implements ArgumentConvert
 
     @Override
     public T parse(String argument) {
-        return Enum.valueOf(targetClass, argument);
+        try {
+            return Enum.valueOf(targetClass, argument);
+        } catch (Exception e) {
+            throw new AnnotationFormatError(e);
+        }
     }
 
     @Override

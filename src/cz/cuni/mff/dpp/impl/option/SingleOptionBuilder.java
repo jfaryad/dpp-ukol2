@@ -72,7 +72,7 @@ public class SingleOptionBuilder implements SingleOption {
     }
 
     @Override
-    public Collection<String> getDependendentList() {
+    public Collection<String> getDependentList() {
         return dependentOn;
     }
 
