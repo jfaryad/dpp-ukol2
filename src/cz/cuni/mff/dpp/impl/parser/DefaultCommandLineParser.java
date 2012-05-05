@@ -1,16 +1,27 @@
-package cz.cuni.mff.dpp.parser;
+package cz.cuni.mff.dpp.impl.parser;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.ArgumentFormatException;
 import cz.cuni.mff.dpp.api.ArgumentValidator;
-import cz.cuni.mff.dpp.api.CommandLineParser;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.api.SingleOption;
+import cz.cuni.mff.dpp.api.parser.CommandLineParser;
+import cz.cuni.mff.dpp.api.parser.exception.CommandLineParserException;
+import cz.cuni.mff.dpp.api.parser.exception.CommonArgumentFormatException;
+import cz.cuni.mff.dpp.api.parser.exception.OptionParameterFormatException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionParameterException;
+import cz.cuni.mff.dpp.api.parser.exception.UnexceptedException;
+import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionException;
+import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionParameterException;
 
 public class DefaultCommandLineParser implements CommandLineParser {
 
@@ -39,6 +50,8 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private final List<ParsedOption> parsedOptionList = new ArrayList<DefaultCommandLineParser.ParsedOption>();
 
+        // private Set<SingleOption> singleOptionsOnCommandLine;
+
         private Object targetBean;
 
         public ParserImpl(final String[] commandLine) {
@@ -47,9 +60,16 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
             createTargetBean();
             parse();
+            // fillSingleOptionsOnCommandLine();
             check();
             process();
         }
+
+        // private void fillSingleOptionsOnCommandLine() {
+        // for (ParsedOption parsedOption : parsedOptionList) {
+        // singleOptionsOnCommandLine.add(parsedOption.getSingleOptionConfig());
+        // }
+        // }
 
         private void process() {
             processOptions();
@@ -61,32 +81,99 @@ public class DefaultCommandLineParser implements CommandLineParser {
                 final Constructor<?> constructor = options.getTargetBeanClass().getConstructor();
                 targetBean = constructor.newInstance();
             } catch (final Exception e) {
-                throw new RuntimeException(e);
-                // todo translate exception
+                throw new UnexceptedException(e);
             }
 
         }
 
         private void check() {
 
-            // todo check parsed command line against configuration
+            final Collection<SingleOption> requiredOptions = new HashSet<SingleOption>(options.getRequiredOptions());
 
+            for (final ParsedOption parsedOption : parsedOptionList) {
+
+                final String optionName = parsedOption.getOptionName();
+
+                final SingleOption singleOption = parsedOption.getSingleOptionConfig();
+                requiredOptions.remove(singleOption);
+
+                if (singleOption == null) {
+                    processException(new UnexceptedOptionException(optionName, parsedOption.isShortOption()));
+                    continue;
+                }
+
+                checkUnexceptedParameterOption(parsedOption);
+                checkExceptedParameterOption(parsedOption);
+
+                checkDependentOption(singleOption);
+
+            }
+
+            checkReqiuredOptions(requiredOptions);
+
+        }
+
+        private void checkExceptedParameterOption(final ParsedOption parsedOption) {
+            if (!parsedOption.hasOptionParameter()
+                    && parsedOption.getSingleOptionConfig().getArgumentObligation() == OptionArgumentObligation.REQUIRED) {
+                processException(new RequiredOptionParameterException(parsedOption.getOptionName()));
+            }
+        }
+
+        private void checkUnexceptedParameterOption(final ParsedOption parsedOption) {
+            if (parsedOption.hasOptionParameter()
+                    && parsedOption.getSingleOptionConfig().getArgumentObligation() == OptionArgumentObligation.FORBIDDEN) {
+                processException(new UnexceptedOptionParameterException(parsedOption.getOptionName(),
+                        parsedOption.getOptionParameter()));
+            }
+        }
+
+        private void checkReqiuredOptions(final Collection<SingleOption> unprovidedRequiredOptions) {
+            if (!unprovidedRequiredOptions.isEmpty()) {
+                final List<String> optionNames = new ArrayList<String>(unprovidedRequiredOptions.size());
+                for (final SingleOption singleOption : unprovidedRequiredOptions) {
+                    // only first name for each option
+                    optionNames.add(singleOption.getNames().iterator().next());
+                }
+                processException(new RequiredOptionException(optionNames));
+            }
+        }
+
+        private void checkDependentOption(final SingleOption singleOption) {
+            // todo - budeme to opravdu podporovat???
+        }
+
+        private void checkCommonArguments() {
+            // todo spolecne s poctama
+        }
+
+        private void processException(final CommandLineParserException exception) {
+            throw exception;
         }
 
         private void processOptions() {
 
             for (final ParsedOption parsedOption : parsedOptionList) {
                 final SingleOption singleOption = options.getOption(parsedOption.getOptionName());
+
                 Object convertedOptionParameter;
                 if (parsedOption.hasOptionParameter()) {
-                    final String optionParameter = parsedOption.getOptionParameter();
-                    convertedOptionParameter = singleOption.getArgumentConverter().parse(optionParameter);
-                    // todo catch and translate exception
+
+                    try {
+                        convertedOptionParameter = singleOption.getArgumentConverter().parse(
+                                parsedOption.getOptionParameter());
+                    } catch (final ArgumentFormatException afe) {
+                        processException(new OptionParameterFormatException(afe, parsedOption.getOptionName()));
+                        continue;
+                    } catch (final Exception e) {
+                        throw new UnexceptedException(e);
+                    }
+
                 } else {
                     convertedOptionParameter = singleOption.getDefaultValue();
                 }
                 applyParameterValidations(singleOption, convertedOptionParameter);
-                singleOption.getOptionSetter().setOption(targetBean, convertedOptionParameter);
+                setOptionParameter(singleOption.getOptionSetter(), convertedOptionParameter);
             }
         }
 
@@ -101,18 +188,39 @@ public class DefaultCommandLineParser implements CommandLineParser {
             }
         }
 
+        private void setOptionParameter(final OptionSetter optionSetter, final Object convertedOptionParameter) {
+
+            try {
+                optionSetter.setOption(targetBean, convertedOptionParameter);
+            } catch (final Exception e) {
+                throw new UnexceptedException(e);
+            }
+
+        }
+
         private void processCommonArguments() {
 
             final OptionSetter commonArgumentSetter = options.getCommonArgumentSetter();
             final ArgumentConverter<?> commonArgumentConverter = options.getCommonArgumentConverter();
             for (final String commonArgument : commonArgumetList) {
                 Object convertedObject;
+
+                // todo...
                 if (commonArgumentConverter == null) {
                     convertedObject = commonArgument;
                 } else {
-                    convertedObject = commonArgumentConverter.parse(commonArgument);
+
+                    try {
+                        convertedObject = commonArgumentConverter.parse(commonArgument);
+                    } catch (final ArgumentFormatException afe) {
+                        processException(new CommonArgumentFormatException(afe));
+                        continue;
+                    } catch (final Exception e) {
+                        throw new UnexceptedException(e);
+                    }
                 }
-                commonArgumentSetter.setOption(targetBean, convertedObject);
+
+                setOptionParameter(commonArgumentSetter, convertedObject);
             }
 
         }
@@ -128,7 +236,6 @@ public class DefaultCommandLineParser implements CommandLineParser {
                 if (isNextCommonArgument) {
                     commonArgumetList.add(element);
                 } else if (isNextOptionParameter) {
-
                     option.setOptionParameter(element);
                     isNextOptionParameter = false;
                 } else if (CommandLineParser.COMMON_ARGUMENT_DELIMITER.equals(element)) {
@@ -156,17 +263,17 @@ public class DefaultCommandLineParser implements CommandLineParser {
             final ParsedOption result = new ParsedOption();
 
             String token;
-
             if (isLongOption(value)) {
-                token = value.substring(CommandLineParser.LONG_OPTION_DELIMITER.length());
+                token = value.substring(CommandLineParser.LONG_OPTION_PREFIX.length());
                 result.setShortOption(false);
             } else if (isShortOption(value)) {
-                token = value.substring(CommandLineParser.SHORT_OPTION_DELIMITER.length());
+                token = value.substring(CommandLineParser.SHORT_OPTION_PREFIX.length());
                 result.setShortOption(true);
             } else {
                 throw new IllegalStateException("This should never happen");
             }
 
+            // todo parsovani -abc
             final int delimIndex = token.indexOf("=");
 
             if (delimIndex == -1) {
@@ -186,14 +293,13 @@ public class DefaultCommandLineParser implements CommandLineParser {
         }
 
         private boolean isShortOption(final String value) {
-            // todo shrink option names
-            return value.startsWith(CommandLineParser.SHORT_OPTION_DELIMITER)
-                    && value.length() > CommandLineParser.SHORT_OPTION_DELIMITER.length();
+            return value.startsWith(CommandLineParser.SHORT_OPTION_PREFIX)
+                    && value.length() > CommandLineParser.SHORT_OPTION_PREFIX.length();
         }
 
         private boolean isLongOption(final String value) {
-            return value.startsWith(CommandLineParser.LONG_OPTION_DELIMITER) &&
-                    value.length() > CommandLineParser.LONG_OPTION_DELIMITER.length();
+            return value.startsWith(CommandLineParser.LONG_OPTION_PREFIX) &&
+                    value.length() > CommandLineParser.LONG_OPTION_PREFIX.length();
         }
 
         public Object getTargetBean() {
@@ -202,13 +308,15 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
     }
 
-    private static class ParsedOption {
+    private class ParsedOption {
 
         private boolean isShortOption;
 
         private String optionName;
 
         private String optionParameter;
+
+        private SingleOption singleOption;
 
         public String getOptionName() {
             return optionName;
@@ -220,6 +328,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         public void setOptionName(final String optionName) {
             this.optionName = optionName;
+            this.singleOption = options.getOption(optionName);
         }
 
         public void setOptionParameter(final String argument) {
@@ -236,6 +345,10 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         public boolean hasOptionParameter() {
             return optionParameter != null;
+        }
+
+        public SingleOption getSingleOptionConfig() {
+            return singleOption;
         }
     }
 
