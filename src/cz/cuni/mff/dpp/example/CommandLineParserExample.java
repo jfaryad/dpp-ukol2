@@ -11,6 +11,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.Options;
+import cz.cuni.mff.dpp.api.RequiredCountInterval;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 
@@ -18,21 +19,21 @@ public class CommandLineParserExample {
 
     public static void main(String[] args) {
 
-        // testGnuTimeBean();
-        //
-        // System.out.println("------------------------------");
-        //
-        // testGnuTimeBean2();
-        //
-        // System.out.println("------------------------------");
-        //
-        // testCommonArgumentTestBean();
-        //
-        // System.out.println("------------------------------");
-        //
-        // testEnumArgumentBean();
-        //
-        // System.out.println("------------------------------");
+         testGnuTimeBean();
+        
+         System.out.println("------------------------------");
+        
+         testGnuTimeBean2();
+        
+         System.out.println("------------------------------");
+        
+         testCommonArgumentTestBean();
+        
+         System.out.println("------------------------------");
+        
+         testEnumArgumentBean();
+        
+         System.out.println("------------------------------");
 
         testTestBean();
     }
@@ -144,7 +145,8 @@ public class CommandLineParserExample {
         Options options = OptionsFactory.createOptions(TestBean.class);
         DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
 
-        parser.parse(new String[] { "aaa", "bb" });
+        TestBean bean=(TestBean) parser.parse(new String[] { "-abc=true" });
+        System.out.println(bean.toString());
 
     }
 
@@ -152,7 +154,7 @@ public class CommandLineParserExample {
 
         private final List<Integer> argumentList = new ArrayList<Integer>();
 
-        @CommonArgument
+        @CommonArgument(maxRequiredCount=RequiredCountInterval.MAX_BOUND)
         public void addArgument(int argument) {
             argumentList.add(argument);
         }
@@ -166,7 +168,7 @@ public class CommandLineParserExample {
     public static class EnumArgumentBean {
         private final List<OptionArgumentObligation> argumentList = new ArrayList<OptionArgumentObligation>();
 
-        @CommonArgument
+        @CommonArgument(maxRequiredCount=3)
         public void addArgument(OptionArgumentObligation argument) {
             argumentList.add(argument);
         }
@@ -182,15 +184,29 @@ public class CommandLineParserExample {
         @ParameterOption(names = "aaa", argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
         private File neco = null;
 
-        @SimpleOption(names = "aaaa")
-        private boolean neco2;
+        @SimpleOption(names = "a")
+        private boolean s1;
+        
+        @SimpleOption(names = "b")
+        private boolean s2;
+        
+        @ParameterOption(names = "c")
+        private boolean s3;
 
         @ParameterOption(names = "bb", minRequiredCount = 0, maxRequiredCount = 3, parameterRequired = false)
         private Integer someNumberFrom2To10;
 
-        @CommonArgument(minRequiredCount = 1, maxRequiredCount = 3)
+        @CommonArgument(minRequiredCount = 0, maxRequiredCount = 3)
         public void setNeco3(String neco3) {
         }
+
+        @Override
+        public String toString() {
+            return "TestBean [neco=" + neco + ", s1=" + s1 + ", s2=" + s2 + ", s3=" + s3 + ", someNumberFrom2To10="
+                    + someNumberFrom2To10 + "]";
+        }
+        
+        
 
     }
 

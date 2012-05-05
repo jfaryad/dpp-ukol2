@@ -151,8 +151,7 @@ public final class OptionsFactory {
             optionsBuilder.setCommonArgumentSetter(optionTarget.createOptionSetter());
             final CommonArgument commonArgument = optionTarget.getCommonArgument();
             final ArgumentConverter<?> commonArgumentConverter = getArgumentConverter(
-                    commonArgument.argumentConverter(),
-                    optionTarget.getTargetClass());
+                    commonArgument.argumentConverter(), optionTarget.getTargetClass());
             optionsBuilder.setCommonArgumentConverter(commonArgumentConverter);
 
             final RequiredCountInterval interval = createRequiredCountInterval(commonArgument.minRequiredCount(),

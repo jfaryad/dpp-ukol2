@@ -45,6 +45,8 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
     private class ParserImpl {
 
+        private final String EMPTY_OPTION_PARAMETER = "";
+
         private final String[] commandLine;
 
         private final List<String> commonArgumetList = new ArrayList<String>();
@@ -215,21 +217,15 @@ public class DefaultCommandLineParser implements CommandLineParser {
             final OptionSetter commonArgumentSetter = options.getCommonArgumentSetter();
             final ArgumentConverter<?> commonArgumentConverter = options.getCommonArgumentConverter();
             for (final String commonArgument : commonArgumetList) {
+
                 Object convertedObject;
-
-                // todo...
-                if (commonArgumentConverter == null) {
-                    convertedObject = commonArgument;
-                } else {
-
-                    try {
-                        convertedObject = commonArgumentConverter.parse(commonArgument);
-                    } catch (final ArgumentFormatException afe) {
-                        processException(new CommonArgumentFormatException(afe));
-                        continue;
-                    } catch (final Exception e) {
-                        throw new UnexceptedException(e);
-                    }
+                try {
+                    convertedObject = commonArgumentConverter.parse(commonArgument);
+                } catch (final ArgumentFormatException afe) {
+                    processException(new CommonArgumentFormatException(afe));
+                    continue;
+                } catch (final Exception e) {
+                    throw new UnexceptedException(e);
                 }
 
                 setOptionParameter(commonArgumentSetter, convertedObject);
@@ -241,21 +237,20 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
             boolean isNextCommonArgument = false;
             boolean isNextOptionParameter = false;
-            ParsedOption option = null;
+            ParsedOption lastOption = null;
 
             for (final String element : commandLine) {
 
                 if (isNextCommonArgument) {
                     commonArgumetList.add(element);
                 } else if (isNextOptionParameter) {
-                    option.setOptionParameter(element);
+                    lastOption.setOptionParameter(element);
                     isNextOptionParameter = false;
                 } else if (CommandLineParser.COMMON_ARGUMENT_DELIMITER.equals(element)) {
                     isNextCommonArgument = true;
                 } else if (isOption(element)) {
-                    option = parseOption(element);
-                    parsedOptionList.add(option);
-                    if (option.getOptionParameter() == null && hasOptionParameter(option.getOptionName())) {
+                    lastOption = addOptions(element);
+                    if (!lastOption.hasOptionParameter() && hasOptionParameter(lastOption.getOptionName())) {
                         isNextOptionParameter = true;
                     }
                 } else {
@@ -270,34 +265,61 @@ public class DefaultCommandLineParser implements CommandLineParser {
             return singleOption != null && singleOption.getArgumentObligation() == OptionArgumentObligation.REQUIRED;
         }
 
-        private ParsedOption parseOption(final String value) {
-
-            final ParsedOption result = new ParsedOption();
+        private ParsedOption addOptions(final String value) {
 
             String token;
+            boolean isShortOption;
             if (isLongOption(value)) {
                 token = value.substring(CommandLineParser.LONG_OPTION_PREFIX.length());
-                result.setShortOption(false);
+                isShortOption = false;
             } else if (isShortOption(value)) {
                 token = value.substring(CommandLineParser.SHORT_OPTION_PREFIX.length());
-                result.setShortOption(true);
+                isShortOption = true;
             } else {
                 throw new IllegalStateException("This should never happen");
             }
 
-            // todo parsovani -abc
             final int delimIndex = token.indexOf("=");
 
+            String tokenName;
+            String tokenParameter;
             if (delimIndex == -1) {
-                result.setOptionName(token);
+                tokenName = token;
+                tokenParameter = null;
             } else {
-                final String optionName = token.substring(0, delimIndex);
-                result.setOptionName(optionName);
-                final String optionParam = token.substring(delimIndex + 1);
-                result.setOptionParameter(optionParam);
+                tokenName = token.substring(0, delimIndex);
+                if (token.length() == delimIndex + 1) {
+                    tokenParameter = "";
+                } else {
+                    tokenParameter = token.substring(delimIndex + 1);
+                }
             }
 
-            return result;
+            if (isShortOption) {
+                addShortOptions(tokenName);
+            } else {
+                addParsedOption(tokenName);
+            }
+
+            ParsedOption lastParsedOption = parsedOptionList.get(parsedOptionList.size()-1);
+            if (tokenParameter != null) {
+                lastParsedOption.setOptionParameter(tokenParameter);
+            }
+
+            return lastParsedOption;
+        }
+
+        private void addShortOptions(String tokenName) {
+            char[] optionNames = tokenName.toCharArray();
+            for (char optionName : optionNames) {
+                addParsedOption(Character.toString(optionName));
+            }
+        }
+
+        private void addParsedOption(String optionName) {
+            ParsedOption parsedOption = new ParsedOption();
+            parsedOption.setOptionName(optionName);
+            parsedOptionList.add(parsedOption);
         }
 
         private boolean isOption(final String value) {
@@ -321,8 +343,6 @@ public class DefaultCommandLineParser implements CommandLineParser {
     }
 
     private class ParsedOption {
-
-        private boolean isShortOption;
 
         private String optionName;
 
@@ -348,11 +368,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
         }
 
         public boolean isShortOption() {
-            return isShortOption;
-        }
-
-        public void setShortOption(final boolean isShortOption) {
-            this.isShortOption = isShortOption;
+            return optionName.length() == CommandLineParser.SHORT_OPTION_NAME_LENGTH;
         }
 
         public boolean hasOptionParameter() {
