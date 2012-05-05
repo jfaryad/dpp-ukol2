@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.validator;
+package cz.cuni.mff.dpp.impl.validator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

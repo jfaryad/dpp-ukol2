@@ -1,4 +1,4 @@
-package cz.cuni.mff.dpp.validator;
+package cz.cuni.mff.dpp.impl.validator;
 
 import cz.cuni.mff.dpp.api.ArgumentValidator;
 

@@ -24,7 +24,7 @@ import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
 import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
-import cz.cuni.mff.dpp.validator.ValidatorFactory;
+import cz.cuni.mff.dpp.impl.validator.ValidatorFactory;
 
 /**
  * This class contains methods, which create Options objects from different parameters
