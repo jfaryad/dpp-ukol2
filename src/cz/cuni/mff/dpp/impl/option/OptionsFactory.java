@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cz.cuni.mff.dpp.annotation.CommonArgument;
+import cz.cuni.mff.dpp.annotation.OptionsDefinition;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
 import cz.cuni.mff.dpp.annotation.Validator;
@@ -105,6 +106,7 @@ public final class OptionsFactory {
 
         private void build() {
             configOptions();
+            processOptionsDefinitionAnnotation();
             addSingleOptions();
         }
 
@@ -124,6 +126,15 @@ public final class OptionsFactory {
                 processAnnotations(new MethodOptionTarget(method));
             }
 
+        }
+
+        private void processOptionsDefinitionAnnotation() {
+            final OptionsDefinition optionsDefinition = beanClass.getAnnotation(OptionsDefinition.class);
+            if (optionsDefinition != null) {
+                optionsBuilder.setDescription(optionsDefinition.description());
+                optionsBuilder.setName(optionsDefinition.name());
+                optionsBuilder.setUsageLine(optionsDefinition.usage());
+            }
         }
 
         private void processAnnotations(final AbstractOptionTarget optionTarget) {
@@ -216,11 +227,11 @@ public final class OptionsFactory {
             builder.setArgumentConverter(argumentConverter);
 
             addValidatorsToSingleOptionBuilder(parameterOption, builder);
-         
+
             builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter, optionTarget.getTargetClass()));
         }
 
-        private static RequiredCountInterval createRequiredCountInterval(int min, int max) {
+        private static RequiredCountInterval createRequiredCountInterval(final int min, final int max) {
 
             if (!RequiredCountInterval.isValid(min, max)) {
                 Errors.BAD_REQUIRED_COUNT_INTERVAL.throwException(min, max);
@@ -242,7 +253,7 @@ public final class OptionsFactory {
         }
 
         private static Object getDefaultValue(final ParameterOption parameterOption,
-                final ArgumentConverter<?> argumentConverter, Class<?> setterTargetClass) {
+                final ArgumentConverter<?> argumentConverter, final Class<?> setterTargetClass) {
             final String[] defaultParameter = parameterOption.defaultParameter();
             if (defaultParameter.length == 0) {
                 return DEFAULT_VALUES_MAP.get(setterTargetClass);

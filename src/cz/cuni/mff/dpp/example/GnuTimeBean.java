@@ -2,6 +2,7 @@ package cz.cuni.mff.dpp.example;
 
 import java.io.File;
 
+import cz.cuni.mff.dpp.annotation.OptionsDefinition;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
 
@@ -11,6 +12,10 @@ import cz.cuni.mff.dpp.annotation.SimpleOption;
  * @author jfaryad
  * 
  */
+@OptionsDefinition(
+        name = "time",
+        description = "time a simple command or give resource usage",
+        usage = "time [options] command [arguments...]")
 public class GnuTimeBean {
 
     @ParameterOption(
@@ -49,7 +54,7 @@ public class GnuTimeBean {
         return format;
     }
 
-    public void setFormat(String format) {
+    public void setFormat(final String format) {
         this.format = format;
     }
 
@@ -57,7 +62,7 @@ public class GnuTimeBean {
         return output;
     }
 
-    public void setOutput(File output) {
+    public void setOutput(final File output) {
         this.output = output;
     }
 
@@ -65,7 +70,7 @@ public class GnuTimeBean {
         return append;
     }
 
-    public void setAppend(boolean append) {
+    public void setAppend(final boolean append) {
         this.append = append;
     }
 
@@ -73,7 +78,7 @@ public class GnuTimeBean {
         return verbose;
     }
 
-    public void setVerbose(boolean verbose) {
+    public void setVerbose(final boolean verbose) {
         this.verbose = verbose;
     }
 
@@ -81,7 +86,7 @@ public class GnuTimeBean {
         return help;
     }
 
-    public void setHelp(boolean help) {
+    public void setHelp(final boolean help) {
         this.help = help;
     }
 
@@ -89,7 +94,7 @@ public class GnuTimeBean {
         return version;
     }
 
-    public void setVersion(boolean version) {
+    public void setVersion(final boolean version) {
         this.version = version;
     }
 

@@ -27,10 +27,13 @@ public class OptionsBuilder implements Options {
     private ArgumentConverter<?> commonArgumentConverter;
     private OptionSetter commonArgumentSetter;
     private RequiredCountInterval commonArgumentRequiredCountInterval = DEFAULT_REQUIRED_COUNT_INTERVAL;
+    private String description;
+    private String name;
+    private String usageLine;
 
-    public SingleOptionBuilder addOption(String... optionNames) {
-        SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
-        for (String optionName : optionNames) {
+    public SingleOptionBuilder addOption(final String... optionNames) {
+        final SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
+        for (final String optionName : optionNames) {
             options.put(optionName, builder);
         }
         return builder;
@@ -38,11 +41,11 @@ public class OptionsBuilder implements Options {
 
     @Override
     public Collection<SingleOption> getOptions() {
-        return options.values();
+        return new HashSet<SingleOption>(options.values());
     }
 
     @Override
-    public SingleOption getOption(String optionName) {
+    public SingleOption getOption(final String optionName) {
         return options.get(optionName);
     }
 
@@ -52,7 +55,7 @@ public class OptionsBuilder implements Options {
      * @param optionName
      * @return
      */
-    public boolean isExistsOption(String optionName) {
+    public boolean isExistsOption(final String optionName) {
         return options.containsKey(optionName);
     }
 
@@ -61,7 +64,7 @@ public class OptionsBuilder implements Options {
         return targetBeanClass;
     }
 
-    public void setTargetBeanClass(Class<?> targetBeanClass) {
+    public void setTargetBeanClass(final Class<?> targetBeanClass) {
         this.targetBeanClass = targetBeanClass;
     }
 
@@ -70,7 +73,7 @@ public class OptionsBuilder implements Options {
         return commonArgumentConverter;
     }
 
-    public void setCommonArgumentConverter(ArgumentConverter<?> commonArgumentConverter) {
+    public void setCommonArgumentConverter(final ArgumentConverter<?> commonArgumentConverter) {
         this.commonArgumentConverter = commonArgumentConverter;
     }
 
@@ -79,8 +82,35 @@ public class OptionsBuilder implements Options {
         return commonArgumentSetter;
     }
 
-    public void setCommonArgumentSetter(OptionSetter commonArgumentSetter) {
+    public void setCommonArgumentSetter(final OptionSetter commonArgumentSetter) {
         this.commonArgumentSetter = commonArgumentSetter;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getUsageLine() {
+        return usageLine;
+    }
+
+    public void setUsageLine(final String usageLine) {
+        this.usageLine = usageLine;
     }
 
     @Override
@@ -88,6 +118,7 @@ public class OptionsBuilder implements Options {
         return "OptionsBuilder [options=" + options + ", targetBeanClass=" + targetBeanClass
                 + ", commonArgumentConverter=" + commonArgumentConverter + ", commonArgumentSetter="
                 + commonArgumentSetter + ", commonArgumentRequiredCountInterval=" + commonArgumentRequiredCountInterval
+                + ", name=" + name + ", description=" + description + ", usageLine=" + usageLine
                 + "]";
     }
 
@@ -96,7 +127,7 @@ public class OptionsBuilder implements Options {
         return commonArgumentRequiredCountInterval;
     }
 
-    public void setCommonArgumentRequiredCountInterval(RequiredCountInterval commonArgumentRequiredCountInterval) {
+    public void setCommonArgumentRequiredCountInterval(final RequiredCountInterval commonArgumentRequiredCountInterval) {
         this.commonArgumentRequiredCountInterval = commonArgumentRequiredCountInterval;
     }
 
