@@ -12,8 +12,6 @@ import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface ParameterOption {
 
-    public static final Class<DummyArgumentConverter> DEFAULT_ARGUMENT_CONVERTER_CLASS = DummyArgumentConverter.class;
-
     /**
      * Jména volby (krátká i dlouhá)
      * 

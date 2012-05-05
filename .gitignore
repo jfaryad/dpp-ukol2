@@ -1,5 +1,8 @@
 .classpath
 .project
 .settings
-build
-dist
+/build
+/dist
+/javadoc
+/test
+/lib/junit.jar
