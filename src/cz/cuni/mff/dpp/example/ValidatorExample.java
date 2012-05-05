@@ -6,14 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import cz.cuni.mff.dpp.annotation.ParameterOption;
-import cz.cuni.mff.dpp.annotation.Validator;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
-import cz.cuni.mff.dpp.validator.BetweenInclusiveValidator;
-import cz.cuni.mff.dpp.validator.GreaterThenValidator;
-import cz.cuni.mff.dpp.validator.OneOfValidator;
+import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 
 /**
  * This is an example of how validators can be used.
@@ -42,8 +38,55 @@ public class ValidatorExample {
     // dateFormat.format(Calendar.getInstance().getTime()));
 
     public static void main(final String[] args) {
-        final Options createOptions = OptionsFactory.createOptions(ValidatedPerson.class);
-        System.out.println(createOptions);
+        final Options options = OptionsFactory.createOptions(ValidatedPerson.class);
+        System.out.println(options);
+
+        final DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+
+        try {
+
+            System.out.println("Testing valid command line");
+            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "55", "-c", "blue",
+                    "-b",
+                    "30-05-2012" });
+            System.out.println(person.toString());
+            System.out.println("Passed");
+        } catch (final Exception e) {
+            System.out.println("Failed");
+        }
+
+        try {
+            System.out.println("Testing invalid nextBirthday");
+            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "55", "-c", "blue",
+                    "-b",
+                    "30-03-2012" });
+            System.out.println(person.toString());
+            System.out.println("Failed");
+        } catch (final Exception e) {
+            System.out.println("Passed");
+        }
+
+        try {
+            System.out.println("Testing invalid color");
+            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "55", "-c", "purple",
+                    "-b",
+                    "30-05-2012" });
+            System.out.println(person.toString());
+            System.out.println("Failed");
+        } catch (final Exception e) {
+            System.out.println("Passed");
+        }
+
+        try {
+            System.out.println("Testing invalid age");
+            final ValidatedPerson person = (ValidatedPerson) parser.parse(new String[] { "--a", "125", "-c", "blue",
+                    "-b",
+                    "30-06-2012" });
+            System.out.println(person.toString());
+            System.out.println("Failed");
+        } catch (final Exception e) {
+            System.out.println("Passed");
+        }
     }
 
     // private static void manuallyCreateBuilder() {
@@ -84,41 +127,5 @@ public class ValidatorExample {
             return Date.class;
         }
 
-    }
-
-    private static class ValidatedPerson {
-
-        @ParameterOption(
-                names = { "a", "age" },
-                argumentName = "AGE",
-                validators = {
-                        @Validator(
-                                validatorClass = BetweenInclusiveValidator.class,
-                                constructorParams = { "0", "120" })
-                },
-                description = "The age of the person.")
-        private int age;
-
-        @ParameterOption(
-                names = { "c", "color" },
-                argumentName = "COLOR",
-                validators = {
-                        @Validator(
-                                validatorClass = OneOfValidator.class,
-                                constructorParams = { "red", "blue", "green" })
-                },
-                description = "Favourite color")
-        private String favouriteColor;
-
-        @ParameterOption(
-                names = { "b", "next-birthday" },
-                argumentConverter = DateArgumentConverter.class,
-                validators = {
-                        @Validator(
-                                validatorClass = GreaterThenValidator.class,
-                                constructorParams = { "30-04-2012" })
-                },
-                description = "Date of the next birthday")
-        private Date nextBirthday;
     }
 }

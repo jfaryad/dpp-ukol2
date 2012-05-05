@@ -183,7 +183,7 @@ public class DefaultCommandLineParser implements CommandLineParser {
             for (final ArgumentValidator<?> validator : option.getValidators()) {
                 if (!validator.isValid(parameter)) {
                     throw new RuntimeException("Validation failed for the option parameter" + option.getArgumentName()
-                            + " with valie " + parameter);
+                            + " with value " + parameter);
                 }
             }
         }
