@@ -7,10 +7,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
+import cz.cuni.mff.dpp.api.ArgumentValidator;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
+import cz.cuni.mff.dpp.api.RequiredCountInterval;
 import cz.cuni.mff.dpp.api.SingleOption;
-import cz.cuni.mff.dpp.api.ArgumentValidator;
 
 /**
  * Basic implementation of {@link SingleOption}
@@ -32,6 +33,7 @@ public class SingleOptionBuilder implements SingleOption {
     private Object defaultValue;
     private OptionSetter optionSetter;
     private Set<ArgumentValidator<?>> validators = new HashSet<ArgumentValidator<?>>();
+    private RequiredCountInterval requiredCountInterval;
 
     SingleOptionBuilder(String... names) {
         for (String name : names) {
@@ -64,11 +66,6 @@ public class SingleOptionBuilder implements SingleOption {
             }
         }
         return longNames;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return required;
     }
 
     @Override
@@ -152,11 +149,6 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
-    public SingleOptionBuilder setRequired(boolean required) {
-        this.required = required;
-        return this;
-    }
-
     public SingleOptionBuilder dependentOn(String... optionName) {
         dependentOn.addAll(Arrays.asList(optionName));
         return this;
@@ -211,5 +203,20 @@ public class SingleOptionBuilder implements SingleOption {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Cannot accept empty value as parameter");
         }
+    }
+
+    @Override
+    public RequiredCountInterval getRequiredCountInterval() {
+        return requiredCountInterval;
+    }
+
+    public SingleOptionBuilder setRequiredCountInterval(RequiredCountInterval requiredCountInterval) {
+        this.requiredCountInterval = requiredCountInterval;
+        return this;
+    }
+
+    @Override
+    public String getFirstOptionName() {
+        return names.iterator().next();
     }
 }

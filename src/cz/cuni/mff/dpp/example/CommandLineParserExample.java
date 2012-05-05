@@ -7,36 +7,34 @@ import java.util.List;
 import cz.cuni.mff.dpp.annotation.CommonArgument;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
-import cz.cuni.mff.dpp.annotation.Validator;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
-import cz.cuni.mff.dpp.validator.AbstractValidator;
 
 public class CommandLineParserExample {
 
     public static void main(String[] args) {
 
-        testGnuTimeBean();
+        // testGnuTimeBean();
+        //
+        // System.out.println("------------------------------");
+        //
+        // testGnuTimeBean2();
+        //
+        // System.out.println("------------------------------");
+        //
+        // testCommonArgumentTestBean();
+        //
+        // System.out.println("------------------------------");
+        //
+        // testEnumArgumentBean();
+        //
+        // System.out.println("------------------------------");
 
-        System.out.println("------------------------------");
-
-        testGnuTimeBean2();
-
-        System.out.println("------------------------------");
-
-        testCommonArgumentTestBean();
-
-        System.out.println("------------------------------");
-
-        testEnumArgumentBean();
-
-        System.out.println("------------------------------");
-
-        //testTestBean();
+        testTestBean();
     }
 
     public static void testGnuTimeBean() {
@@ -145,8 +143,8 @@ public class CommandLineParserExample {
 
         Options options = OptionsFactory.createOptions(TestBean.class);
         DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
-        
-        parser.parse(new String[] {"--aa"});
+
+        parser.parse(new String[] { "aaa", "bb" });
 
     }
 
@@ -181,17 +179,17 @@ public class CommandLineParserExample {
 
     public static class TestBean {
 
-        @ParameterOption(names="aaa", argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
+        @ParameterOption(names = "aaa", argumentConverter = CommandLineParserExample.TestArgumentConverter.class)
         private File neco = null;
 
-        @SimpleOption(names="aaaa")
+        @SimpleOption(names = "aaaa")
         private boolean neco2;
 
-        @ParameterOption(names="bb", optionRequired=false,parameterRequired=false)
+        @ParameterOption(names = "bb", minRequiredCount = 0, maxRequiredCount = 3, parameterRequired = false)
         private Integer someNumberFrom2To10;
 
-        //@CommonArgument
-        public void setNeco3(boolean neco3) { 
+        @CommonArgument(minRequiredCount = 1, maxRequiredCount = 3)
+        public void setNeco3(String neco3) {
         }
 
     }
@@ -212,6 +210,5 @@ public class CommandLineParserExample {
         }
 
     }
-
 
 }

@@ -2,9 +2,9 @@ package cz.cuni.mff.dpp.impl.parser;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
@@ -17,7 +17,8 @@ import cz.cuni.mff.dpp.api.parser.CommandLineParser;
 import cz.cuni.mff.dpp.api.parser.exception.CommandLineParserException;
 import cz.cuni.mff.dpp.api.parser.exception.CommonArgumentFormatException;
 import cz.cuni.mff.dpp.api.parser.exception.OptionParameterFormatException;
-import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredCommonArgumentCountException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionCountException;
 import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionParameterException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionException;
@@ -88,14 +89,14 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
         private void check() {
 
-            final Collection<SingleOption> requiredOptions = new HashSet<SingleOption>(options.getRequiredOptions());
+            Map<SingleOption, Integer> optionCounts = new HashMap<SingleOption, Integer>();
 
             for (final ParsedOption parsedOption : parsedOptionList) {
 
                 final String optionName = parsedOption.getOptionName();
 
                 final SingleOption singleOption = parsedOption.getSingleOptionConfig();
-                requiredOptions.remove(singleOption);
+                addSingleOptionCount(optionCounts, singleOption);
 
                 if (singleOption == null) {
                     processException(new UnexceptedOptionException(optionName, parsedOption.isShortOption()));
@@ -109,8 +110,18 @@ public class DefaultCommandLineParser implements CommandLineParser {
 
             }
 
-            checkReqiuredOptions(requiredOptions);
+            checkOptionCounts(optionCounts);
+            checkCommonArgumentsCounts();
 
+        }
+
+        private void addSingleOptionCount(final Map<SingleOption, Integer> optionCounts, final SingleOption singleOption) {
+            final int count = getSingleOptionCount(optionCounts, singleOption);
+            optionCounts.put(singleOption, count + 1);
+        }
+
+        private int getSingleOptionCount(final Map<SingleOption, Integer> optionCounts, final SingleOption singleOption) {
+            return optionCounts.containsKey(singleOption) ? optionCounts.get(singleOption) : 0;
         }
 
         private void checkExceptedParameterOption(final ParsedOption parsedOption) {
@@ -128,14 +139,13 @@ public class DefaultCommandLineParser implements CommandLineParser {
             }
         }
 
-        private void checkReqiuredOptions(final Collection<SingleOption> unprovidedRequiredOptions) {
-            if (!unprovidedRequiredOptions.isEmpty()) {
-                final List<String> optionNames = new ArrayList<String>(unprovidedRequiredOptions.size());
-                for (final SingleOption singleOption : unprovidedRequiredOptions) {
-                    // only first name for each option
-                    optionNames.add(singleOption.getNames().iterator().next());
+        private void checkOptionCounts(final Map<SingleOption, Integer> optionCounts) {
+
+            for (final SingleOption singleOption : options.getOptions()) {
+                final int count = getSingleOptionCount(optionCounts, singleOption);
+                if (!singleOption.getRequiredCountInterval().isInside(count)) {
+                    processException(new RequiredOptionCountException(singleOption.getFirstOptionName(), count));
                 }
-                processException(new RequiredOptionException(optionNames));
             }
         }
 
@@ -143,8 +153,10 @@ public class DefaultCommandLineParser implements CommandLineParser {
             // todo - budeme to opravdu podporovat???
         }
 
-        private void checkCommonArguments() {
-            // todo spolecne s poctama
+        public void checkCommonArgumentsCounts() {
+            if (!options.getCommonArgumentRequiredCountInterval().isInside(commonArgumetList.size())) {
+                processException(new RequiredCommonArgumentCountException(commonArgumetList.size()));
+            }
         }
 
         private void processException(final CommandLineParserException exception) {
@@ -351,5 +363,4 @@ public class DefaultCommandLineParser implements CommandLineParser {
             return singleOption;
         }
     }
-
 }

@@ -32,13 +32,6 @@ public interface SingleOption {
     public Collection<String> getLongNames();
 
     /**
-     * Returns true if this option must be specified. If the option is not required, it is by default optional.
-     * 
-     * @return
-     */
-    public boolean isRequired();
-
-    /**
      * Returns names of options that must be specified together with this option.
      * 
      * @return
@@ -112,7 +105,7 @@ public interface SingleOption {
     public Object getDefaultValue();
 
     /**
-     * Returns an implementation of {@code OptionSetter}, whose method {@link OptionSetter#setOption(Object, Object)}
+     * Returns an implementation of {@link OptionSetter}, whose method {@link OptionSetter#setOption(Object, Object)}
      * should be called for this option
      * 
      * @return
@@ -125,5 +118,19 @@ public interface SingleOption {
      * @return
      */
     public Collection<ArgumentValidator<?>> getValidators();
+
+    /**
+     * Returns interval how many times must be this option specified. Default interval is <0,1>.
+     * 
+     * @return
+     */
+    public RequiredCountInterval getRequiredCountInterval();
+
+    /**
+     * Returns first name for this option (in order in which option names were configured)
+     * 
+     * @return
+     */
+    public String getFirstOptionName();
 
 }

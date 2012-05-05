@@ -34,15 +34,15 @@ public @interface ParameterOption {
 
     String[] incompatibleWith() default {};
 
-    boolean optionRequired() default false;
-
     boolean parameterRequired() default true;
 
     Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
 
     String[] defaultParameter() default {};
 
-    boolean multipleInvocation() default true;
+    int minRequiredCount() default 0;
+
+    int maxRequiredCount() default 1;
 
     Validator[] validators() default {};
 

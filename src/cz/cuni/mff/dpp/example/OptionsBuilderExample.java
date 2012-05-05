@@ -30,7 +30,6 @@ public class OptionsBuilderExample {
                 .setDescription("Print a usage message on standard output and exit successfully.");
         builder.addOption("V", "version")
                 .setDescription("Print version information on standard output, then exit successfully.");
-        builder.setNonOptionArgumentsAllowed(false);
     }
 
 }

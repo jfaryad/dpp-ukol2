@@ -17,6 +17,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
+import cz.cuni.mff.dpp.api.RequiredCountInterval;
 import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
 import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
@@ -86,6 +87,9 @@ public final class OptionsFactory {
 
         private static final Boolean SIMPLE_OPTION_DEFAULT_VALUE = Boolean.TRUE;
 
+        private static final RequiredCountInterval SIMPLE_OPTION_REQUIRED_COUNT_INTERVAL =
+                new RequiredCountInterval(0, 1);
+
         private final OptionsBuilder optionsBuilder;
 
         private final Class<?> beanClass;
@@ -150,6 +154,11 @@ public final class OptionsFactory {
                     commonArgument.argumentConverter(),
                     optionTarget.getTargetClass());
             optionsBuilder.setCommonArgumentConverter(commonArgumentConverter);
+
+            final RequiredCountInterval interval = createRequiredCountInterval(commonArgument.minRequiredCount(),
+                    commonArgument.maxRequiredCount());
+
+            optionsBuilder.setCommonArgumentRequiredCountInterval(interval);
         }
 
         private void checkMultipleCommonArgument() {
@@ -174,9 +183,9 @@ public final class OptionsFactory {
                     .setDescription(simpleOption.description())
                     .dependentOn(simpleOption.dependentOn())
                     .incompatibleWith(simpleOption.incompatibleWith())
-                    .setRequired(false)
                     .setDefaultValue(SIMPLE_OPTION_DEFAULT_VALUE)
-                    .setOptionSetter(optionTarget.createOptionSetter());
+                    .setOptionSetter(optionTarget.createOptionSetter())
+                    .setRequiredCountInterval(SIMPLE_OPTION_REQUIRED_COUNT_INTERVAL);
         }
 
         private static void checkIsDeclaringClassBoolean(final Class<?> targetClass) {
@@ -192,14 +201,16 @@ public final class OptionsFactory {
             final String[] optionNames = parameterOption.names();
             checkOptionNames(optionNames);
 
-            final SingleOptionBuilder builder = optionsBuilder.addOption(optionNames)
+            final SingleOptionBuilder builder = optionsBuilder
+                    .addOption(optionNames)
                     .setArgumentObligation(translateOptionParameterRequired(parameterOption.parameterRequired()))
                     .setDescription(parameterOption.description())
                     .setArgumentName(parameterOption.argumentName())
                     .dependentOn(parameterOption.dependentOn())
                     .incompatibleWith(parameterOption.incompatibleWith())
-                    .setRequired(parameterOption.optionRequired())
-                    .setOptionSetter(optionTarget.createOptionSetter());
+                    .setOptionSetter(optionTarget.createOptionSetter())
+                    .setRequiredCountInterval(createRequiredCountInterval(parameterOption.minRequiredCount(),
+                            parameterOption.maxRequiredCount()));
 
             final ArgumentConverter<?> argumentConverter = getArgumentConverter(parameterOption.argumentConverter(),
                     optionTarget.getTargetClass());
@@ -208,6 +219,15 @@ public final class OptionsFactory {
             addValidatorsToSingleOptionBuilder(parameterOption, builder);
 
             builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter));
+        }
+
+        private static RequiredCountInterval createRequiredCountInterval(int min, int max) {
+
+            if (!RequiredCountInterval.isValid(min, max)) {
+                Errors.BAD_REQUIRED_COUNT_INTERVAL.throwException(min, max);
+            }
+
+            return new RequiredCountInterval(min, max);
         }
 
         private static void addValidatorsToSingleOptionBuilder(
@@ -510,7 +530,8 @@ public final class OptionsFactory {
                 "Static field/method: %s cannot be tagged with @SimpleOption, @ParameterOption or @CommonArgument."),
         MEMBER_FINAL(
                 "Final field/method: %s cannot be tagged with @SimpleOption, @ParameterOption or @CommonArgument.."),
-        METHOD_BAD_SIGNATURE("Tagged method: %s must have void return type and exactly one parameter.");
+        METHOD_BAD_SIGNATURE("Tagged method: %s must have void return type and exactly one parameter."),
+        BAD_REQUIRED_COUNT_INTERVAL("Bad bounds (%d, %d) in 'minRequiredCount' and 'maxRequiredCount' parameters.");
 
         private final String errorText;
 

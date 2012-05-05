@@ -20,11 +20,6 @@ public interface Options {
     public Collection<SingleOption> getOptions();
 
     /**
-     * Returns a collection of all options which are required.
-     */
-    public Collection<SingleOption> getRequiredOptions();
-
-    /**
      * Returns the option with the specified name (long or short). If no such option exists, null is returned.
      * 
      * @param optionName
@@ -32,12 +27,6 @@ public interface Options {
      * @return option with the given name or null
      */
     public SingleOption getOption(String optionName);
-
-    /**
-     * A flag defining if additional arguments (arguments not belonging to any option) are allowed.
-     * 
-     */
-    public boolean nonOptionArgumentsAllowed();
 
     /**
      * Returns class of the target bean.
@@ -60,4 +49,12 @@ public interface Options {
      * @return
      */
     public OptionSetter getCommonArgumentSetter();
+
+    /**
+     * Return interval how many times common interval should appear on command line
+     * 
+     * @return
+     */
+    public RequiredCountInterval getCommonArgumentRequiredCountInterval();
+
 }

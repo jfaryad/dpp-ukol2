@@ -17,16 +17,13 @@ import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface CommonArgument {
-
-    /**
-     * Určí zda se daná metoda může volat v případě výskytu více argumentů vícekrát (sémantika add)
-     * 
-     * @return
-     */
-    boolean multipleInvocation() default true;
-
+    
     String description() default "";
 
     Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
+
+    int minRequiredCount() default 0;
+
+    int maxRequiredCount() default 1;
 
 }

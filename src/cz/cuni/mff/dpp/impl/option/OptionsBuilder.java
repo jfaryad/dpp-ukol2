@@ -1,14 +1,13 @@
 package cz.cuni.mff.dpp.impl.option;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
+import cz.cuni.mff.dpp.api.RequiredCountInterval;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
@@ -19,12 +18,14 @@ import cz.cuni.mff.dpp.api.SingleOption;
  */
 public class OptionsBuilder implements Options {
 
+    private static final RequiredCountInterval DEFAULT_REQUIRED_COUNT_INTERVAL = new RequiredCountInterval(0, 0);
+
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
-    private boolean nonOptionArgumentsAllowed = false;
     private Class<?> targetBeanClass;
 
     private ArgumentConverter<?> commonArgumentConverter;
     private OptionSetter commonArgumentSetter;
+    private RequiredCountInterval commonArgumentRequiredCountInterval = DEFAULT_REQUIRED_COUNT_INTERVAL;
 
     public SingleOptionBuilder addOption(String... optionNames) {
         SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
@@ -52,15 +53,6 @@ public class OptionsBuilder implements Options {
      */
     public boolean isExistsOption(String optionName) {
         return options.containsKey(optionName);
-    }
-
-    @Override
-    public boolean nonOptionArgumentsAllowed() {
-        return nonOptionArgumentsAllowed;
-    }
-
-    public void setNonOptionArgumentsAllowed(boolean nonOptionArgumentsAllowed) {
-        this.nonOptionArgumentsAllowed = nonOptionArgumentsAllowed;
     }
 
     @Override
@@ -92,18 +84,19 @@ public class OptionsBuilder implements Options {
 
     @Override
     public String toString() {
-        return "OptionsBuilder [options=" + options + ", nonOptionArgumentsAllowed=" + nonOptionArgumentsAllowed
-                + ", targetBeanClass=" + targetBeanClass + "]";
+        return "OptionsBuilder [options=" + options + ", targetBeanClass=" + targetBeanClass
+                + ", commonArgumentConverter=" + commonArgumentConverter + ", commonArgumentSetter="
+                + commonArgumentSetter + ", commonArgumentRequiredCountInterval=" + commonArgumentRequiredCountInterval
+                + "]";
     }
 
     @Override
-    public Collection<SingleOption> getRequiredOptions() {
-        List<SingleOption> result=new ArrayList<SingleOption>();
-        for (SingleOption singleOption : options.values()) {
-            if (singleOption.isRequired()) {
-                result.add(singleOption);
-            }
-        }
-        return result;
+    public RequiredCountInterval getCommonArgumentRequiredCountInterval() {
+        return commonArgumentRequiredCountInterval;
     }
+
+    public void setCommonArgumentRequiredCountInterval(RequiredCountInterval commonArgumentRequiredCountInterval) {
+        this.commonArgumentRequiredCountInterval = commonArgumentRequiredCountInterval;
+    }
+
 }
