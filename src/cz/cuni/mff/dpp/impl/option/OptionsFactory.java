@@ -576,32 +576,32 @@ public final class OptionsFactory {
         }
 
         private void throwException(final Object... args) {
-            throw new MissConfiguratedAnnotationException(this, String.format(errorText, args));
+            throw new MissconfiguratedAnnotationException(this, String.format(errorText, args));
         }
 
         private void throwException(final Exception exception, final Object... args) {
-            throw new MissConfiguratedAnnotationException(this, String.format(errorText, args), exception);
+            throw new MissconfiguratedAnnotationException(this, String.format(errorText, args), exception);
         }
 
     }
 
-    public static class MissConfiguratedAnnotationException extends RuntimeException {
+    public static class MissconfiguratedAnnotationException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;
 
         private final Errors error;
 
-        public MissConfiguratedAnnotationException(final Errors error, final String message, final Throwable cause) {
+        public MissconfiguratedAnnotationException(final Errors error, final String message, final Throwable cause) {
             super(message, cause);
             this.error = error;
         }
 
-        public MissConfiguratedAnnotationException(final Errors error, final String message) {
+        public MissconfiguratedAnnotationException(final Errors error, final String message) {
             super(message);
             this.error = error;
         }
 
-        public MissConfiguratedAnnotationException(final Errors error, final Throwable cause) {
+        public MissconfiguratedAnnotationException(final Errors error, final Throwable cause) {
             super(cause);
             this.error = error;
         }
