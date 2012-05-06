@@ -64,7 +64,7 @@ public class DefaultCommandLineParser<T> implements CommandLineParser<T> {
      *            - command line from main method
      * @return
      */
-    public static <T> Object parse(final Class<T> targetBeanClass, final String[] commnadLine) {
+    public static <T> T parse(final Class<T> targetBeanClass, final String[] commnadLine) {
         final Options<T> options = OptionsFactory.createOptions(targetBeanClass);
         final DefaultCommandLineParser<T> parser = new DefaultCommandLineParser<T>(options);
         return parser.parse(commnadLine);

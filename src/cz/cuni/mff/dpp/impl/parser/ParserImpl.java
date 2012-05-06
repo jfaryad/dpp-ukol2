@@ -126,14 +126,14 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
     }
 
     private void checkExceptedParameterOption(final ParsedOption parsedOption) {
-        if (!parsedOption.hasOptionParameter()
+        if (!parsedOption.isOptionParameterSpecified()
                 && parsedOption.getSingleOptionConfig().getArgumentObligation() == OptionArgumentObligation.REQUIRED) {
             processException(new RequiredOptionParameterException(parsedOption.getOptionName()));
         }
     }
 
     private void checkUnexceptedParameterOption(final ParsedOption parsedOption) {
-        if (parsedOption.hasOptionParameter()
+        if (parsedOption.isOptionParameterSpecified()
                 && parsedOption.getSingleOptionConfig().getArgumentObligation() == OptionArgumentObligation.FORBIDDEN) {
             processException(new UnexceptedOptionParameterException(parsedOption.getOptionName(),
                     parsedOption.getOptionParameter()));
@@ -192,7 +192,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
             final SingleOption singleOption = options.getOption(parsedOption.getOptionName());
 
             Object convertedOptionParameter;
-            if (parsedOption.hasOptionParameter()) {
+            if (parsedOption.isOptionParameterSpecified()) {
 
                 try {
                     convertedOptionParameter = singleOption.getArgumentConverter().convert(
@@ -269,7 +269,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
                 isNextCommonArgument = true;
             } else if (isOption(element)) {
                 lastOption = addOptions(element);
-                if (!lastOption.hasOptionParameter() && hasOptionParameter(lastOption.getOptionName())) {
+                if (!lastOption.isOptionParameterSpecified() && hasOptionParameter(lastOption.getOptionName())) {
                     isNextOptionParameter = true;
                 }
             } else {
@@ -391,7 +391,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
             return optionName.length() == CommandLineParser.SHORT_OPTION_NAME_LENGTH;
         }
 
-        public boolean hasOptionParameter() {
+        public boolean isOptionParameterSpecified() {
             return optionParameter != null;
         }
 
