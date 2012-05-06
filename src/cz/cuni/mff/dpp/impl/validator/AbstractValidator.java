@@ -4,7 +4,9 @@ import cz.cuni.mff.dpp.api.ArgumentValidator;
 
 /**
  * Default implementation of a parent class for validators. Subclasses have to implement the
- * {@link ArgumentValidator#validate(Object)} method.
+ * {@link ArgumentValidator#isValid(Object)} method.<br>
+ * It contains also protected convenience methods that check if a parameter is null, empty, if the array has the given
+ * size, if two objects have the same class etc.
  * 
  * @author jakub
  * 
@@ -21,7 +23,7 @@ public abstract class AbstractValidator<T> implements ArgumentValidator<T> {
      * @param targetClass
      *            the class of the argument to validate
      */
-    
+
     public AbstractValidator(final Class<T> targetClass) {
         this.targetClass = targetClass;
     }
@@ -30,6 +32,12 @@ public abstract class AbstractValidator<T> implements ArgumentValidator<T> {
     public Class<T> getTargetClass() {
         return targetClass;
     }
+
+    /**************************************************************************************
+     * 
+     * Convenience methods for subclasses to check for example for null or empty parameters
+     * 
+     **************************************************************************************/
 
     protected static boolean bothNullOrEqual(final Object a, final Object b) {
         return (a == null && b == null) || a.equals(b);
@@ -63,7 +71,7 @@ public abstract class AbstractValidator<T> implements ArgumentValidator<T> {
 
     protected static void checkSameClass(final Object argument, final Object constraint) {
         if (argument.getClass() != constraint.getClass()) {
-            throw new IllegalStateException("The validated argument is not of same class as a constraint");
+            throw new IllegalArgumentException("The validated argument is not of same class as a constraint");
         }
     }
 

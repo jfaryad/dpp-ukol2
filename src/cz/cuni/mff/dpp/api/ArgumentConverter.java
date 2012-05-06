@@ -8,6 +8,8 @@ package cz.cuni.mff.dpp.api;
  * @param <T>
  */
 public interface ArgumentConverter<T> {
+    
+    String CONVERT_METHOD_NAME="convert";
 
     /**
      * Converts {@link String} value to desired type.

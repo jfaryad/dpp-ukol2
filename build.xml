@@ -37,7 +37,7 @@
 		<mkdir dir="${dist}" />
 	</target>
 
-	<target name="dist" depends="test,compile,init-dist" description="generate the distribution">
+	<target name="dist" depends="compile,init-dist" description="generate the distribution">
 		<!-- Put everything in ${build} into the Joker.jar file -->
 		<jar jarfile="${dist}/Options.jar" basedir="${build}" />
 	</target>

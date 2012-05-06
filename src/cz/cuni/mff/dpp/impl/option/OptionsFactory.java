@@ -306,7 +306,7 @@ public final class OptionsFactory {
 
             Method method = null;
             try {
-                method = argumentConverterClass.getMethod("parse", String.class);
+                method = argumentConverterClass.getMethod(ArgumentConverter.CONVERT_METHOD_NAME, String.class);
             } catch (final Exception e) {
                 Errors.COMMON_ERROR.throwException(e);
             }
@@ -362,7 +362,7 @@ public final class OptionsFactory {
             }
         }
 
-        private boolean isValidOptionName(String optionName) {
+        private boolean isValidOptionName(final String optionName) {
             return !optionName.contains(CommandLineParser.OPTION_VALUE_DELIMITER)
                     && !optionName.startsWith(CommandLineParser.SHORT_OPTION_PREFIX);
         }

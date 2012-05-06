@@ -44,7 +44,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
     private T targetBean;
 
-    /* package */ParserImpl(Options<T> options, final String[] commandLine) {
+    /* package */ParserImpl(final Options<T> options, final String[] commandLine) {
         super();
         this.commandLine = commandLine;
         this.options = options;
@@ -72,7 +72,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
     private void check() {
 
-        Map<SingleOption, Integer> optionCounts = new HashMap<SingleOption, Integer>();
+        final Map<SingleOption, Integer> optionCounts = new HashMap<SingleOption, Integer>();
 
         for (final ParsedOption parsedOption : parsedOptionList) {
 
@@ -132,7 +132,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
     private void checkOptionsCompatibility(final Map<SingleOption, Integer> optionCounts) {
 
-        for (SingleOption singleOption : optionCounts.keySet()) {
+        for (final SingleOption singleOption : optionCounts.keySet()) {
             checkDependentOptions(singleOption, new HashSet<SingleOption>(optionCounts.keySet()));
             checkIncompatibleOptions(singleOption, new HashSet<SingleOption>(optionCounts.keySet()));
         }
@@ -156,7 +156,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
         }
     }
 
-    public void checkCommonArgumentsCounts() {
+    private void checkCommonArgumentsCounts() {
         if (!options.getCommonArgumentRequiredCountInterval().isInside(commonArgumetList.size())) {
             processException(new RequiredCommonArgumentCountException(commonArgumetList.size()));
         }
@@ -300,7 +300,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
             addParsedOption(tokenName);
         }
 
-        ParsedOption lastParsedOption = parsedOptionList.get(parsedOptionList.size() - 1);
+        final ParsedOption lastParsedOption = parsedOptionList.get(parsedOptionList.size() - 1);
         if (tokenParameter != null) {
             lastParsedOption.setOptionParameter(tokenParameter);
         }
@@ -308,15 +308,15 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
         return lastParsedOption;
     }
 
-    private void addShortOptions(String tokenName) {
-        char[] optionNames = tokenName.toCharArray();
-        for (char optionName : optionNames) {
+    private void addShortOptions(final String tokenName) {
+        final char[] optionNames = tokenName.toCharArray();
+        for (final char optionName : optionNames) {
             addParsedOption(Character.toString(optionName));
         }
     }
 
-    private void addParsedOption(String optionName) {
-        ParsedOption parsedOption = new ParsedOption();
+    private void addParsedOption(final String optionName) {
+        final ParsedOption parsedOption = new ParsedOption();
         parsedOption.setOptionName(optionName);
         parsedOptionList.add(parsedOption);
     }

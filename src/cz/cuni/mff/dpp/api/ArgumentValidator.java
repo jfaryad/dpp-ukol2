@@ -11,7 +11,7 @@ package cz.cuni.mff.dpp.api;
 public interface ArgumentValidator<T> {
 
     /**
-     * Invokes the validation. If the value doesn't pass the validation, an {@link IllegalArgumentException} is thrown.
+     * Checks whether the argument is valid according to this validator.
      * 
      * @param argument
      *            the argument to validate
