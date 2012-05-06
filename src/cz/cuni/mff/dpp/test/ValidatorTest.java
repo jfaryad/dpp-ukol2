@@ -21,7 +21,7 @@ import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
  */
 public class ValidatorTest {
 
-    private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private final Options options = OptionsFactory.createOptions(ValidatedPerson.class);
     private final DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
 
@@ -45,16 +45,12 @@ public class ValidatorTest {
         parser.parse(new String[] { "--a", "55", "-c", "purple", "-b", "30-05-2012" });
     }
 
-    public static class DateArgumentConverter implements ArgumentConverter<Date> {
-
-        public DateArgumentConverter() {
-
-        }
+    public class DateArgumentConverter implements ArgumentConverter<Date> {
 
         @Override
         public Date parse(final String argument) {
             try {
-                return dateFormat.parse(argument);
+                return ValidatorTest.dateFormat.parse(argument);
             } catch (final ParseException e) {
                 throw new RuntimeException(e);
             }

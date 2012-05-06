@@ -31,6 +31,16 @@ public class OptionsBuilder<T> implements Options<T> {
     private String name;
     private String usageLine;
 
+    /**
+     * Adds a new option definition to the builder. It will be an argument-less option by default (argument obligation =
+     * FORBIDDEN). <br>
+     * If an argument name, class or converter is specified, the argument will be considered required, unless argument
+     * obligation is explicitly changed.
+     * 
+     * @param optionNames
+     *            the names (long and short) of the new option. The ordering has no meaning.
+     * @return reference to the single option builder representing the new option
+     */
     public SingleOptionBuilder addOption(final String... optionNames) {
         final SingleOptionBuilder builder = new SingleOptionBuilder(optionNames);
         for (final String optionName : optionNames) {
@@ -132,18 +142,18 @@ public class OptionsBuilder<T> implements Options<T> {
     }
 
     @Override
-    public Collection<SingleOption> getDependentSingleOptionList(String optionName) {
+    public Collection<SingleOption> getDependentSingleOptionList(final String optionName) {
         return getSingleOptionsByOptionNames(getOption(optionName).getDependentList());
     }
 
     @Override
-    public Collection<SingleOption> getIncompatibleSingleOptionList(String optionName) {
+    public Collection<SingleOption> getIncompatibleSingleOptionList(final String optionName) {
         return getSingleOptionsByOptionNames(getOption(optionName).getIncompatibleList());
     }
 
-    private final Collection<SingleOption> getSingleOptionsByOptionNames(Collection<String> optionNames) {
-        Collection<SingleOption> result = new HashSet<SingleOption>();
-        for (String dependentOptionName : optionNames) {
+    private final Collection<SingleOption> getSingleOptionsByOptionNames(final Collection<String> optionNames) {
+        final Collection<SingleOption> result = new HashSet<SingleOption>();
+        for (final String dependentOptionName : optionNames) {
             result.add(options.get(dependentOptionName));
         }
         return result;

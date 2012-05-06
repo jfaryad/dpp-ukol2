@@ -352,7 +352,7 @@ public final class OptionsFactory {
             }
         }
 
-        private boolean isValidOptionName(String optionName) {
+        private boolean isValidOptionName(final String optionName) {
             return !optionName.contains(CommandLineParser.OPTION_VALUE_DELIMITER)
                     && !optionName.startsWith(CommandLineParser.SHORT_OPTION_PREFIX);
         }

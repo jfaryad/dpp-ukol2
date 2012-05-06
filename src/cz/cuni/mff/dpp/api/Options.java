@@ -31,47 +31,43 @@ public interface Options<T> {
     /**
      * Returns class of the target bean.
      * 
-     * @return
      */
     public Class<T> getTargetBeanClass();
 
     /**
-     * Returns converter for common argument, this converter is used to convert value from {@link String} to desired
+     * Returns a converter for a common argument, this converter is used to convert value from {@link String} to desired
      * type.
      * 
-     * @return
      */
     public ArgumentConverter<?> getCommonArgumentConverter();
 
     /**
      * Returns setter for common argument.
      * 
-     * @return
      */
     public OptionSetter getCommonArgumentSetter();
 
     /**
      * Return interval how many times common interval should appear on command line
      * 
-     * @return
      */
     public RequiredCountInterval getCommonArgumentRequiredCountInterval();
 
     /**
      * Returns {@link SingleOption} objects of options (specified by parameter) which must be specified together with
-     * this option on the command line.
+     * the given option on the command line.
      * 
      * @param optionName
-     * @return
+     *            the option which we're searching dependencies for
      */
     public Collection<SingleOption> getDependentSingleOptionList(String optionName);
 
     /**
      * Returns {@link SingleOption} objects of options (specified by parameter) which mustn't be specified together with
-     * this option on the command line.
+     * the given option on the command line.
      * 
      * @param optionName
-     * @return
+     *            the option which we're searching incompatible options for
      */
     public Collection<SingleOption> getIncompatibleSingleOptionList(String optionName);
 
@@ -79,7 +75,6 @@ public interface Options<T> {
      * Returns a summary of about the program that this Options object represents. It will be used for help screen
      * generation.
      * 
-     * @return
      */
     public String getDescription();
 
@@ -87,7 +82,6 @@ public interface Options<T> {
      * Returns the name of the command line program that this Options object represents. It will be used for help screen
      * generation.
      * 
-     * @return
      */
     public String getName();
 

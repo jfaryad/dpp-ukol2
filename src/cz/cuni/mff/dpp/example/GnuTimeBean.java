@@ -5,6 +5,7 @@ import java.io.File;
 import cz.cuni.mff.dpp.annotation.OptionsDefinition;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
 import cz.cuni.mff.dpp.annotation.SimpleOption;
+import cz.cuni.mff.dpp.impl.converter.FileArgumentConverter;
 
 /**
  * Example of using the annotation @Option to define allowed options for GNU time
