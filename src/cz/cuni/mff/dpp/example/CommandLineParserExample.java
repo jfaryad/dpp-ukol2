@@ -8,22 +8,13 @@ public class CommandLineParserExample {
 
     public static void main(String[] args) {
 
-        // testGnuTimeBean();
-        //
-        // System.out.println("------------------------------");
-        //
-        // testGnuTimeBean2();
-        //
-        // System.out.println("------------------------------");
-        //
-        // testCommonArgumentTestBean();
-        //
-        // System.out.println("------------------------------");
-        //
-        // testEnumArgumentBean();
-        //
-        // System.out.println("------------------------------");
+        testGnuTimeBean();
 
+        System.out.println("------------------------------");
+
+        testGnuTimeBean2();
+
+        System.out.println("------------------------------");
     }
 
     public static void testGnuTimeBean() {
@@ -34,16 +25,13 @@ public class CommandLineParserExample {
         GnuTimeBean gnuTimeBean = parser.parse(new String[] {});
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = parser.parse(new String[] { "-a" });
-        System.out.println(gnuTimeBean.toString());
-
-        gnuTimeBean = parser.parse(new String[] { "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "-a", "-o=temp.txt" });
         System.out.println(gnuTimeBean.toString());
 
         gnuTimeBean = parser.parse(new String[] { "--help" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = parser.parse(new String[] { "--help", "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "--help", "-V" });
         System.out.println(gnuTimeBean.toString());
 
         gnuTimeBean = parser.parse(new String[] { "--format", "%s%d%m" });
@@ -52,13 +40,9 @@ public class CommandLineParserExample {
         gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V" });
-        System.out.println(gnuTimeBean.toString());
-
         gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V", "-o",
                 "c:\\temp.txt" });
         System.out.println(gnuTimeBean.toString());
-
     }
 
     public static void testGnuTimeBean2() {
@@ -69,25 +53,19 @@ public class CommandLineParserExample {
         GnuTimeBean2 gnuTimeBean = parser.parse(new String[] {});
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = parser.parse(new String[] { "-a" });
-        System.out.println(gnuTimeBean.toString());
-
-        gnuTimeBean = parser.parse(new String[] { "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "-a", "-o=temp.txt" });
         System.out.println(gnuTimeBean.toString());
 
         gnuTimeBean = parser.parse(new String[] { "--help" });
         System.out.println(gnuTimeBean.toString());
 
-        gnuTimeBean = parser.parse(new String[] { "--help", "-a", "-V" });
+        gnuTimeBean = parser.parse(new String[] { "--help", "-V" });
         System.out.println(gnuTimeBean.toString());
 
         gnuTimeBean = parser.parse(new String[] { "--format", "%s%d%m" });
         System.out.println(gnuTimeBean.toString());
 
         gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m" });
-        System.out.println(gnuTimeBean.toString());
-
-        gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V" });
         System.out.println(gnuTimeBean.toString());
 
         gnuTimeBean = parser.parse(new String[] { "--format=%s%d%m", "--help", "-a", "-V", "-o",

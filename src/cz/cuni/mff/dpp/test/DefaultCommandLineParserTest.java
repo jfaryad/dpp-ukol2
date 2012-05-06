@@ -8,7 +8,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
 
 import cz.cuni.mff.dpp.annotation.CommonArgument;
 import cz.cuni.mff.dpp.annotation.ParameterOption;
@@ -16,8 +15,15 @@ import cz.cuni.mff.dpp.annotation.SimpleOption;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
+import cz.cuni.mff.dpp.api.parser.exception.DependentOptionsException;
+import cz.cuni.mff.dpp.api.parser.exception.IncompatibleOptionsException;
+import cz.cuni.mff.dpp.api.parser.exception.LongOptionException;
+import cz.cuni.mff.dpp.api.parser.exception.OptionParameterFormatException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredCommonArgumentCountException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionCountException;
+import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionParameterException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionException;
-import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
+import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionParameterException;
 import cz.cuni.mff.dpp.impl.converter.FileArgumentConverter;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
@@ -141,12 +147,50 @@ public class DefaultCommandLineParserTest extends TestCase {
                 OptionArgumentObligation.REQUIRED), bean);
 
     }
-    
+
     @Test(expected = UnexceptedOptionException.class)
     public void testUnexceptedOption() {
-        
-        DefaultCommandLineParser.parse(TestBean.class, new String[] {"-x"});
-        
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "-x" });
+    }
+
+    @Test(expected = UnexceptedOptionParameterException.class)
+    public void testUnexceptedOptionParameter() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "-b=d" });
+    }
+
+    @Test(expected = RequiredOptionParameterException.class)
+    public void testRequiredOptionParameter() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "--bb" });
+    }
+
+    @Test(expected = RequiredOptionCountException.class)
+    public void testRequiredOptionCount() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "--bb=1", "--bb=1", "--bb=1", "--bb=1" });
+    }
+
+    @Test(expected = RequiredCommonArgumentCountException.class)
+    public void testRequiredCommonArgumentCount() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "a", "b", "c", "a" });
+    }
+
+    @Test(expected = OptionParameterFormatException.class)
+    public void testOptionParameterFormat() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "--bb", "10a" });
+    }
+
+    @Test(expected = LongOptionException.class)
+    public void testLongOption() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "--b" });
+    }
+
+    @Test(expected = IncompatibleOptionsException.class)
+    public void testIncompatibleOptions() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "-a", "-b", "-c", "false" });
+    }
+
+    @Test(expected = DependentOptionsException.class)
+    public void testDependentOptions() {
+        DefaultCommandLineParser.parse(TestBean.class, new String[] { "-a" });
     }
 
     // =================================================================================================================
@@ -404,7 +448,7 @@ public class DefaultCommandLineParserTest extends TestCase {
         @ParameterOption(names = "aaa", argumentConverter = FileArgumentConverter.class)
         private File neco = null;
 
-        @SimpleOption(names = "a", dependentOn = { "c" }, incompatibleWith = "ab")
+        @SimpleOption(names = "a", dependentOn = { "c" }, incompatibleWith = "b")
         private boolean s1;
 
         @SimpleOption(names = "b")
