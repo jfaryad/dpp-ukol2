@@ -2,6 +2,10 @@
 <body>
 This library allows you to specify what command line options a program expects and contains tools to parse the command line 
 and based on the specified configurations, populate a bean with the specified options.
+
+
+
+<h3>Simple options</h3>
 <p>
 Expected options are configured via annotated beans.<br>
 For example:<br>
@@ -28,6 +32,7 @@ public static void main(String[] args) {
 	System.out.println(hello);
 }
 </pre>
+The result of the parsing is a populated bean.<br>
 The field useCapitalLetters is set to true, if the option of the given name is specified on the command line.
 <br>
 A simple option must always be of type boolean.
@@ -36,6 +41,9 @@ An option can have several synonyms, for example, in the previous example you co
 java SayHello --use-capitals
 <br>
 All such synonyms are specified in the "names" array in the annotation.
+
+
+<h3>Options with parameters</h3>
 <p>
 To pass parameters to options, they have to be tagged with @ParameterOption<br>
 For example:
@@ -90,6 +98,10 @@ dependencies/incompatible options: options that must/mustn't be specified togeth
 parameterRequired: whether the parameter of this option is required or optional.<br>
 argumentConverter: what converter to use to convert the option parameter from String.<br>
 validators: custom validations that can be triggered on the value when it is parsed from the command line.<br>
+
+
+
+<h3>Option parameter validators</h3>
 <p>
 You can specify validators like this:
 <pre>
@@ -108,6 +120,10 @@ This example shows field that takes an int value defining an age, but it has to 
 Other validators are for examle GreaterThenValidator, OneOfValidator, etc.<br>
 For a complete list, se the cz.cuni.mff.dpp.validator package<br>
 You can easily create custom validators by extending the AbstractValidator class.
+
+
+
+<h3>Non-option arguments</h3>
 <p>
 Every program can have common non-option arguments. For example:
 <br>
@@ -129,6 +145,10 @@ If you expect only one non-option argument, you can tag directly a field:
 </pre>
 Note that you can specify, how many times a common argument can be found (default values are min 0 and max Integer.MAX_VALUE)<br>
 Off course, you can also have an argument other then String and use a converter.
+
+
+
+<h3>Generating help screen</h3>
 <p>
 Most programs are able display a help page with usage information.<br>
 You can generate such a help page from the information provided by the Options object using a HelpScreenFactory.<br>
