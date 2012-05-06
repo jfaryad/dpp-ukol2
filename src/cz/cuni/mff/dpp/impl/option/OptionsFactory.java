@@ -18,7 +18,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
-import cz.cuni.mff.dpp.api.RequiredCountInterval;
+import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
 import cz.cuni.mff.dpp.api.parser.CommandLineParser;
 import cz.cuni.mff.dpp.impl.converter.ArgumentConverterFactory;
 import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
@@ -27,7 +27,7 @@ import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 import cz.cuni.mff.dpp.impl.validator.ValidatorFactory;
 
 /**
- * This class contains methods, which create Options objects from different parameters
+ * This class contains method, that creates {@link Options} object from annotated bean.
  * 
  * @author Tom
  * 
@@ -37,6 +37,15 @@ public final class OptionsFactory {
     private OptionsFactory() {
     }
 
+    /**
+     * Builds {@link Options} configuration object from annotated bean, that is used in {@link CommandLineParser}. Go to
+     * {@link Errors} to see possible errors during annotation bean processing
+     * 
+     * @param targetBeanClass
+     *            - annotated bean, that should be used to store command line informations
+     * @return {@link Options} configuration object
+     * 
+     */
     public static <T> Options<T> createOptions(final Class<T> targetBeanClass) {
         return new AnnotatedBeanOptionsBuilder<T>(targetBeanClass).getOptionsBuilder();
     }
@@ -51,23 +60,15 @@ public final class OptionsFactory {
 
         static {
             final Map<Class<?>, Object> temp = new HashMap<Class<?>, Object>();
-            // temp.put(Byte.class, new Byte((byte) 0));
             temp.put(byte.class, new Byte((byte) 0));
-            // temp.put(Character.class, new Character('\0'));
             temp.put(char.class, new Character('\0'));
-            // temp.put(Short.class, new Short((short) 0));
             temp.put(short.class, new Short((short) 0));
-            // temp.put(Integer.class, new Integer(0));
             temp.put(int.class, new Integer(0));
-            // temp.put(Long.class, new Long(0));
             temp.put(long.class, new Long(0));
 
-            // temp.put(Float.class, new Float(0));
             temp.put(float.class, new Float(0));
-            // temp.put(Double.class, new Double(0));
             temp.put(double.class, new Double(0));
 
-            // temp.put(Boolean.class, Boolean.FALSE);
             temp.put(boolean.class, Boolean.FALSE);
             DEFAULT_VALUES_MAP = Collections.unmodifiableMap(temp);
         }
@@ -89,8 +90,8 @@ public final class OptionsFactory {
 
         private static final Boolean SIMPLE_OPTION_DEFAULT_VALUE = Boolean.TRUE;
 
-        private static final RequiredCountInterval SIMPLE_OPTION_REQUIRED_COUNT_INTERVAL =
-                new RequiredCountInterval(0, 1);
+        private static final RequiredOccurrenceCountInterval SIMPLE_OPTION_REQUIRED_COUNT_INTERVAL =
+                new RequiredOccurrenceCountInterval(0, 1);
 
         private final OptionsBuilder<T> optionsBuilder;
 
@@ -166,7 +167,8 @@ public final class OptionsFactory {
                     commonArgument.argumentConverter(), optionTarget.getTargetClass());
             optionsBuilder.setCommonArgumentConverter(commonArgumentConverter);
 
-            final RequiredCountInterval interval = createRequiredCountInterval(commonArgument.minRequiredCount(),
+            final RequiredOccurrenceCountInterval interval = createRequiredCountInterval(
+                    commonArgument.minRequiredCount(),
                     commonArgument.maxRequiredCount());
 
             optionsBuilder.setCommonArgumentRequiredCountInterval(interval);
@@ -232,13 +234,13 @@ public final class OptionsFactory {
             builder.setDefaultValue(getDefaultValue(parameterOption, argumentConverter, optionTarget.getTargetClass()));
         }
 
-        private static RequiredCountInterval createRequiredCountInterval(final int min, final int max) {
+        private static RequiredOccurrenceCountInterval createRequiredCountInterval(final int min, final int max) {
 
-            if (!RequiredCountInterval.isValid(min, max)) {
+            if (!RequiredOccurrenceCountInterval.isValid(min, max)) {
                 Errors.BAD_REQUIRED_COUNT_INTERVAL.throwException(min, max);
             }
 
-            return new RequiredCountInterval(min, max);
+            return new RequiredOccurrenceCountInterval(min, max);
         }
 
         private static void addValidatorsToSingleOptionBuilder(
@@ -255,18 +257,25 @@ public final class OptionsFactory {
 
         private static Object getDefaultValue(final ParameterOption parameterOption,
                 final ArgumentConverter<?> argumentConverter, final Class<?> setterTargetClass) {
+
             final String[] defaultParameter = parameterOption.defaultParameter();
             if (defaultParameter.length == 0) {
                 return DEFAULT_VALUES_MAP.get(setterTargetClass);
             } else if (defaultParameter.length == 1) {
-                try {
-                    return argumentConverter.parse(defaultParameter[0]);
-                } catch (final Exception e) {
-                    Errors.DEFAULT_VALUE_CONVERTING_ERROR.throwException(e, defaultParameter[0],
-                            argumentConverter.getTargetClass());
-                }
+                return convertDefaultValue(defaultParameter[0], argumentConverter);
             } else if (defaultParameter.length > 1) {
                 Errors.DEFAULT_VALUE_BAD_INITIALIZATION.throwException();
+            }
+            throw new IllegalStateException("This should really never happen");
+        }
+
+        private static Object convertDefaultValue(final String defaultParameter,
+                final ArgumentConverter<?> argumentConverter) {
+            try {
+                return argumentConverter.convert(defaultParameter);
+            } catch (final Exception e) {
+                Errors.DEFAULT_VALUE_CONVERTING_ERROR.throwException(e, defaultParameter,
+                        argumentConverter.getTargetClass());
             }
             throw new IllegalStateException("This should really never happen");
         }
@@ -276,18 +285,20 @@ public final class OptionsFactory {
                 final Class<?> targetClass) {
 
             if (DummyArgumentConverter.class == argumentConverterClass) {
-                if (ArgumentConverterFactory.existsDefaultConverter(targetClass)) {
-                    return ArgumentConverterFactory.getDefaultConverter(targetClass);
-                } else {
-                    Errors.ARGUMENT_CONVERTER_NOT_SPECIFIED.throwException(targetClass.toString());
-                }
+                return getDefaultArgumentConverter(targetClass);
             } else {
                 checkArgumentConverter(argumentConverterClass, targetClass);
                 return createInstance(argumentConverterClass);
             }
+        }
 
+        private ArgumentConverter<?> getDefaultArgumentConverter(final Class<?> targetClass) {
+            if (ArgumentConverterFactory.existsDefaultConverter(targetClass)) {
+                return ArgumentConverterFactory.getDefaultConverter(targetClass);
+            } else {
+                Errors.ARGUMENT_CONVERTER_NOT_SPECIFIED.throwException(targetClass.toString());
+            }
             throw new IllegalStateException("This should really never happen");
-
         }
 
         private static void checkArgumentConverter(final Class<? extends ArgumentConverter<?>> argumentConverterClass,
@@ -305,7 +316,6 @@ public final class OptionsFactory {
                 Errors.ARGUMENT_CONVERTERBAD_RETURN_TYPE.throwException(argumentConverterClass.toString(),
                         returnType.toString(), targetClass.toString());
             }
-
         }
 
         private static boolean isSamePrimitiveAndWrapperType(final Class<?> primitiveClass, final Class<?> wrapperClass) {
@@ -526,6 +536,13 @@ public final class OptionsFactory {
         }
     }
 
+    /**
+     * 
+     * Type of errors, that can happen during annotation processing
+     * 
+     * @author Tom
+     * 
+     */
     private static enum Errors {
 
         MULTIPLE_ANNOTATIONS("Usage of multiple annotations on the same class member (%s %s) is not allowed."),
@@ -559,11 +576,11 @@ public final class OptionsFactory {
         }
 
         private void throwException(final Object... args) {
-            throw new MissConfiguratedAnnotationException(String.format(errorText, args));
+            throw new MissConfiguratedAnnotationException(this, String.format(errorText, args));
         }
 
         private void throwException(final Exception exception, final Object... args) {
-            throw new MissConfiguratedAnnotationException(String.format(errorText, args), exception);
+            throw new MissConfiguratedAnnotationException(this, String.format(errorText, args), exception);
         }
 
     }
@@ -572,20 +589,26 @@ public final class OptionsFactory {
 
         private static final long serialVersionUID = 1L;
 
-        public MissConfiguratedAnnotationException() {
-            super();
-        }
+        private final Errors error;
 
-        public MissConfiguratedAnnotationException(final String message, final Throwable cause) {
+        public MissConfiguratedAnnotationException(final Errors error, final String message, final Throwable cause) {
             super(message, cause);
+            this.error = error;
         }
 
-        public MissConfiguratedAnnotationException(final String message) {
+        public MissConfiguratedAnnotationException(final Errors error, final String message) {
             super(message);
+            this.error = error;
         }
 
-        public MissConfiguratedAnnotationException(final Throwable cause) {
+        public MissConfiguratedAnnotationException(final Errors error, final Throwable cause) {
             super(cause);
+            this.error = error;
         }
+
+        public Errors getError() {
+            return error;
+        }
+
     }
 }

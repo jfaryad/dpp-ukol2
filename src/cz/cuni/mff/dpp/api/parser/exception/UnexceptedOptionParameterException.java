@@ -1,5 +1,10 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
+/**
+ * Indicates parameter for parameter, that does not permit option parameters
+ * @author Tom
+ *
+ */
 public class UnexceptedOptionParameterException extends CommandLineParserException {
 
     private static final long serialVersionUID = 1L;
@@ -15,10 +20,18 @@ public class UnexceptedOptionParameterException extends CommandLineParserExcepti
         this.unexceptedOptionParameter = unexceptedOptionParameter;
     }
 
+    /**
+     * Returns option parameter name
+     * @return
+     */
     public String getOptionName() {
         return optionName;
     }
 
+    /**
+     * Return not permitted option parameter
+     * @return
+     */
     public String getUnexceptedOptionParameter() {
         return unexceptedOptionParameter;
     }

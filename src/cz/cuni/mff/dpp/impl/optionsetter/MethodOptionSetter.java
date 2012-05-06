@@ -4,6 +4,13 @@ import java.lang.reflect.Method;
 
 import cz.cuni.mff.dpp.api.OptionSetter;
 
+
+/**
+ * Setter used for method invoking
+ * 
+ * @author Tom
+ *
+ */
 public class MethodOptionSetter implements OptionSetter {
 
     private final Method method;

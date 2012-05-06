@@ -125,7 +125,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
         for (final SingleOption singleOption : options.getOptions()) {
             final int count = getSingleOptionCount(optionCounts, singleOption);
             if (!singleOption.getRequiredCountInterval().isInside(count)) {
-                processException(new RequiredOptionCountException(singleOption.getFirstOptionName(), count));
+                processException(new RequiredOptionCountException(singleOption, count));
             }
         }
     }
@@ -175,7 +175,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
             if (parsedOption.hasOptionParameter()) {
 
                 try {
-                    convertedOptionParameter = singleOption.getArgumentConverter().parse(
+                    convertedOptionParameter = singleOption.getArgumentConverter().convert(
                             parsedOption.getOptionParameter());
                 } catch (final ArgumentFormatException afe) {
                     processException(new OptionParameterFormatException(afe, parsedOption.getOptionName()));
@@ -219,7 +219,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
             Object convertedObject;
             try {
-                convertedObject = commonArgumentConverter.parse(commonArgument);
+                convertedObject = commonArgumentConverter.convert(commonArgument);
             } catch (final ArgumentFormatException afe) {
                 processException(new CommonArgumentFormatException(afe));
                 continue;

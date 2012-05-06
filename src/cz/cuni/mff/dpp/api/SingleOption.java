@@ -77,7 +77,7 @@ public interface SingleOption {
     public boolean isArgumentRequired();
 
     /**
-     * Defines wheter an argument is mandatory, optional of forbidden for this option.
+     * Defines whether an argument is mandatory, optional of forbidden for this option.
      */
     public OptionArgumentObligation getArgumentObligation();
 
@@ -124,7 +124,7 @@ public interface SingleOption {
      * 
      * @return
      */
-    public RequiredCountInterval getRequiredCountInterval();
+    public RequiredOccurrenceCountInterval getRequiredCountInterval();
 
     /**
      * Returns first name for this option (alphabetically)

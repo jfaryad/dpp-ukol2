@@ -114,7 +114,7 @@ public class ValidatorExample {
         }
 
         @Override
-        public Date parse(final String argument) {
+        public Date convert(final String argument) {
             try {
                 return dateFormat.parse(argument);
             } catch (final ParseException e) {

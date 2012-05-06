@@ -8,7 +8,7 @@ import java.util.Map;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.OptionSetter;
 import cz.cuni.mff.dpp.api.Options;
-import cz.cuni.mff.dpp.api.RequiredCountInterval;
+import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
@@ -19,14 +19,14 @@ import cz.cuni.mff.dpp.api.SingleOption;
  */
 public class OptionsBuilder<T> implements Options<T> {
 
-    private static final RequiredCountInterval DEFAULT_REQUIRED_COUNT_INTERVAL = new RequiredCountInterval(0, 0);
+    private static final RequiredOccurrenceCountInterval DEFAULT_REQUIRED_COUNT_INTERVAL = new RequiredOccurrenceCountInterval(0, 0);
 
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
     private Class<T> targetBeanClass;
 
     private ArgumentConverter<?> commonArgumentConverter;
     private OptionSetter commonArgumentSetter;
-    private RequiredCountInterval commonArgumentRequiredCountInterval = DEFAULT_REQUIRED_COUNT_INTERVAL;
+    private RequiredOccurrenceCountInterval commonArgumentRequiredCountInterval = DEFAULT_REQUIRED_COUNT_INTERVAL;
     private String description;
     private String name;
     private String usageLine;
@@ -123,11 +123,11 @@ public class OptionsBuilder<T> implements Options<T> {
     }
 
     @Override
-    public RequiredCountInterval getCommonArgumentRequiredCountInterval() {
+    public RequiredOccurrenceCountInterval getCommonArgumentRequiredCountInterval() {
         return commonArgumentRequiredCountInterval;
     }
 
-    public void setCommonArgumentRequiredCountInterval(final RequiredCountInterval commonArgumentRequiredCountInterval) {
+    public void setCommonArgumentRequiredCountInterval(final RequiredOccurrenceCountInterval commonArgumentRequiredCountInterval) {
         this.commonArgumentRequiredCountInterval = commonArgumentRequiredCountInterval;
     }
 

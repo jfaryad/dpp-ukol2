@@ -22,8 +22,8 @@ import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 public class ValidatorTest {
 
     private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private final Options options = OptionsFactory.createOptions(ValidatedPerson.class);
-    private final DefaultCommandLineParser parser = new DefaultCommandLineParser(options);
+    private final Options<ValidatedPerson> options = OptionsFactory.createOptions(ValidatedPerson.class);
+    private final DefaultCommandLineParser<ValidatedPerson> parser = new DefaultCommandLineParser<ValidatedPerson>(options);
 
     @Test
     public void testValidCommandLineValidation() {
@@ -52,7 +52,7 @@ public class ValidatorTest {
         }
 
         @Override
-        public Date parse(final String argument) {
+        public Date convert(final String argument) {
             try {
                 return dateFormat.parse(argument);
             } catch (final ParseException e) {

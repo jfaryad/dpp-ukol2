@@ -1,5 +1,10 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
+/**
+ * Indicates bad occurrences count of the common argument
+ * @author Tom
+ *
+ */
 public class RequiredCommonArgumentCountException extends CommandLineParserException {
 
     private static final long serialVersionUID = 1L;
@@ -13,6 +18,10 @@ public class RequiredCommonArgumentCountException extends CommandLineParserExcep
         this.badCount = badCount;
     }
 
+    /**
+     * Return count of the common argument occurrence
+     * @return
+     */
     public int getBadCount() {
         return badCount;
     };

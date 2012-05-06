@@ -11,7 +11,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.Options;
-import cz.cuni.mff.dpp.api.RequiredCountInterval;
+import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 
@@ -152,7 +152,7 @@ public class CommandLineParserExample {
 
         private final List<Integer> argumentList = new ArrayList<Integer>();
 
-        @CommonArgument(maxRequiredCount = RequiredCountInterval.MAX_BOUND)
+        @CommonArgument(maxRequiredCount = RequiredOccurrenceCountInterval.MAX_BOUND)
         public void addArgument(int argument) {
             argumentList.add(argument);
         }
@@ -211,7 +211,7 @@ public class CommandLineParserExample {
         }
 
         @Override
-        public File parse(String argument) {
+        public File convert(String argument) {
             throw new ArgumentFormatException(argument, this.getClass());
         }
 

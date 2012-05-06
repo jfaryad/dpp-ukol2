@@ -1,5 +1,10 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
+/**
+ * Indicates unconfigured option occurrence on the command line.
+ * @author Tom
+ *
+ */
 public class UnexceptedOptionException extends CommandLineParserException {
 
     private static final long serialVersionUID = 1L;
@@ -16,10 +21,18 @@ public class UnexceptedOptionException extends CommandLineParserException {
         this.isShortOption = isShortOption;
     }
 
+    /**
+     * Unconfigured option name
+     * @return
+     */
     public String getOptionName() {
         return optionName;
     }
 
+    /**
+     * Return true if option is short
+     * @return
+     */
     public boolean isShortOption() {
         return isShortOption;
     }

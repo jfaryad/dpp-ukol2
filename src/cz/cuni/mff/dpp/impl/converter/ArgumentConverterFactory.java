@@ -7,6 +7,11 @@ import java.util.Map;
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
 
+/**
+ * Factory for default converters, i.e. primitive types, wrapper types, enum types and {@link String}
+ * @author Tom
+ *
+ */
 public class ArgumentConverterFactory {
 
     private static final Map<Class<?>, ArgumentConverter<?>> CONVERTER_MAP;
@@ -18,11 +23,11 @@ public class ArgumentConverterFactory {
         temp.put(Byte.class, new ArgumentConverter<Byte>() {
 
             @Override
-            public Byte parse(String argument) {
+            public Byte convert(String argument) {
                 try {
                     return Byte.parseByte(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -35,11 +40,11 @@ public class ArgumentConverterFactory {
         temp.put(byte.class, new ArgumentConverter<Byte>() {
 
             @Override
-            public Byte parse(String argument) {
+            public Byte convert(String argument) {
                 try {
                     return Byte.parseByte(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -52,11 +57,11 @@ public class ArgumentConverterFactory {
         temp.put(Short.class, new ArgumentConverter<Short>() {
 
             @Override
-            public Short parse(String argument) {
+            public Short convert(String argument) {
                 try {
                     return Short.parseShort(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -69,11 +74,11 @@ public class ArgumentConverterFactory {
         temp.put(short.class, new ArgumentConverter<Short>() {
 
             @Override
-            public Short parse(String argument) {
+            public Short convert(String argument) {
                 try {
                     return Short.parseShort(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -86,11 +91,11 @@ public class ArgumentConverterFactory {
         temp.put(Integer.class, new ArgumentConverter<Integer>() {
 
             @Override
-            public Integer parse(String argument) {
+            public Integer convert(String argument) {
                 try {
                     return Integer.parseInt(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -103,11 +108,11 @@ public class ArgumentConverterFactory {
         temp.put(int.class, new ArgumentConverter<Integer>() {
 
             @Override
-            public Integer parse(String argument) {
+            public Integer convert(String argument) {
                 try {
                     return Integer.parseInt(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -120,11 +125,11 @@ public class ArgumentConverterFactory {
         temp.put(Long.class, new ArgumentConverter<Long>() {
 
             @Override
-            public Long parse(String argument) {
+            public Long convert(String argument) {
                 try {
                     return Long.parseLong(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -137,11 +142,11 @@ public class ArgumentConverterFactory {
         temp.put(long.class, new ArgumentConverter<Long>() {
 
             @Override
-            public Long parse(String argument) {
+            public Long convert(String argument) {
                 try {
                     return Long.parseLong(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument,this.getClass());
                 }
             }
 
@@ -154,11 +159,11 @@ public class ArgumentConverterFactory {
         temp.put(Float.class, new ArgumentConverter<Float>() {
 
             @Override
-            public Float parse(String argument) {
+            public Float convert(String argument) {
                 try {
                     return Float.parseFloat(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -171,11 +176,11 @@ public class ArgumentConverterFactory {
         temp.put(float.class, new ArgumentConverter<Float>() {
 
             @Override
-            public Float parse(String argument) {
+            public Float convert(String argument) {
                 try {
                     return Float.parseFloat(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -188,11 +193,11 @@ public class ArgumentConverterFactory {
         temp.put(Double.class, new ArgumentConverter<Double>() {
 
             @Override
-            public Double parse(String argument) {
+            public Double convert(String argument) {
                 try {
                     return Double.parseDouble(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -205,11 +210,11 @@ public class ArgumentConverterFactory {
         temp.put(double.class, new ArgumentConverter<Double>() {
 
             @Override
-            public Double parse(String argument) {
+            public Double convert(String argument) {
                 try {
                     return Double.parseDouble(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument,this.getClass());
                 }
             }
 
@@ -222,11 +227,11 @@ public class ArgumentConverterFactory {
         temp.put(Boolean.class, new ArgumentConverter<Boolean>() {
 
             @Override
-            public Boolean parse(String argument) {
+            public Boolean convert(String argument) {
                 try {
                     return Boolean.parseBoolean(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -239,11 +244,11 @@ public class ArgumentConverterFactory {
         temp.put(boolean.class, new ArgumentConverter<Boolean>() {
 
             @Override
-            public Boolean parse(String argument) {
+            public Boolean convert(String argument) {
                 try {
                     return Boolean.parseBoolean(argument);
                 } catch (NumberFormatException nfe) {
-                    throw new ArgumentFormatException(nfe, argument, getTargetClass());
+                    throw new ArgumentFormatException(nfe, argument, this.getClass());
                 }
             }
 
@@ -256,8 +261,8 @@ public class ArgumentConverterFactory {
         temp.put(Character.class, new ArgumentConverter<Character>() {
 
             @Override
-            public Character parse(String argument) {
-                checkIsChar(argument);
+            public Character convert(String argument) {
+                checkIsChar(argument, this.getClass());
                 return argument.charAt(0);
             }
 
@@ -270,8 +275,8 @@ public class ArgumentConverterFactory {
         temp.put(char.class, new ArgumentConverter<Character>() {
 
             @Override
-            public Character parse(String argument) {
-                checkIsChar(argument);
+            public Character convert(String argument) {
+                checkIsChar(argument, this.getClass());
                 return argument.charAt(0);
             }
 
@@ -284,7 +289,7 @@ public class ArgumentConverterFactory {
         temp.put(String.class, new ArgumentConverter<String>() {
 
             @Override
-            public String parse(String argument) {
+            public String convert(String argument) {
                 return argument;
             }
 
@@ -298,6 +303,11 @@ public class ArgumentConverterFactory {
 
     }
 
+    /**
+     * Return default argument converter for the specified class
+     * @param argumentClass
+     * @return
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> ArgumentConverter<T> getDefaultConverter(Class<T> argumentClass) {
 
@@ -320,13 +330,18 @@ public class ArgumentConverterFactory {
         return result;
     }
 
+    /**
+     * Return {@code true} if default converter for specified type exists, otherwise {@code false}
+     * @param argumentClass
+     * @return
+     */
     public static boolean existsDefaultConverter(Class<?> argumentClass) {
         return CONVERTER_MAP.containsKey(argumentClass) || argumentClass.isEnum();
     }
 
-    private static void checkIsChar(String character) {
+    private static void checkIsChar(String character, Class<? extends ArgumentConverter<?>> argumentConverterClass) {
         if (character == null || character.length() != 1) {
-            throw new ArgumentFormatException(character, Character.class);
+            throw new ArgumentFormatException(character, argumentConverterClass);
         }
 
     }

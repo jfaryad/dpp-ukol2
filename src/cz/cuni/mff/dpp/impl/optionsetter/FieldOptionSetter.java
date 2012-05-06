@@ -4,6 +4,11 @@ import java.lang.reflect.Field;
 
 import cz.cuni.mff.dpp.api.OptionSetter;
 
+/**
+ * Setter used for fields setting
+ * @author Tom
+ *
+ */
 public class FieldOptionSetter implements OptionSetter {
 
     private final Field field;

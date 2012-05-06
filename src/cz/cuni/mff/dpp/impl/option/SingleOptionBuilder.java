@@ -10,7 +10,7 @@ import cz.cuni.mff.dpp.api.ArgumentConverter;
 import cz.cuni.mff.dpp.api.ArgumentValidator;
 import cz.cuni.mff.dpp.api.OptionArgumentObligation;
 import cz.cuni.mff.dpp.api.OptionSetter;
-import cz.cuni.mff.dpp.api.RequiredCountInterval;
+import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
@@ -33,7 +33,7 @@ public class SingleOptionBuilder implements SingleOption {
     private Object defaultValue;
     private OptionSetter optionSetter;
     private Set<ArgumentValidator<?>> validators = new HashSet<ArgumentValidator<?>>();
-    private RequiredCountInterval requiredCountInterval;
+    private RequiredOccurrenceCountInterval requiredCountInterval;
 
     SingleOptionBuilder(String... names) {
         for (String name : names) {
@@ -206,11 +206,11 @@ public class SingleOptionBuilder implements SingleOption {
     }
 
     @Override
-    public RequiredCountInterval getRequiredCountInterval() {
+    public RequiredOccurrenceCountInterval getRequiredCountInterval() {
         return requiredCountInterval;
     }
 
-    public SingleOptionBuilder setRequiredCountInterval(RequiredCountInterval requiredCountInterval) {
+    public SingleOptionBuilder setRequiredCountInterval(RequiredOccurrenceCountInterval requiredCountInterval) {
         this.requiredCountInterval = requiredCountInterval;
         return this;
     }

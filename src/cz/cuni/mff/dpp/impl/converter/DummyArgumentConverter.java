@@ -2,13 +2,19 @@ package cz.cuni.mff.dpp.impl.converter;
 
 import cz.cuni.mff.dpp.api.ArgumentConverter;
 
+
+/**
+ * Dummy converter for interval use
+ * @author Tom
+ *
+ */
 public final class DummyArgumentConverter implements ArgumentConverter<Object> {
 
     private DummyArgumentConverter() {
     }
 
     @Override
-    public Object parse(String argument) {
+    public Object convert(String argument) {
         throw new IllegalStateException("This method shouldn't be called.");
     }
 

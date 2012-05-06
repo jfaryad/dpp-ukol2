@@ -55,7 +55,7 @@ public interface Options<T> {
      * 
      * @return
      */
-    public RequiredCountInterval getCommonArgumentRequiredCountInterval();
+    public RequiredOccurrenceCountInterval getCommonArgumentRequiredCountInterval();
 
     /**
      * Returns {@link SingleOption} objects of options (specified by parameter) which must be specified together with
