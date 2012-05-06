@@ -28,7 +28,7 @@ import cz.cuni.mff.dpp.impl.converter.FileArgumentConverter;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 
-public class DefaultCommandLineParserTest extends TestCase {
+public class DefaultCommandLineParserTest {
 
     @Test
     public void test1() {
@@ -146,6 +146,10 @@ public class DefaultCommandLineParserTest extends TestCase {
         assertEquals(new EnumArgumentBean(OptionArgumentObligation.OPTIONAL, OptionArgumentObligation.FORBIDDEN,
                 OptionArgumentObligation.REQUIRED), bean);
 
+    }
+    
+    private static void assertEquals(Object obj1, Object obj2) {
+        assert obj1.equals(obj2);
     }
 
     @Test(expected = UnexceptedOptionException.class)
