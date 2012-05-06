@@ -27,25 +27,25 @@ public class ValidatorTest {
 
     @Test
     public void testValidCommandLineValidation() {
-        parser.parse(new String[] { "--a", "55", "-c", "blue", "-b", "30-05-2012" });
+        parser.parse(new String[] { "-a", "55", "-c", "blue", "-b", "30-05-2012" });
     }
 
     @Test(expected = ValidationException.class)
     public void testInvalidDateGreaterThanValidation() {
-        parser.parse(new String[] { "--a", "55", "-c", "blue", "-b", "30-03-2012" });
+        parser.parse(new String[] { "-a", "55", "-c", "blue", "-b", "30-03-2012" });
     }
 
     @Test(expected = ValidationException.class)
     public void testInvalidBetweenInclusiveValidation() {
-        parser.parse(new String[] { "--a", "125", "-c", "blue", "-b", "30-03-2012" });
+        parser.parse(new String[] { "-a", "125", "-c", "blue", "-b", "30-03-2012" });
     }
 
     @Test(expected = ValidationException.class)
     public void testInvalidOneOfValidation() {
-        parser.parse(new String[] { "--a", "55", "-c", "purple", "-b", "30-05-2012" });
+        parser.parse(new String[] { "-a", "55", "-c", "purple", "-b", "30-05-2012" });
     }
 
-    public class DateArgumentConverter implements ArgumentConverter<Date> {
+    public static class DateArgumentConverter implements ArgumentConverter<Date> {
 
         @Override
         public Date convert(final String argument) {
