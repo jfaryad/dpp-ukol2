@@ -143,7 +143,7 @@ public class CommandLineParserExample {
 
     public static void testTestBean() {
 
-        Object bean = DefaultCommandLineParser.parse(TestBean.class, new String[] { "-abc", "vvv" });
+        Object bean = DefaultCommandLineParser.parse(TestBean.class, new String[] { "--bb" });
         System.out.println(bean.toString());
 
     }

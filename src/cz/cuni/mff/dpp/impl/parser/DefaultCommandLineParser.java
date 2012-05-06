@@ -8,14 +8,43 @@ import cz.cuni.mff.dpp.impl.option.OptionsFactory;
  * 
  * Default {@link CommandLineParser} implementation.
  * 
- * Uses this command line parsing algorithm:
- *
+ * Uses this command line algorithm:
  * 
+ * 1. Target bean is create (must have parameterless public constructor)
+ * 
+ * 2. command line parsing: for every command line element is determined whether it is:
+ * 
+ * a) short option (starts with - and one character, e.g. -a),
+ * 
+ * b) united short option (starts with - and contains multiple characters, e.g. -abc)
+ * 
+ * c) long option (starts with -- a contains more characters, e.g. --output)
+ * 
+ * d) option with parameter (normal option after character = and parameter, e.g. -f=tmp.txt or --file=tmt.txt or
+ * -abf=tmp.txt, in this case option parameter belongs to last short option)
+ * 
+ * e) option parameter (it is not option format and follows after option with required parameter without this parameter
+ * (e.g. without =value))
+ * 
+ * e) common argument delimiter (--)
+ * 
+ * f) common argument (everything after -- and elements, that are not options and option parameters)
+ * 
+ * 3. validation:
+ * 
+ * In this step is every option, option parameter and common argument validated (e.g. occurrences count, is option
+ * permitted and so on...). If some validation fails appropriate exception is thrown.
+ * 
+ * 4. Target bean is population.
+ * 
+ * Appropriate methods are invoked, fields are setted. Option parameters and common arguments are converted and
+ * validated by costumer validators during this phase.
  * 
  * 
  * @author Tom
- *
- * @param <T> - target bean (bean used for command line information storing) type
+ * 
+ * @param <T>
+ *            - target bean (bean used for command line information storing) type
  */
 public class DefaultCommandLineParser<T> implements CommandLineParser<T> {
 
@@ -29,9 +58,11 @@ public class DefaultCommandLineParser<T> implements CommandLineParser<T> {
     /**
      * Connect {@link Options} configuration creation form annotated bean and comman lin parsing together
      * 
-     * @param targetBeanClass - annotated bean
-     * @param commnadLine - command line from main method
-     * @return 
+     * @param targetBeanClass
+     *            - annotated bean
+     * @param commnadLine
+     *            - command line from main method
+     * @return
      */
     public static <T> Object parse(final Class<T> targetBeanClass, final String[] commnadLine) {
         final Options<T> options = OptionsFactory.createOptions(targetBeanClass);

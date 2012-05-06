@@ -21,6 +21,7 @@ import cz.cuni.mff.dpp.api.parser.exception.CommandLineParserException;
 import cz.cuni.mff.dpp.api.parser.exception.CommonArgumentFormatException;
 import cz.cuni.mff.dpp.api.parser.exception.DependentOptionsException;
 import cz.cuni.mff.dpp.api.parser.exception.IncompatibleOptionsException;
+import cz.cuni.mff.dpp.api.parser.exception.LongOptionException;
 import cz.cuni.mff.dpp.api.parser.exception.OptionParameterFormatException;
 import cz.cuni.mff.dpp.api.parser.exception.RequiredCommonArgumentCountException;
 import cz.cuni.mff.dpp.api.parser.exception.RequiredOptionCountException;
@@ -30,7 +31,14 @@ import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionException;
 import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionParameterException;
 import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
-/*package*/class ParserImpl<T> {
+/**
+ * {@code DefaultCommandLineParser} strategy. Do not determined for public usage.
+ * 
+ * @author Tom
+ * 
+ * @param <T>
+ */
+/* package */class ParserImpl<T> {
 
     private final String EMPTY_OPTION_PARAMETER = "";
 
@@ -78,6 +86,8 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
             final String optionName = parsedOption.getOptionName();
 
+            checkLongOption(parsedOption);
+
             final SingleOption singleOption = parsedOption.getSingleOptionConfig();
             addSingleOptionCount(optionCounts, singleOption);
 
@@ -94,6 +104,16 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
         checkOptionCounts(optionCounts);
         checkCommonArgumentsCounts();
 
+    }
+
+    private void checkLongOption(ParsedOption parsedOption) {
+        if (parsedOption.isShortOption() && !parsedOption.isPrefixedWithShortOptionPrefix()) {
+            processException(new LongOptionException(parsedOption.getOptionName()));
+        } else if (!parsedOption.isShortOption() && parsedOption.isPrefixedWithShortOptionPrefix()) {
+            throw new IllegalStateException("This should never happen");
+        } else {
+            // all is ok
+        }
     }
 
     private void addSingleOptionCount(final Map<SingleOption, Integer> optionCounts, final SingleOption singleOption) {
@@ -295,9 +315,9 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
         }
 
         if (isShortOption) {
-            addShortOptions(tokenName);
+            addShortOptions(tokenName, isShortOption);
         } else {
-            addParsedOption(tokenName);
+            addParsedOption(tokenName, isShortOption);
         }
 
         final ParsedOption lastParsedOption = parsedOptionList.get(parsedOptionList.size() - 1);
@@ -308,16 +328,17 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
         return lastParsedOption;
     }
 
-    private void addShortOptions(final String tokenName) {
+    private void addShortOptions(final String tokenName, final boolean prefixedWithShortOption) {
         final char[] optionNames = tokenName.toCharArray();
         for (final char optionName : optionNames) {
-            addParsedOption(Character.toString(optionName));
+            addParsedOption(Character.toString(optionName), prefixedWithShortOption);
         }
     }
 
-    private void addParsedOption(final String optionName) {
+    private void addParsedOption(final String optionName, final boolean prefixedWithShortOption) {
         final ParsedOption parsedOption = new ParsedOption();
         parsedOption.setOptionName(optionName);
+        parsedOption.setPrefixedWithShortOptionPrefix(prefixedWithShortOption);
         parsedOptionList.add(parsedOption);
     }
 
@@ -340,6 +361,8 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
     }
 
     private class ParsedOption {
+
+        private boolean prefixedWithShortOptionPrefix;
 
         private String optionName;
 
@@ -374,6 +397,14 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
         public SingleOption getSingleOptionConfig() {
             return singleOption;
+        }
+
+        public boolean isPrefixedWithShortOptionPrefix() {
+            return prefixedWithShortOptionPrefix;
+        }
+
+        public void setPrefixedWithShortOptionPrefix(boolean prefixedShortOptionPrefix) {
+            this.prefixedWithShortOptionPrefix = prefixedShortOptionPrefix;
         }
     }
 
