@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import cz.cuni.mff.dpp.annotation.CommonArgument;
@@ -147,7 +145,7 @@ public class DefaultCommandLineParserTest {
                 OptionArgumentObligation.REQUIRED), bean);
 
     }
-    
+
     private static void assertEquals(Object obj1, Object obj2) {
         assert obj1.equals(obj2);
     }
