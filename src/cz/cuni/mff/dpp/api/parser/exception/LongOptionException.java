@@ -3,7 +3,7 @@ package cz.cuni.mff.dpp.api.parser.exception;
 import cz.cuni.mff.dpp.api.parser.CommandLineParser;
 
 /**
- * Indicates short option (one-character option) prefixed with long option prefix
+ * Indicates that a short option (one-character option) is prefixed with long option prefix
  * 
  * @author Tom
  * 
@@ -17,7 +17,7 @@ public class LongOptionException extends CommandLineParserException {
 
     private final String optionName;
 
-    public LongOptionException(String optionName) {
+    public LongOptionException(final String optionName) {
         super(String.format(MESSAGE, optionName));
         this.optionName = optionName;
     }

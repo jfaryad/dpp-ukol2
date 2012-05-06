@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import cz.cuni.mff.dpp.example.GnuTimeBean;
 import cz.cuni.mff.dpp.impl.optionsetter.FieldOptionSetter;
 import cz.cuni.mff.dpp.impl.optionsetter.MethodOptionSetter;
 

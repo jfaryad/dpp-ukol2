@@ -1,9 +1,10 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
 /**
- * Base exception to inherited from it by command line exceptions.
+ * Base exception to extended by command line exceptions.
+ * 
  * @author Tom
- *
+ * 
  */
 public abstract class CommandLineParserException extends RuntimeException {
 
@@ -13,15 +14,15 @@ public abstract class CommandLineParserException extends RuntimeException {
         super();
     }
 
-    public CommandLineParserException(String message, Throwable cause) {
+    public CommandLineParserException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public CommandLineParserException(String message) {
+    public CommandLineParserException(final String message) {
         super(message);
     }
 
-    public CommandLineParserException(Throwable cause) {
+    public CommandLineParserException(final Throwable cause) {
         super(cause);
     }
 

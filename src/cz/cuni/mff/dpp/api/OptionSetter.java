@@ -5,8 +5,10 @@ public interface OptionSetter {
     /**
      * Implementation of this interface are used for setting options
      * 
-     * @param context - some context (e.g. field or method)
-     * @param argument - value to be setted
+     * @param context
+     *            some context (e.g. field or method)
+     * @param argument
+     *            value to be set
      */
     void setOption(Object context, Object argument);
 

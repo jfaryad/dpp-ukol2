@@ -1,10 +1,11 @@
 package cz.cuni.mff.dpp.api;
 
 /**
- * Represents lower and upper bounds of the option or common argument occurrences.
+ * Represents lower and upper bounds of how many time an option or common argument can occur.<br>
  * Immutable.
+ * 
  * @author Tom
- *
+ * 
  */
 public class RequiredOccurrenceCountInterval {
 
@@ -16,10 +17,12 @@ public class RequiredOccurrenceCountInterval {
 
     /**
      * 
-     * @param min - lower bound
-     * @param max - upper bound
+     * @param min
+     *            - lower bound
+     * @param max
+     *            - upper bound
      */
-    public RequiredOccurrenceCountInterval(int min, int max) {
+    public RequiredOccurrenceCountInterval(final int min, final int max) {
         super();
         isValid(min, max);
         this.min = min;
@@ -28,6 +31,7 @@ public class RequiredOccurrenceCountInterval {
 
     /**
      * Returns lower bound
+     * 
      * @return lower bound
      */
     public int getMin() {
@@ -36,6 +40,7 @@ public class RequiredOccurrenceCountInterval {
 
     /**
      * Returns upper bound
+     * 
      * @return upper bound
      */
     public int getMax() {
@@ -44,24 +49,32 @@ public class RequiredOccurrenceCountInterval {
 
     /**
      * Returns {@code} if the count is inside interval (inclusive)
+     * 
      * @param count
      * @return
      */
-    public boolean isInside(int count) {
+    public boolean isInside(final int count) {
         return min <= count && max >= count;
     }
 
     /**
      * Validates bounds
+     * 
      * @param min
      * @param max
      * @return
      */
-    public static boolean isValid(int min, int max) {
+    public static boolean isValid(final int min, final int max) {
         return min >= MIN_BOUND && max <= MAX_BOUND && min <= max;
     }
 
-    public static void check(int min, int max) {
+    /**
+     * Checks if the bound are valid and if not, throw an IllegalArgumentException
+     * 
+     * @param min
+     * @param max
+     */
+    public static void check(final int min, final int max) {
 
         if (!isValid(min, max)) {
             throw new IllegalArgumentException(String.format("Invalid parameters %d, %d.", min, max));

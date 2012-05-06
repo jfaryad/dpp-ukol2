@@ -8,37 +8,27 @@ import cz.cuni.mff.dpp.impl.option.OptionsFactory;
  * 
  * Default {@link CommandLineParser} implementation.
  * 
- * Uses this command line algorithm:
- * 
- * 1. Target bean is create (must have parameterless public constructor)
- * 
- * 2. command line parsing: for every command line element is determined whether it is:
- * 
- * a) short option (starts with - and one character, e.g. -a),
- * 
- * b) united short option (starts with - and contains multiple characters, e.g. -abc)
- * 
- * c) long option (starts with -- a contains more characters, e.g. --output)
- * 
+ * Uses this command line algorithm: <br>
+ * 1. Target bean is created (must have parameterless public constructor) <br>
+ * <br>
+ * 2. command line parsing: for every command line element, it is determined whether it is: <br>
+ * a) short option (starts with - and one character, e.g. -a), <br>
+ * b) united short option (starts with - and contains multiple characters, e.g. -abc) <br>
+ * c) long option (starts with -- a contains more characters, e.g. --output) <br>
  * d) option with parameter (normal option after character = and parameter, e.g. -f=tmp.txt or --file=tmt.txt or
- * -abf=tmp.txt, in this case option parameter belongs to last short option)
- * 
+ * -abf=tmp.txt, in this case option parameter belongs to last short option) <br>
  * e) option parameter (it is not option format and follows after option with required parameter without this parameter
- * (e.g. without =value))
- * 
- * e) common argument delimiter (--)
- * 
- * f) common argument (everything after -- and elements, that are not options and option parameters)
- * 
- * 3. validation:
- * 
- * In this step is every option, option parameter and common argument validated (e.g. occurrences count, is option
- * permitted and so on...). If some validation fails appropriate exception is thrown.
- * 
- * 4. Target bean is population.
- * 
- * Appropriate methods are invoked, fields are setted. Option parameters and common arguments are converted and
- * validated by costumer validators during this phase.
+ * (e.g. without =value)) <br>
+ * e) common argument delimiter (--) <br>
+ * f) common argument (everything after -- and elements, that are not options and option parameters) <br>
+ * <br>
+ * 3. validation: <br>
+ * In this step every option, option parameter and common argument are validated (e.g. occurrences count, if option is
+ * permitted and so on...). If some validation fails, an appropriate exception is thrown. <br>
+ * <br>
+ * 4. Target bean is populated. <br>
+ * Appropriate methods are invoked, fields are set. Option parameters and common arguments are converted and validated
+ * by costumer validators during this phase.
  * 
  * 
  * @author Tom
@@ -56,13 +46,13 @@ public class DefaultCommandLineParser<T> implements CommandLineParser<T> {
     }
 
     /**
-     * Connect {@link Options} configuration creation form annotated bean and comman lin parsing together
+     * Create a {@link Options} configuration creation from the annotated bean and parse the command line
      * 
      * @param targetBeanClass
      *            - annotated bean
      * @param commnadLine
      *            - command line from main method
-     * @return
+     * @return a populated bean
      */
     public static <T> T parse(final Class<T> targetBeanClass, final String[] commnadLine) {
         final Options<T> options = OptionsFactory.createOptions(targetBeanClass);

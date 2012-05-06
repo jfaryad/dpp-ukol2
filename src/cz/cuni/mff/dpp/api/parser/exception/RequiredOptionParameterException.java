@@ -1,7 +1,7 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
 /**
- * Indicates no option parameter for option with obligatory option parameter
+ * Indicates that no option parameter has been specified for an option with obligatory option parameter
  * 
  * @author Tom
  * 
@@ -14,7 +14,7 @@ public class RequiredOptionParameterException extends CommandLineParserException
 
     private final String optionName;
 
-    public RequiredOptionParameterException(String optionName) {
+    public RequiredOptionParameterException(final String optionName) {
         super(String.format(MESSAGE, optionName));
         this.optionName = optionName;
     }

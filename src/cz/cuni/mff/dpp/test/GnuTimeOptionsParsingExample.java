@@ -1,12 +1,19 @@
-package cz.cuni.mff.dpp.example;
+package cz.cuni.mff.dpp.test;
 
 import cz.cuni.mff.dpp.api.Options;
 import cz.cuni.mff.dpp.impl.option.OptionsFactory;
 import cz.cuni.mff.dpp.impl.parser.DefaultCommandLineParser;
 
-public class CommandLineParserExample {
+/**
+ * An example of how options for GNU time can be parsed. It is a manual test, so it is intended to be executed as a java
+ * application and then the results are printed on system out.
+ * 
+ * @author jakub
+ * 
+ */
+public class GnuTimeOptionsParsingExample {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
         testGnuTimeBean();
 
@@ -19,8 +26,8 @@ public class CommandLineParserExample {
 
     public static void testGnuTimeBean() {
 
-        Options<GnuTimeBean> options = OptionsFactory.createOptions(GnuTimeBean.class);
-        DefaultCommandLineParser<GnuTimeBean> parser = new DefaultCommandLineParser<GnuTimeBean>(options);
+        final Options<GnuTimeBean> options = OptionsFactory.createOptions(GnuTimeBean.class);
+        final DefaultCommandLineParser<GnuTimeBean> parser = new DefaultCommandLineParser<GnuTimeBean>(options);
 
         GnuTimeBean gnuTimeBean = parser.parse(new String[] {});
         System.out.println(gnuTimeBean.toString());
@@ -47,8 +54,8 @@ public class CommandLineParserExample {
 
     public static void testGnuTimeBean2() {
 
-        Options<GnuTimeBean2> options = OptionsFactory.createOptions(GnuTimeBean2.class);
-        DefaultCommandLineParser<GnuTimeBean2> parser = new DefaultCommandLineParser<GnuTimeBean2>(options);
+        final Options<GnuTimeBean2> options = OptionsFactory.createOptions(GnuTimeBean2.class);
+        final DefaultCommandLineParser<GnuTimeBean2> parser = new DefaultCommandLineParser<GnuTimeBean2>(options);
 
         GnuTimeBean2 gnuTimeBean = parser.parse(new String[] {});
         System.out.println(gnuTimeBean.toString());

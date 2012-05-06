@@ -5,7 +5,7 @@ import java.util.Collection;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
- * Indicates unspecified options on which is option specified on the command line dependent.
+ * Indicates that an option has is dependent on another option that was not specified on the command line
  * 
  * @author Tom
  * 
@@ -16,8 +16,15 @@ public class DependentOptionsException extends AbstractOptionsCompatibilityExcep
 
     private static final String MESSAGE = "Option with name: %s depends on options which aren't specified on the command line.";
 
-    public DependentOptionsException(SingleOption dependentSingleOption,
-            Collection<SingleOption> unspecifiedDependentOptions) {
+    /**
+     * 
+     * @param dependentSingleOption
+     *            the option that misses dependencies
+     * @param unspecifiedDependentOptions
+     *            the options that this option is dependent on
+     */
+    public DependentOptionsException(final SingleOption dependentSingleOption,
+            final Collection<SingleOption> unspecifiedDependentOptions) {
         super(MESSAGE, dependentSingleOption, unspecifiedDependentOptions);
     }
 

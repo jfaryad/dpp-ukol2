@@ -53,7 +53,7 @@
 
 	<target name="javadoc" depends="clean-javadoc" description="generates javadoc from sources">
 		<!-- Generate javadoc -->
-		<javadoc sourcepath="${src}" access="private" destdir="${javadoc.dir}" author="true" use="true" windowtitle="Options API">
+		<javadoc sourcepath="${src}" overview="src/overview.html" excludepackagenames="cz.cuni.mff.dpp.test" access="public" destdir="${javadoc.dir}" author="true" use="true" windowtitle="Options API">
 			<fileset dir="${src}">
 				<include name="**/*.java,**/*.html" />
 			</fileset>

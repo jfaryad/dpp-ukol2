@@ -1,0 +1,147 @@
+<html>
+<body>
+This library allows you to specify what command line options a program expects and contains tools to parse the command line 
+and based on the specified configurations, populate a bean with the specified options.
+<p>
+Expected options are configured via annotated beans.<br>
+For example:<br>
+<pre>
+public class SayHello {
+	
+	@SimpleOption(names={"c", "use-capitals"})
+	boolean useCapitalLetters
+	
+}
+</pre>
+This configuration defines one single option. We could call the program like this:
+<br>
+java SayHello -c
+<br>
+To parse the command line, we need to use a parser:<br>
+<pre>
+public static void main(String[] args) {
+	SayHello options = DefaultCommandLineParser.parse(SayHello.class, args);
+	final String hello = "Hello";
+	if (options.useCapitalLetters) {
+		hello = hello.toUpperCase();
+	}
+	System.out.println(hello);
+}
+</pre>
+The field useCapitalLetters is set to true, if the option of the given name is specified on the command line.
+<br>
+A simple option must always be of type boolean.
+<br>
+An option can have several synonyms, for example, in the previous example you could have called the program like this:<br>
+java SayHello --use-capitals
+<br>
+All such synonyms are specified in the "names" array in the annotation.
+<p>
+To pass parameters to options, they have to be tagged with @ParameterOption<br>
+For example:
+<pre>
+public class ReadFromFile {
+	
+	@ParameterOption(
+            names = { "i", "input" },
+            argumentName = "FILE",
+            description = "The file to read",
+            argumentConverter = FileArgumentConverter.class)
+    File input;
+	
+}
+</pre>
+So when you call the program with the argument "--input /home/text.txt", you can parse the command line like this:<br>
+<pre>
+public static void main(String[] args) {
+	ReadFromFile options = DefaultCommandLineParser.parse(ReadFromFile.class, args);
+	FileReader reader = new FileReader(options.input);
+	...
+}
+</pre>
+Note, that we had to specify an argument converter, so that the parser would know, what to do with the parameter. 
+Argument converters are not necessary for primitive types, Strings and enums.<br>
+To implement your own converter, you just have to implement the ArgumentConverter interface.
+<p>
+There is another way, how to process option parameters. You can annotate a method, that takes a String parameter, instead of a field and in that method,
+you can do whatever you like with the parameter. You can validate it, store it in a field, convert it etc...
+For example:
+<pre>
+public class ReadFromFile {
+
+	File input
+	
+	@ParameterOption(
+            names = { "i", "input" },
+            argumentName = "FILE",
+            description = "The file to read",
+            argumentConverter = FileArgumentConverter.class)
+    void convertInput(String input) {
+    	this.input = new File(input);
+    }
+	
+}
+</pre>
+<p>
+There are many thins you can specify in an option annotation:<br>
+names: all the synonyms that will define this option on the command line.<br>
+description: a description of the purpose of the option. It will be used when generating a help screen.<br>
+dependencies/incompatible options: options that must/mustn't be specified together with another option.<br>
+parameterRequired: whether the parameter of this option is required or optional.<br>
+argumentConverter: what converter to use to convert the option parameter from String.<br>
+validators: custom validations that can be triggered on the value when it is parsed from the command line.<br>
+<p>
+You can specify validators like this:
+<pre>
+	@ParameterOption(
+            names = { "a", "age" },
+            argumentName = "AGE",
+            validators = {
+                    @Validator(
+                            validatorClass = BetweenInclusiveValidator.class,
+                            constructorParams = { "0", "120" })
+            },
+            description = "The age of the person.")
+    private int age;
+</pre>
+This example shows field that takes an int value defining an age, but it has to be in the interval 0 - 120, inclusive.<br>
+Other validators are for examle GreaterThenValidator, OneOfValidator, etc.<br>
+For a complete list, se the cz.cuni.mff.dpp.validator package<br>
+You can easily create custom validators by extending the AbstractValidator class.
+<p>
+Every program can have common non-option arguments. For example:
+<br>
+ls -a /home<br>
+where "/home" is a program argument, to an argument of the option "-a".
+To enable such arguments, use the annotation CommonArgument:
+<pre>
+	@CommonArgument
+    public void addArgument(String argument) {
+        argumentList.add(argument);
+    }
+</pre>
+Every time an argument is found on the command line, that doesn't belong to any option, this method will be called.
+<br>
+If you expect only one non-option argument, you can tag directly a field:
+<pre>
+	@CommonArgument(maxRequiredCount = 1, minRequiredCount = 0)
+    String argument;
+</pre>
+Note that you can specify, how many times a common argument can be found (default values are min 0 and max Integer.MAX_VALUE)<br>
+Off course, you can also have an argument other then String and use a converter.
+<p>
+Most programs are able display a help page with usage information.<br>
+You can generate such a help page from the information provided by the Options object using a HelpScreenFactory.<br>
+Options is the object that holds all the information about allowed/expected options and is created based on the annotaded bean 
+(or you can even create it manually, 
+but that you will have to implement your own parser as the default parser expects an annotation configuration)
+<br>
+To display a sample help screen, you can use the default implementation DefaultHelpScreenFactory<br>
+For example:<br>
+<pre>
+	Options<GnuTimeBean> options = OptionsFactory.createOptions(GnuTimeBean.class);
+    HelpScreenFactory helpScreenFactory = new DefaultHelpScreenFactory(options);
+    System.out.println(helpScreenFactory.generateHelpScreen());
+</pre>
+</body>
+</html>

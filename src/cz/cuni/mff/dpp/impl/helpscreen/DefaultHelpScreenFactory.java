@@ -48,6 +48,12 @@ public class DefaultHelpScreenFactory implements HelpScreenFactory {
     private final StringBuilder[] optionNames;
     private final String[] optionDescriptions;;
 
+    /**
+     * Create an instance of the factory.
+     * 
+     * @param options
+     *            the options definition.
+     */
     public DefaultHelpScreenFactory(final Options<?> options) {
         this.options = options;
         this.singleOptions.addAll(options.getOptions());

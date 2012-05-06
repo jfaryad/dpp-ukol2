@@ -15,11 +15,13 @@ import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionParameterException;
 import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
 /**
- * @author Tom
  * 
  * Interface to be implemented by command line parser
- *
- * @param <T> - type target bean (bean used for options storing)
+ * 
+ * @author Tom
+ * 
+ * @param <T>
+ *            type of target bean (bean used for options storing)
  */
 public interface CommandLineParser<T> {
 
@@ -34,24 +36,27 @@ public interface CommandLineParser<T> {
     int SHORT_OPTION_NAME_LENGTH = 1;
 
     /**
+     * Parses the command line and stores the result in a bean.
      * 
-     * @param commnadLine - command line from {@code main} method. I.e. processed by JVM.
+     * @param commnadLine
+     *            - command line from {@code main} method. I.e. processed by JVM.
      * @return target been, that stores parsed command line
      * 
-     * @throws CommandLineParserException and exceptions inherited from it
+     * @throws CommandLineParserException
+     *             and exceptions inherited from it
      * 
-     * @see {@link CommonArgumentFormatException}, {@link DependentOptionsException}, 
-     * {@link IncompatibleOptionsException}, {@link OptionParameterFormatException}, 
-     * {@link RequiredCommonArgumentCountException}, {@link RequiredOptionCountException},
-     * {@link RequiredOptionParameterException}, {@link UnexceptedException},
-     * {@link UnexceptedOptionException}, {@link UnexceptedOptionParameterException},
-     * {@link ValidationException}
+     * @see {@link CommonArgumentFormatException}, {@link DependentOptionsException},
+     *      {@link IncompatibleOptionsException}, {@link OptionParameterFormatException},
+     *      {@link RequiredCommonArgumentCountException}, {@link RequiredOptionCountException},
+     *      {@link RequiredOptionParameterException}, {@link UnexceptedException}, {@link UnexceptedOptionException},
+     *      {@link UnexceptedOptionParameterException}, {@link ValidationException}
      * 
      */
     T parse(String[] commnadLine);
 
     /**
      * Returns options configuration
+     * 
      * @return options configuration
      */
     Options<T> getOptions();

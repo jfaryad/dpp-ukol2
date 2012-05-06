@@ -10,10 +10,10 @@ import cz.cuni.mff.dpp.impl.converter.DummyArgumentConverter;
 
 /**
  * This annotation is used for tagging fields or methods, that are designed for common arguments of the program. This
- * annotation can be used at most one time in the annotated bean.
+ * annotation can be used at most once in the annotated bean.<br>
  * 
- * Field contract is: non-static, non-final field. Method contract is: non-static, one-parameter method, that returns
- * void.
+ * Field contract is: non-static, non-final field.<br>
+ * Method contract is: non-static, one-parameter method, that returns void.
  * 
  * 
  * @author Tom
@@ -26,33 +26,29 @@ public @interface CommonArgument {
     /**
      * Description of the program's common argument used in help screen
      * 
-     * @return
      */
     String description() default "";
 
     /**
      * {@link Class} literal of the class implementing {@link ArgumentConverter} interface. This implementation must
-     * have parameterless public constructor, that is used for instantiation. Returns type of the method
-     * {@link ArgumentConverter#convert(String)} have to be assignable to the field or method tagged with this annotation.
-     * This parameter can be omitted if the target class is primitive type, wrapper type, {@link String} type or enum
-     * type.
+     * have a parameterless public constructor, that is used for instantiation. The return type of the method
+     * {@link ArgumentConverter#convert(String)} has to be assignable to the field or method tagged with this
+     * annotation. This parameter can be omitted if the target class is a primitive type, wrapper type, {@link String}
+     * type or enum type.
      * 
-     * @return
      */
     Class<? extends ArgumentConverter<?>> argumentConverter() default DummyArgumentConverter.class;
 
     /**
-     * Lower bound of the common argument occurrence on the command line
+     * Lower bound of the common argument occurrence count on the command line
      * 
-     * @return
      */
     int minRequiredCount() default 0;
 
     /**
-     * Upper bound of the common argument occurrence on the command line
+     * Upper bound of the common argument occurrence count on the command line
      * 
-     * @return
      */
-    int maxRequiredCount() default 1;
+    int maxRequiredCount() default Integer.MAX_VALUE;
 
 }

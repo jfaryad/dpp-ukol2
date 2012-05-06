@@ -1,9 +1,10 @@
 package cz.cuni.mff.dpp.api.parser.exception;
 
 /**
- * Indicates parameter for parameter, that does not permit option parameters
+ * Indicates that a parameter has bees specified for an option, that does not permit option parameters
+ * 
  * @author Tom
- *
+ * 
  */
 public class UnexceptedOptionParameterException extends CommandLineParserException {
 
@@ -14,7 +15,7 @@ public class UnexceptedOptionParameterException extends CommandLineParserExcepti
     private final String optionName;
     private final String unexceptedOptionParameter;
 
-    public UnexceptedOptionParameterException(String optionName, String unexceptedOptionParameter) {
+    public UnexceptedOptionParameterException(final String optionName, final String unexceptedOptionParameter) {
         super(String.format(MESSAGE, optionName, unexceptedOptionParameter));
         this.optionName = optionName;
         this.unexceptedOptionParameter = unexceptedOptionParameter;
@@ -22,6 +23,7 @@ public class UnexceptedOptionParameterException extends CommandLineParserExcepti
 
     /**
      * Returns option parameter name
+     * 
      * @return
      */
     public String getOptionName() {
@@ -30,6 +32,7 @@ public class UnexceptedOptionParameterException extends CommandLineParserExcepti
 
     /**
      * Return not permitted option parameter
+     * 
      * @return
      */
     public String getUnexceptedOptionParameter() {

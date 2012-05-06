@@ -3,8 +3,8 @@ package cz.cuni.mff.dpp.api.parser.exception;
 import cz.cuni.mff.dpp.api.ArgumentValidator;
 
 /**
- * Indicates, that validator cannot valid object (option parameter)
- *  
+ * Indicates, that validator cannot validate an object (option parameter)
+ * 
  * @author Tom
  * 
  */
@@ -18,14 +18,14 @@ public class ValidationException extends CommandLineParserException {
 
     private final Object invalidArgument;
 
-    public ValidationException(ArgumentValidator<?> validator, Object invalidArgument) {
+    public ValidationException(final ArgumentValidator<?> validator, final Object invalidArgument) {
         super(String.format(MESSAGE, invalidArgument, validator.getClass().getName()));
         this.validator = validator;
         this.invalidArgument = invalidArgument;
     }
 
     /**
-     * Return validator
+     * Returns the validator
      * 
      * @return
      */
@@ -34,7 +34,7 @@ public class ValidationException extends CommandLineParserException {
     }
 
     /**
-     * Returns object, that was not validated by validator
+     * Returns the object, that was not validated by validator
      * 
      * @return
      */

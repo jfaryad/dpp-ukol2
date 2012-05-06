@@ -5,7 +5,8 @@ import java.util.Collection;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
- * Indicates incompatible options specified on the command line
+ * Indicates that an option has been specified on the command line together with other options, that are incompatible
+ * with this option.
  * 
  * @author Tom
  * 
@@ -16,8 +17,15 @@ public class IncompatibleOptionsException extends AbstractOptionsCompatibilityEx
 
     private static final String MESSAGE = "Option with name: %s is incompatible with options which are specified on the command line.";
 
-    public IncompatibleOptionsException(SingleOption incompatibleSingleOption,
-            Collection<SingleOption> specifiedIncompatibleOptions) {
+    /**
+     * 
+     * @param incompatibleSingleOption
+     *            the invalid option
+     * @param specifiedIncompatibleOptions
+     *            the options that this option is incombatible with
+     */
+    public IncompatibleOptionsException(final SingleOption incompatibleSingleOption,
+            final Collection<SingleOption> specifiedIncompatibleOptions) {
         super(MESSAGE, incompatibleSingleOption, specifiedIncompatibleOptions);
     }
 

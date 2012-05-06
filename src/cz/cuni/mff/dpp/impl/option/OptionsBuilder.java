@@ -12,14 +12,17 @@ import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
- * Basic implementation of {@link Options}
+ * A builder that enables to manually create a full options definition, add single options, specify the target bean
+ * class etc.<br>
+ * It implements {@link Options}, so it can be directly passed to a parser.
  * 
  * @author jfaryad
  * 
  */
 public class OptionsBuilder<T> implements Options<T> {
 
-    private static final RequiredOccurrenceCountInterval DEFAULT_REQUIRED_COUNT_INTERVAL = new RequiredOccurrenceCountInterval(0, 0);
+    private static final RequiredOccurrenceCountInterval DEFAULT_REQUIRED_COUNT_INTERVAL = new RequiredOccurrenceCountInterval(
+            0, 0);
 
     private final Map<String, SingleOption> options = new HashMap<String, SingleOption>();
     private Class<T> targetBeanClass;
@@ -137,7 +140,8 @@ public class OptionsBuilder<T> implements Options<T> {
         return commonArgumentRequiredCountInterval;
     }
 
-    public void setCommonArgumentRequiredCountInterval(final RequiredOccurrenceCountInterval commonArgumentRequiredCountInterval) {
+    public void setCommonArgumentRequiredCountInterval(
+            final RequiredOccurrenceCountInterval commonArgumentRequiredCountInterval) {
         this.commonArgumentRequiredCountInterval = commonArgumentRequiredCountInterval;
     }
 

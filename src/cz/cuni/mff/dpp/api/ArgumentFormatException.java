@@ -1,7 +1,7 @@
 package cz.cuni.mff.dpp.api;
 
 /**
- * This exception is used for invalid value indication for {@link ArgumentConverter} 
+ * This exception is used for indication of an invalid value in {@link ArgumentConverter}
  * 
  * @author Tom
  * 
@@ -16,14 +16,15 @@ public class ArgumentFormatException extends RuntimeException {
 
     private final String argument;
 
-    public ArgumentFormatException(String argument, Class<? extends ArgumentConverter<?>> argumentConverterClass) {
+    public ArgumentFormatException(final String argument,
+            final Class<? extends ArgumentConverter<?>> argumentConverterClass) {
         super(String.format(MESSAGE, argument, argumentConverterClass.getName()));
         this.argumentConverterClass = argumentConverterClass;
         this.argument = argument;
     }
 
-    public ArgumentFormatException(Throwable cause, String argument,
-            Class<? extends ArgumentConverter<?>> argumentConverterClass) {
+    public ArgumentFormatException(final Throwable cause, final String argument,
+            final Class<? extends ArgumentConverter<?>> argumentConverterClass) {
         super(String.format(MESSAGE, argument, argumentConverterClass.getName()), cause);
         this.argumentConverterClass = argumentConverterClass;
         this.argument = argument;
@@ -31,6 +32,7 @@ public class ArgumentFormatException extends RuntimeException {
 
     /**
      * Class of the argument converter, that throws this exception.
+     * 
      * @return class of the argument converter, that throws this exception.
      */
     public Class<? extends ArgumentConverter<?>> getArgumentConverterClass() {

@@ -32,7 +32,7 @@ import cz.cuni.mff.dpp.api.parser.exception.UnexceptedOptionParameterException;
 import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
 /**
- * {@code DefaultCommandLineParser} strategy. Do not determined for public usage.
+ * {@code DefaultCommandLineParser} strategy. Is not meant for public usage.
  * 
  * @author Tom
  * 
@@ -106,7 +106,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
 
     }
 
-    private void checkLongOption(ParsedOption parsedOption) {
+    private void checkLongOption(final ParsedOption parsedOption) {
         if (parsedOption.isShortOption() && !parsedOption.isPrefixedWithShortOptionPrefix()) {
             processException(new LongOptionException(parsedOption.getOptionName()));
         } else if (!parsedOption.isShortOption() && parsedOption.isPrefixedWithShortOptionPrefix()) {
@@ -403,7 +403,7 @@ import cz.cuni.mff.dpp.api.parser.exception.ValidationException;
             return prefixedWithShortOptionPrefix;
         }
 
-        public void setPrefixedWithShortOptionPrefix(boolean prefixedShortOptionPrefix) {
+        public void setPrefixedWithShortOptionPrefix(final boolean prefixedShortOptionPrefix) {
             this.prefixedWithShortOptionPrefix = prefixedShortOptionPrefix;
         }
     }

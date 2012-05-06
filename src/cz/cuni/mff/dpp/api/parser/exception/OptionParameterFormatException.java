@@ -3,9 +3,10 @@ package cz.cuni.mff.dpp.api.parser.exception;
 import cz.cuni.mff.dpp.api.ArgumentFormatException;
 
 /**
- * Indicates invalid option parameter format for argument converter.
+ * Indicates an invalid option parameter format for an argument converter.
+ * 
  * @author Tom
- *
+ * 
  */
 public class OptionParameterFormatException extends AbstractArgumentConverterException {
 
@@ -15,15 +16,17 @@ public class OptionParameterFormatException extends AbstractArgumentConverterExc
 
     private final String optionName;
 
-    public OptionParameterFormatException(ArgumentFormatException exception, String optioName) {
+    public OptionParameterFormatException(final ArgumentFormatException exception, final String optioName) {
 
-        super(String.format(MESSAGE, exception.getArgument(), exception.getArgumentConverterClass().getName()), exception,
+        super(String.format(MESSAGE, exception.getArgument(), exception.getArgumentConverterClass().getName()),
+                exception,
                 exception.getArgument(), exception.getArgumentConverterClass());
         this.optionName = optioName;
     }
 
     /**
      * Option name with invalid option parameter
+     * 
      * @return
      */
     public String getOptionName() {

@@ -14,7 +14,9 @@ import cz.cuni.mff.dpp.api.RequiredOccurrenceCountInterval;
 import cz.cuni.mff.dpp.api.SingleOption;
 
 /**
- * Basic implementation of {@link SingleOption}
+ * Builder that enables to define a single option.<br>
+ * It implements {@link SingleOption} so once all the information is set, it can be passed wherever a SingleOption
+ * instance is required.
  * 
  * @author jfaryad
  * 
@@ -35,6 +37,12 @@ public class SingleOptionBuilder implements SingleOption {
     private final Set<ArgumentValidator<?>> validators = new HashSet<ArgumentValidator<?>>();
     private RequiredOccurrenceCountInterval requiredCountInterval;
 
+    /**
+     * Creates the builder with the given list of synonyms for the option
+     * 
+     * @param names
+     *            the names of the option (both long and short)
+     */
     SingleOptionBuilder(final String... names) {
         for (final String name : names) {
             addName(name);
@@ -134,7 +142,7 @@ public class SingleOptionBuilder implements SingleOption {
         return this;
     }
 
-    public SingleOptionBuilder setArgumentObligation(OptionArgumentObligation argumentObligation) {
+    public SingleOptionBuilder setArgumentObligation(final OptionArgumentObligation argumentObligation) {
         this.argumentObligation = argumentObligation;
         return this;
     }

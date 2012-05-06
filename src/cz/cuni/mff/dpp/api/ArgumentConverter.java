@@ -1,15 +1,16 @@
 package cz.cuni.mff.dpp.api;
 
 /**
- * Class used for converting of the option parameters and common arguments from {@link String} to desired type.
+ * Class used for converting option parameters and common arguments from {@link String} to the desired type.
  * 
  * @author Tom
  * 
  * @param <T>
+ *            the type to convert to
  */
 public interface ArgumentConverter<T> {
-    
-    String CONVERT_METHOD_NAME="convert";
+
+    String CONVERT_METHOD_NAME = "convert";
 
     /**
      * Converts {@link String} value to desired type.
